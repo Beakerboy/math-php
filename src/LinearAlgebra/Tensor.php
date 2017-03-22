@@ -202,7 +202,7 @@ class Tensor
         
         // Create New Tensor
         $N = Tensor::zeroes($N_dimension_variance);
-        for ($i = 0; $i < array_product($this->dimensions); $i++) {
+        for ($i = 0; $i < array_product($N->getDimensions()); $i++) {
             
           // For each element in $N, sum the values of $this where $m = $n and the rest of the indices match the position in N.
           // ie Tᵝᵩᵪᵞ->contract(1,2) = Nᵪᵞ = T¹₁ᵪᵞ + T²₂ᵪᵞ + T³₃ᵪᵞ ... for all χ and γ.
