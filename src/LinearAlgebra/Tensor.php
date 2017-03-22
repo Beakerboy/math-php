@@ -194,9 +194,8 @@ class Tensor
      */
     public function contract(int $n, int $m): Tensor
     {
-        // Check that the $this is square along the n and m dimensions
         // Check that one index in covariant and one is contravariant.
-        // Check that count($this->dimensions) >= max($n,$m) (offset by one?) 
+        // Check that count($this->dimensions) >= max($n,$m) 
         $N_dimensions = array_splice(array_splice($this->dimensions, max($n, $m), 1), min($m, $n), 1);
         $N_cov_or_con = array_splice(array_splice($this->cov_or_con, max($n, $m), 1), min($m, $n), 1);
         $N_dimension_variance = Multi::multiply($N_dimensions, $N_cov_or_con);
@@ -205,10 +204,11 @@ class Tensor
         $N = Tensor::zeroes($N_dimension_variance);
         for ($i = 0; $i < array_product($this->dimensions); $i++) {
             
-          // For each element in $N, sum the values of $this where $m = $n and the rest of the indices match.
+          // For each element in $N, sum the values of $this where $m = $n and the rest of the indices match the position in N.
+          // ie Tᵝᵩᵪᵞ->contract(1,2) = Nᵪᵞ = T¹₁ᵪᵞ + T²₂ᵪᵞ + T³₃ᵪᵞ ... for all χ and γ.
           $N_index = $n->getIndexFromNumber($i);
           $sum = 0;
-          for ($j = 0; $j < $this->dimensions[$n]; $j++) {
+          for ($j = 0; $j < min($this->dimensions[$n-1], $this->dimensions[$m-1]); $j++) {
               // Find the index position in $this having the same position as the N index, but moving
               // along the diagonal of n and m.
               $A_index = array_splice($N_index, min($n, $m), 0, $j);
