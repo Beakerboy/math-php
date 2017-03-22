@@ -196,13 +196,27 @@ class Tensor
     {
         // Check that the tensor is aware along the specified dimensions.
         // Check that one index in covariant and one is contravariant.
+        // Check that $this is square along the n and m dimensions. 
         $N_dimensions = array_splice(array_splice($this->dimensions, max($n, $m), 1), min($m, $n), 1);
         $N_cov_or_con = array_splice(array_splice($this->cov_or_con, max($n, $m), 1), min($m, $n), 1);
         $N_dimension_variance = Multi::multiply($N_dimensions, $N_cov_or_con);
         
         // Create New Tensor
         $N = Tensor::zeroes($N_dimension_variance);
-        // For each element in $N, sum the values of $this where $m = $n and the rest of the indices match.
+        for ($i = 0; $i < array_product($this->dimensions); $i++) {
+            
+          // For each element in $N, sum the values of $this where $m = $n and the rest of the indices match.
+          $N_index = $n->getIndexFromNumber($i);
+          $sum = 0;
+          for ($j = 0; $j < $this->dimensions[$n]; $j++) {
+              // Find the index position in $this having the same position as the N index, but moving
+              // along the diagonal of n and m.
+              $A_index = array_splice($N_index, min($n, $m), 0, $j);
+              $A_index = array_splice($A_index, max($n, $m), 0, $j);
+              $sum += $this->getValue($A_index);
+          }
+          $N->setValue($sum, $N_index);
+        }
         return $N;
     }
     
