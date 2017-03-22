@@ -10,6 +10,29 @@ class Tensor
     protected $A;
     
     /**
+     * An array that indicates which indicies are covariant.
+     *
+     * Tensor Tᵝᵩᵪᵞ would have $contravariant_indice = [2,3]
+     * (should this be [1,2]?)
+     */
+    protected $covariant_indices = [];
+    
+    /**
+     * An array that indicates which indicies are covariant.
+     *
+     * Tensor Tᵝᵩᵪᵞ would have $contravariant_indice = [1,4]
+     * (should this be [0,3]?)
+     */
+    protected $contravariant_indices = [];
+    
+    /**
+     * An array that indicates which indicies are covariant or contravariant.
+     * 
+     * Tensor Tᵝᵩᵪᵞ would have $cov_or_con = [1,-1,-1,1]
+     */
+    protected $cov_or_con;
+    
+    /**
      * An array of tensor dimensions.
      * Scaler: $dimensions = []
      * Vector of length = 4: $dimensions = [4]
@@ -28,15 +51,23 @@ class Tensor
      * Constructs an array of the size of each dimension.
      * Determines the order of the Tensor
      *
+     * @param array or numeric $A 
+     * @param array $cov_or_con An ordered list of which indices are covariant, contravatiant is +1, covariant is -1
+     *
      * @todo Error checking. Make sure the tensor is well formatted
      */
-    public function __construct($A)
+    public function __construct($A, array $cov_or_con)
     {
         if (is_numeric($A)) {
             $this->A = $A;
         } else {
+           
             $this->dimensions = measureDimensions($A);
             $this->order = count($this->dimensions);
+            if (count($cov_or_con) != $this->order){
+              //Exception all dimensions need to be defined.   
+            }
+            //Each value in $cov_or_con shall be +1 or -1. If not, throw exeption
             $this->A = $A;
         }
     }
