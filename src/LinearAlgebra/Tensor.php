@@ -1,5 +1,7 @@
 <?php
-namespace Math\LinearAlgebra;
+namespace MathPHP\LinearAlgebra;
+namespace MathPHP\Functions\Map\Multi;
+namespace MathPHP\Functions\Map\Single;
 
 class Tensor
 {
@@ -112,6 +114,16 @@ class Tensor
     }
     
     /**
+     * Return the list of covariant and contrvariant indicies
+     *
+     * @return array
+     */
+    public function getCovOrCon()
+    {
+        return $this->cov_or_con;
+    }
+    
+    /**
      * Produces the Tensor product of two tensors
      *
      * @param Tensor $T
@@ -123,9 +135,10 @@ class Tensor
         $T_dimensions = $T->getDimensions();
         $A_dimensions = $this->dimensions;
         $N_dimensions = array_merge($A_dimensions, $T_dimensions);
-        
+        $N_cov_or_con = array_merge($A->cov_or_con, $T->getCovOrCon());
+        $N_dimension_variance = Multi::multiply($N_dimensions, $N_cov_or_con) 
         // Create New Tensor
-        $N = Tensor::zeroes($N_dimensions);
+        $N = Tensor::zeroes($N_dimension_variance);
         
         $A_index = 0;
         $T_index = 0;
@@ -188,7 +201,7 @@ class Tensor
     
     /**
      * Produce a Tensor with the specified dimensions,
-     * with all values initialized to zero.
+     * with all values initialized to zero, or some other specified value.
      * zeroes([2]) = [0, 0]
      * zeroes([2, 3]) = [ [0, 0, 0],
      *                    [0, 0, 0] ]
@@ -196,12 +209,18 @@ class Tensor
      * zeroes([2, 3, 2]) =  [ [ [0, 0], [0, 0], [0, 0] ],
      *                        [ [0, 0], [0, 0], [0, 0] ] ]
      *
+     * The sign of the dimension idicates whether the particular dimension is
+     * covariant or contrvariant. (1 = contravariant, -1 = covariant)
      * @param array $dimensions: The shape of the tensor to produce
      * @param optional $value  : The initial value to assign to the tesnor
      */
-    public static function zeroes(array $dimensions, $value = 0): Tensor
+    public static function zeroes(array $dimensions_variance, $value = 0): Tensor
     {
         $A = [];
+        $dimensions = Single::abs($dimensions_variance);
+        $cov_or_con = Multi::divide($dimensions, $dimensions_variance);
+        
+        // We need to reverse the dimensions in order to build the Tensor from the inside out.
         $dimensions_reverse = array_reverse($dimensions);
         foreach ($dimensions_reverse as $dimension) {
             for ($i = 0; $i < $dimension; $i++) {
@@ -210,6 +229,7 @@ class Tensor
             $value = $A;
             $A = [];
         }
+       return new Tensor($value, $cov_or_con);
     }
     
     /**
