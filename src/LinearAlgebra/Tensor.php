@@ -136,7 +136,7 @@ class Tensor
         $A_dimensions = $this->dimensions;
         $N_dimensions = array_merge($A_dimensions, $T_dimensions);
         $N_cov_or_con = array_merge($A->cov_or_con, $T->getCovOrCon());
-        $N_dimension_variance = Multi::multiply($N_dimensions, $N_cov_or_con) 
+        $N_dimension_variance = Multi::multiply($N_dimensions, $N_cov_or_con); 
         // Create New Tensor
         $N = Tensor::zeroes($N_dimension_variance);
         
@@ -194,9 +194,16 @@ class Tensor
      */
     public function contract(int $n, int $m): Tensor
     {
-        //check that the tensor is aware along the specified dimensions
-        //check that the tensor order is large enough.
-        return;
+        // Check that the tensor is aware along the specified dimensions.
+        // Check that one index in covariant and one is contravariant.
+        $N_dimensions = array_splice(array_splice($this->dimensions, max($n, $m), 1), min($m, $n), 1);
+        $N_cov_or_con = array_splice(array_splice($this->cov_or_con, max($n, $m), 1), min($m, $n), 1);
+        $N_dimension_variance = Multi::multiply($N_dimensions, $N_cov_or_con);
+        
+        // Create New Tensor
+        $N = Tensor::zeroes($N_dimension_variance);
+        // For each element in $N, sum the values of $this where $m = $n and the rest of the indices match.
+        return $N;
     }
     
     /**
