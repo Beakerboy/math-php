@@ -194,9 +194,9 @@ class Tensor
      */
     public function contract(int $n, int $m): Tensor
     {
-        // Check that the tensor is aware along the specified dimensions.
+        // Check that the $this is square along the n and m dimensions
         // Check that one index in covariant and one is contravariant.
-        // Check that $this is square along the n and m dimensions. 
+        // Check that count($this->dimensions) >= max($n,$m) (offset by one?) 
         $N_dimensions = array_splice(array_splice($this->dimensions, max($n, $m), 1), min($m, $n), 1);
         $N_cov_or_con = array_splice(array_splice($this->cov_or_con, max($n, $m), 1), min($m, $n), 1);
         $N_dimension_variance = Multi::multiply($N_dimensions, $N_cov_or_con);
