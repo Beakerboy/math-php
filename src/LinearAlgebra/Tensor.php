@@ -123,6 +123,71 @@ class Tensor
         return $this->cov_or_con;
     }
     
+      /**
+     * Set the value at the given position
+     */
+    public function setValue($value, array $position)
+    {
+        if (count($position) != $this->order) {
+            //throw exception. the tensors are different orders
+        }
+        foreach ($position as $key => $size) {
+            if ($size > $this->dimensions[$key]) {
+                //Element out of bounds exception
+            }
+        }
+        if (!is_numeric($value)) {
+            // We shouldn't be adding arrays or strings to a Tensor, right?
+            // throw an exception
+        }
+        $element = &$this->A;
+        foreach ($position as $subarray) {
+            $element = &$element[$subarray];
+        }
+        $element = $value;
+    }
+    
+    /**
+     * Get the value at the given position
+     */
+    public function getValue(array $position)
+    {
+        $value = $this->A;
+        foreach ($positions as $position) {
+            $value = $value[$position];
+        }
+        return $value;
+    }
+
+    /**
+     * Given an integer $n, provide the $nth element in the Tensor.
+     *
+     * Useful for iterative functions where the sequence of operation
+     * is not important, but full coverage is.
+     *
+     * If the Tensor dimensions are [2, 3]
+     * n = 0: [0, 0]
+     * n = 1: [1, 0]
+     * n = 2: [0, 1]
+     * n = 3: [1, 1]
+     * n = 4: [0, 2]
+     * n = 5: [1, 2]
+     */
+    public function getIndexFromNumber(int $number)
+    {
+        // if ($number >= product($this->dimensions) throw exception
+        $index = [];
+        foreach ($this->dimensions as $dimension) {
+            $i = $number % $dimension;
+            $index[] = $i;
+            $number = ($number - $i) / $dimension;
+        }
+    }
+    
+    /**
+     * Tensor Calculus
+     */
+    
     /**
      * Produces the Tensor product of two tensors
      *
@@ -163,30 +228,6 @@ class Tensor
     }
     
     /**
-     * Given an integer $n, provide the $nth element in the Tensor.
-     *
-     * Useful for iterative functions where the sequence of operation
-     * is not important, but full coverage is.
-     *
-     * If the Tensor dimensions are [2, 3]
-     * n = 0: [0, 0]
-     * n = 1: [1, 0]
-     * n = 2: [0, 1]
-     * n = 3: [1, 1]
-     * n = 4: [0, 2]
-     * n = 5: [1, 2]
-     */
-    public function getIndexFromNumber(int $number)
-    {
-        // if ($number >= product($this->dimensions) throw exception
-        $index = [];
-        foreach ($this->dimensions as $dimension) {
-            $i = $number % $dimension;
-            $index[] = $i;
-            $number = ($number - $i) / $dimension;
-        }
-    }
-    /**
      * Contract the tensor by an order of two by summing
      * the diagonal element on the supplied dimensions.
      *
@@ -219,6 +260,10 @@ class Tensor
         }
         return $N;
     }
+    
+    /**
+     * Special Tensors
+     */
     
     /**
      * Produce a Tensor with the specified dimensions,
@@ -254,38 +299,17 @@ class Tensor
     }
     
     /**
-     * Set the value at the given position
+     * The Kronecker Tensor is the square Tensor, equivalent of the identity matrix.
+     * It is a rank 2 tensor with ones on the diagonal.
+     *
+     * @param int $dimensions width and height of the tensor
+     * @param array $cov_or_con  
      */
-    public function setValue($value, array $position)
+    public function kroneckerTensor(int $dimensions, array $cov_or_con): Tensor
     {
-        if (count($position) != $this->order) {
-            //throw exception. the tensors are different orders
-        }
-        foreach ($position as $key => $size) {
-            if ($size > $this->dimensions[$key]) {
-                //Element out of bounds exception
-            }
-        }
-        if (!is_numeric($value)) {
-            // We shouldn't be adding arrays or strings to a Tensor, right?
-            // throw an exception
-        }
-        $element = &$this->A;
-        foreach ($position as $subarray) {
-            $element = &$element[$subarray];
-        }
-        $element = $value;
+        // check that sum($cov_or_con) == 2;
+        $A = MatrixFactory::identity($dimensions)->getA();
+        return ($A, $cov_or_con);
     }
     
-    /**
-     * Get the value at the given position
-     */
-    public function getValue(array $position)
-    {
-        $value = $this->A;
-        foreach ($positions as $position) {
-            $value = $value[$position];
-        }
-        return $value;
-    }
 }
