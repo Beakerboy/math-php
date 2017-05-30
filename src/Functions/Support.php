@@ -1,6 +1,7 @@
 <?php
 namespace MathPHP\Functions;
 
+use MathPHP\Combinatorics;
 use MathPHP\Exception;
 
 class Support
@@ -83,5 +84,77 @@ class Support
         }
 
         return true;
+    }
+
+    /*
+     * Determining the constants for the Lanczos gamma approximation
+     *
+     * http://my.fit.edu/~gabdo/gamma.txt
+     */
+    public static function lanczosConstants(int $n, $g): array
+    {
+        // Diagonal Matrix
+        $Dc_array = [];
+        for ($i=0; $i<$n; $i++) {
+            $Dc_array[] = 2 * Combinatorics::doubleFactorial(2*$i-1);
+        }
+        $Dc = MatrixFactory:create($Dc_array);
+        
+        // Diagonal Matrix
+        $Dr_array = [];
+        for ($i=0; $i<$n; $i++) {
+            if ($i == 0) {
+                $Dr_array[] = 1;
+            } else {
+                $numerator = -1 * Combinatorics::factorial(2 * $i);
+                $denominator = 2 * Combinatorics::factorial($i - 1) * Combinatorics::factorial($i);
+                $Dr_array[] = $numerator / $denominator;
+            }
+        }
+        $Dr = MatrixFactory:create($Dr_array);
+
+        // Upper Triangle
+        $B_array = [];
+        for ($i=0; $i<$n; $i++) {
+            for ($j=0; $j<$n; $j++) {
+                if ($i == 0) {
+                    $B_array[$i][$j] = 1;
+                } elseif ($i < $j) {
+                    $B_array[$i][$j] = 0;
+                } else {
+                    $B_array[$i][$j] = -1 ** ($i - $j) * Combinatorics::combinations($i + $j - 1, $i - $j);
+                }
+            }
+        }
+        $B = MatrixFactory:create($B_array);
+
+        // Lower Triangle
+        $C_array = [];
+        for ($i=0; $i<$n; $i++) {
+            for ($j=0; $j<$n; $j++) {
+                if ($i == 0 && $j == 0) {
+                    $C_array[$i][$j] = .5;
+                } elseif ($i > $j) {
+                    $C_array[$i][$j] = 0;
+                } else {
+                    $numerator = -1 ** ($i + $j + 2) * 4 ** $i * $j * Combinatorics::factorial($i + $j - 1);
+                    $denominator = Combinatorics::factorial($j - $i) * Combinatorics::factorial(2 * $i)
+                    $C_array[$i][$j] = $numerator / $denominator;               
+                }
+            }
+        }
+        $C = MatrixFactory:create($C_array);
+
+        $M = $Dr->multiply($B)->multiply($C->multiply($Dc));
+
+        // Column vector
+        $f_array = [];
+        for ($i=0; $i<$n; $i++) {
+            $f_array[] = \M_SQRT2 * (\M_E / (2*$i+2*$g+1)) ** ($i + 0.5);
+        }
+        $f = MatrixFactory::create([$f_array])->transpose();
+
+        $a = $M->multiply($f);
+        return ($a->scalarMultiply(exp($g) / \M_SQRT2 / \M_SQRTPI))->getColumn(0);
     }
 }
