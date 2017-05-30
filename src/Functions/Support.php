@@ -104,6 +104,7 @@ class Support
             }
         }
         $Dc = MatrixFactory::create($Dc_array);
+        echo "\nDC=" . $Dc . "\n";
         
         // Diagonal Matrix
         $Dr_array = [];
@@ -117,6 +118,7 @@ class Support
             }
         }
         $Dr = MatrixFactory::create($Dr_array);
+        echo "\nDr=" . $Dr . "\n";
 
         // Upper Triangle
         $B_array = [];
@@ -132,6 +134,7 @@ class Support
             }
         }
         $B = MatrixFactory::create($B_array);
+        echo "\nB=" . $B . "\n";
 
         // Lower Triangle
         $C_array = [];
@@ -149,8 +152,10 @@ class Support
             }
         }
         $C = MatrixFactory::create($C_array);
+        echo "\nC=" . $C . "\n";
 
         $M = $Dr->multiply($B)->multiply($C->multiply($Dc));
+        echo "\nM=" . $M . "\n";
 
         // Column vector
         $f_array = [];
@@ -158,8 +163,10 @@ class Support
             $f_array[] = \M_SQRT2 * (\M_E / (2 * ($i + $g) + 1)) ** ($i + 0.5);
         }
         $f = MatrixFactory::create([$f_array])->transpose();
+        echo "\nf=" . $f . "\n";
 
         $a = $M->multiply($f);
+        echo "\na=" . $a . "\n";
         return ($a->scalarMultiply(exp($g) / \M_SQRT2 / \M_SQRTPI))->getColumn(0);
     }
 }
