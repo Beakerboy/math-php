@@ -167,6 +167,9 @@ class Support
 
         $a = $M->multiply($f);
         echo "\na=" . $a . "\n";
-        return ($a->scalarMultiply(exp($g) / \M_SQRT2 / \M_SQRTPI))->getColumn(0);
+
+        $results = $a->scalarMultiply(exp($g) / \M_SQRT2 / \M_SQRTPI);
+        echo "\nresults=" . $results . "\n";
+        return ($results->getColumn(0));
     }
 }
