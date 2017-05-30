@@ -129,7 +129,7 @@ class Support
                 } elseif ($i > $j) {
                     $B_array[$i][$j] = 0;
                 } else {
-                    $B_array[$i][$j] = -1 ** ($j - $i) * Combinatorics::combinations($i + $j - 1, $j - $i);
+                    $B_array[$i][$j] = (-1) ** ($j - $i) * Combinatorics::combinations($i + $j - 1, $j - $i);
                 }
             }
         }
@@ -145,7 +145,7 @@ class Support
                 } elseif ($i < $j) {
                     $C_array[$i][$j] = 0;
                 } else {
-                    $numerator = -1 ** ($i + $j + 2) * 4 ** $i * $j * Combinatorics::factorial($i + $j - 1);
+                    $numerator = (-1) ** ($i + $j + 2) * 4 ** $i * $j * Combinatorics::factorial($i + $j - 1);
                     $denominator = Combinatorics::factorial($i - $j) * Combinatorics::factorial(2 * $i);
                     $C_array[$i][$j] = $numerator / $denominator;
                 }
