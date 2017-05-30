@@ -143,7 +143,7 @@ class Support
                     $C_array[$i][$j] = 0;
                 } else {
                     $numerator = -1 ** ($i + $j + 2) * 4 ** $i * $j * Combinatorics::factorial($i + $j - 1);
-                    $denominator = Combinatorics::factorial($j - $i) * Combinatorics::factorial(2 * $i);
+                    $denominator = Combinatorics::factorial($i - $j) * Combinatorics::factorial(2 * $i);
                     $C_array[$i][$j] = $numerator / $denominator;
                 }
             }
@@ -155,7 +155,7 @@ class Support
         // Column vector
         $f_array = [];
         for ($i=0; $i<$n; $i++) {
-            $f_array[] = \M_SQRT2 * (\M_E / (2*$i+2*$g+1)) ** ($i + 0.5);
+            $f_array[] = \M_SQRT2 * (\M_E / (2 * ($i + $g) + 1)) ** ($i + 0.5);
         }
         $f = MatrixFactory::create([$f_array])->transpose();
 
