@@ -138,7 +138,7 @@ class Support
                     $C_array[$i][$j] = 0;
                 } else {
                     $numerator = -1 ** ($i + $j + 2) * 4 ** $i * $j * Combinatorics::factorial($i + $j - 1);
-                    $denominator = Combinatorics::factorial($j - $i) * Combinatorics::factorial(2 * $i)
+                    $denominator = Combinatorics::factorial($j - $i) * Combinatorics::factorial(2 * $i);
                     $C_array[$i][$j] = $numerator / $denominator;               
                 }
             }
