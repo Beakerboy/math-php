@@ -139,7 +139,7 @@ class Support
                 } else {
                     $numerator = -1 ** ($i + $j + 2) * 4 ** $i * $j * Combinatorics::factorial($i + $j - 1);
                     $denominator = Combinatorics::factorial($j - $i) * Combinatorics::factorial(2 * $i);
-                    $C_array[$i][$j] = $numerator / $denominator;               
+                    $C_array[$i][$j] = $numerator / $denominator;
                 }
             }
         }
