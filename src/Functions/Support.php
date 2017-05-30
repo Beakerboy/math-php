@@ -96,7 +96,11 @@ class Support
         // Diagonal Matrix
         $Dc_array = [];
         for ($i=0; $i<$n; $i++) {
-            $Dc_array[] = 2 * Combinatorics::doubleFactorial(2*$i-1);
+            if ($i == 0) {
+                $Dc_array[] = 2;
+            } else {
+                $Dc_array[] = 2 * Combinatorics::doubleFactorial(2 * $i - 1);
+            }
         }
         $Dc = MatrixFactory::create($Dc_array);
         
