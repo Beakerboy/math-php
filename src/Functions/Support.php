@@ -1,7 +1,7 @@
 <?php
 namespace MathPHP\Functions;
 
-use MathPHP\Combinatorics;
+use MathPHP\Probability\Combinatorics;
 use MathPHP\Exception;
 
 class Support
