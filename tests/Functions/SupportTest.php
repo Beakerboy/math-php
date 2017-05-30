@@ -253,4 +253,17 @@ class SupportTest extends \PHPUnit_Framework_TestCase
             ],
         ];
     }
+
+    /**
+     * @dataProvider dataProviderForLanczosConstants
+     */
+    public function testLanczosConstants(int $n, $g, array $expected)
+    {
+
+    }
+
+    public function dataProviderForLanczosConstants()
+    {
+        
+    }
 }
