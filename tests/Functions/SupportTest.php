@@ -260,7 +260,9 @@ class SupportTest extends \PHPUnit_Framework_TestCase
     public function testLanczosConstants(int $n, $g, array $expected)
     {
         $calculated = lanczosConstants($n, $g);
-        $this->assertEquals($expected, $calculated, '', 0.0001);
+        foreach ($calculated as $key => $value) {
+          $this->assertEquals($expected[$key], $value, '', 0.0001 * $expected);
+        }
     }
 
     public function dataProviderForLanczosConstants()
