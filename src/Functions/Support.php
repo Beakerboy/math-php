@@ -3,6 +3,7 @@ namespace MathPHP\Functions;
 
 use MathPHP\Probability\Combinatorics;
 use MathPHP\Exception;
+use MathPHP\LinearAlgebra\MatrixFactory;
 
 class Support
 {
