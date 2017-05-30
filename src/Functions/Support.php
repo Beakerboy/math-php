@@ -124,7 +124,7 @@ class Support
             for ($j=0; $j<$n; $j++) {
                 if ($i == 0) {
                     $B_array[$i][$j] = 1;
-                } elseif ($i < $j) {
+                } elseif ($i > $j) {
                     $B_array[$i][$j] = 0;
                 } else {
                     $B_array[$i][$j] = -1 ** ($i - $j) * Combinatorics::combinations($i + $j - 1, $i - $j);
@@ -139,7 +139,7 @@ class Support
             for ($j=0; $j<$n; $j++) {
                 if ($i == 0 && $j == 0) {
                     $C_array[$i][$j] = .5;
-                } elseif ($i > $j) {
+                } elseif ($i < $j) {
                     $C_array[$i][$j] = 0;
                 } else {
                     $numerator = -1 ** ($i + $j + 2) * 4 ** $i * $j * Combinatorics::factorial($i + $j - 1);
