@@ -127,7 +127,7 @@ class Support
                 } elseif ($i > $j) {
                     $B_array[$i][$j] = 0;
                 } else {
-                    $B_array[$i][$j] = -1 ** ($j - $1) * Combinatorics::combinations($i + $j - 1, $j - $i);
+                    $B_array[$i][$j] = -1 ** ($j - $i) * Combinatorics::combinations($i + $j - 1, $j - $i);
                 }
             }
         }
