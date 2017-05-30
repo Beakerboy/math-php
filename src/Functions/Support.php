@@ -88,9 +88,14 @@ class Support
     }
 
     /*
-     * Determining the constants for the Lanczos gamma approximation
+     * Calculate n+1 parameters for the Lanczos gamma approximation
      *
      * http://my.fit.edu/~gabdo/gamma.txt
+     *
+     * @param int $n
+     * @param     $g
+     *
+     * @return array n+1 elements
      */
     public static function lanczosConstants(int $n, $g): array
     {
