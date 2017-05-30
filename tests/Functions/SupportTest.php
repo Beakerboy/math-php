@@ -264,6 +264,12 @@ class SupportTest extends \PHPUnit_Framework_TestCase
 
     public function dataProviderForLanczosConstants()
     {
-        
+        return [
+            [
+                6,
+                5,
+                [0.01689, 1.2866, -1.461, 0.4055, -0.02080, 2.0413E-05, -9.1123E-08],
+            ],
+        ];
     }
 }
