@@ -145,8 +145,8 @@ class Support
                 } elseif ($i < $j) {
                     $C_array[$i][$j] = 0;
                 } else {
-                    $numerator = (-1) ** ($i + $j + 2) * 4 ** $i * $j * Combinatorics::factorial($i + $j - 1);
-                    $denominator = Combinatorics::factorial($i - $j) * Combinatorics::factorial(2 * $i);
+                    $numerator = (-1) ** ($i + $j + 2) * 4 ** $j * $i * Combinatorics::factorial($i + $j - 1);
+                    $denominator = Combinatorics::factorial($i - $j) * Combinatorics::factorial(2 * $j);
                     $C_array[$i][$j] = $numerator / $denominator;
                 }
             }
