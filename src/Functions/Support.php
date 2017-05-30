@@ -98,7 +98,7 @@ class Support
         for ($i=0; $i<$n; $i++) {
             $Dc_array[] = 2 * Combinatorics::doubleFactorial(2*$i-1);
         }
-        $Dc = MatrixFactory:create($Dc_array);
+        $Dc = MatrixFactory::create($Dc_array);
         
         // Diagonal Matrix
         $Dr_array = [];
@@ -111,7 +111,7 @@ class Support
                 $Dr_array[] = $numerator / $denominator;
             }
         }
-        $Dr = MatrixFactory:create($Dr_array);
+        $Dr = MatrixFactory::create($Dr_array);
 
         // Upper Triangle
         $B_array = [];
@@ -126,7 +126,7 @@ class Support
                 }
             }
         }
-        $B = MatrixFactory:create($B_array);
+        $B = MatrixFactory::create($B_array);
 
         // Lower Triangle
         $C_array = [];
@@ -143,7 +143,7 @@ class Support
                 }
             }
         }
-        $C = MatrixFactory:create($C_array);
+        $C = MatrixFactory::create($C_array);
 
         $M = $Dr->multiply($B)->multiply($C->multiply($Dc));
 
