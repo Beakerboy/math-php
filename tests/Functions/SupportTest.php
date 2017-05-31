@@ -268,10 +268,10 @@ class SupportTest extends \PHPUnit_Framework_TestCase
     public function dataProviderForLanczosConstants()
     {
         return [
-            [
+            [// https://mrob.com/pub/ries/lanczos-gamma.html
                 6,
                 5,
-                [0.01689, 1.2866, -1.461, 0.4055, -0.02080, 2.0413E-05, -9.1123E-08],
+                [1.000000000190015, 76.18009172947146, -86.50532032941677, 24.01409824083091, -1.231739572450155, 0.1208650973866179e-2, -0.5395239384953e-5],
             ],
         ];
     }
