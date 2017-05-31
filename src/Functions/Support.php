@@ -101,7 +101,7 @@ class Support
     {
         // Diagonal Matrix
         $Dc_array = [];
-        for ($i=0; $i<$n; $i++) {
+        for ($i=0; $i<=$n; $i++) {
             if ($i == 0) {
                 $Dc_array[] = 2;
             } else {
@@ -113,7 +113,7 @@ class Support
         
         // Diagonal Matrix
         $Dr_array = [];
-        for ($i=0; $i<$n; $i++) {
+        for ($i=0; $i<=$n; $i++) {
             if ($i == 0) {
                 $Dr_array[] = 1;
             } else {
@@ -127,7 +127,7 @@ class Support
 
         // Upper Triangle
         $B_array = [];
-        for ($i=0; $i<$n; $i++) {
+        for ($i=0; $i<=$n; $i++) {
             for ($j=0; $j<$n; $j++) {
                 if ($i == 0) {
                     $B_array[$i][$j] = 1;
@@ -143,7 +143,7 @@ class Support
 
         // Lower Triangle
         $C_array = [];
-        for ($i=0; $i<$n; $i++) {
+        for ($i=0; $i<=$n; $i++) {
             for ($j=0; $j<$n; $j++) {
                 if ($i == 0 && $j == 0) {
                     $C_array[$i][$j] = .5;
@@ -164,7 +164,7 @@ class Support
 
         // Column vector
         $f_array = [];
-        for ($i=0; $i<$n; $i++) {
+        for ($i=0; $i<=$n; $i++) {
             $f_array[] = \M_SQRT2 * (\M_E / (2 * ($i + $g) + 1)) ** ($i + 0.5);
         }
         $f = MatrixFactory::create([$f_array])->transpose();
