@@ -140,7 +140,7 @@ class Special
      *
      * @return number
      */
-    public static function gammaLanczos($z, $g = 7, $n = 9)
+    public static function gammaLanczos($z, $g = 7, int $n = 9)
     {
         // Basic integer/factorial cases
         if ($z == 0) {
@@ -155,9 +155,9 @@ class Special
             return Combinatorics::factorial(round($z) - 1);
         }
 
-        $p - [];
+        $p = [];
         // p coefficients: g = 7, n = 9
-        if ($g == 7 && $n == 9) {
+        if ($g === 7 && $n === 9) {
             $p = [
                 0.99999999999980993227684700473478,
                 676.520368121885098567009190444019,
