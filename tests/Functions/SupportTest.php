@@ -283,7 +283,7 @@ class SupportTest extends \PHPUnit_Framework_TestCase
                 ],
             ],
             [
-                9,
+                8,
                 7,
                 [
                     0.99999999999980993227684700473478,
@@ -298,7 +298,7 @@ class SupportTest extends \PHPUnit_Framework_TestCase
                 ],
             ],
             [
-                11,
+                10,
                 9,
                 [
                     1.000000000000000174663,
@@ -315,7 +315,7 @@ class SupportTest extends \PHPUnit_Framework_TestCase
                 ],
             ],
             [
-                15,
+                14,
                 4.7421875,
                 [
                     0.99999999999999709182,
