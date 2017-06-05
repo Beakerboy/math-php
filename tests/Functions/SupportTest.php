@@ -261,7 +261,7 @@ class SupportTest extends \PHPUnit_Framework_TestCase
     {
         $calculated = Support::lanczosConstants($n, $g);
         foreach ($calculated as $key => $value) {
-            $diff = abs(.001 * $expected[$key]);
+            $diff = abs(.01 * $expected[$key]);
             $this->assertEquals($expected[$key], $value, '', $diff);
         }
     }
