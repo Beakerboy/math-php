@@ -47,7 +47,7 @@ class SpecialTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider dataProviderForGammaLanczos
      */
-    public function testGammaLanczos($z, $Γ)
+    public function testGammaLanczosCustomP($z, $Γ)
     {
         $this->assertEquals($Γ, Special::gammaLanczos($z, 6, 5), '', 0.001);
         $this->assertEquals($Γ, Special::gammaLanczos($z, 9, 7), '', 0.001);
