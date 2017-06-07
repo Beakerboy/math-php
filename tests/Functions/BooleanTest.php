@@ -34,6 +34,9 @@ class BooleanTest extends \PHPUnit_Framework_TestCase
             [
                 \PHP_INT_MIN, \PHP_INT_MIN, [true, 0]
             ],
+            [
+                \PHP_INT_MIN, \PHP_INT_MAX, [false, -1]
+            ],
         ];
     }
 }
