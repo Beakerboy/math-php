@@ -68,6 +68,25 @@ class KernelDensityEstimation
             throw new Exception\OutOfBoundsException("h must be > 0. h = $this->h");
         }
     }
+    
+    /**************************************************************************
+     * SETTERS
+     **************************************************************************/
+
+    /**
+     * Set Bandwidth
+     *
+     * @param float $h the bandwidth
+     *
+     * @throws OutOfBoundsException if h <= 0
+     */
+    public function setBandwidth(float $h)
+    {
+        if ($this->h <= 0) {
+            throw new Exception\OutOfBoundsException("h must be > 0. h = $this->h");
+        }
+        $this->h = $h;
+    }
 
     /**
      * Evaluate
