@@ -84,13 +84,13 @@ class KernelDensityEstimationTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
-    public function testBadH()
+    public function testBadKernel()
     {
-        $this->expectException(Exception\OutOfBoundsException::class);
-        $KDE = new KernelDensityEstimation($this->data, -1);
+        $this->expectException(Exception\BadParameterException::class);
+        $KDE = new KernelDensityEstimation($this->data, 1, 1.0);
     }
-
-    public function testBadsetBandwidth()
+    
+    public function testBadSetBandwidth()
     {
         $this->expectException(Exception\OutOfBoundsException::class);
         $KDE = new KernelDensityEstimation($this->data);
