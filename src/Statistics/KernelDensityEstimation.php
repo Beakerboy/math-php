@@ -37,11 +37,11 @@ class KernelDensityEstimation
      */
     protected $kernel;
 
-    public const NORMAL       = 0;
-    public const UNIFORM      = 1;
-    public const TRIANGULAR   = 2;
-    public const EPANECHNIKOV = 3;
-    public const TRICUBE      = 4;
+    const NORMAL       = 0;
+    const UNIFORM      = 1;
+    const TRIANGULAR   = 2;
+    const EPANECHNIKOV = 3;
+    const TRICUBE      = 4;
 
     /**
      * constructor
@@ -93,7 +93,7 @@ class KernelDensityEstimation
     /**
      * Set The Kernel Function
      *
-     * If the parameter is a string, check that there is a function with that name 
+     * If the parameter is a string, check that there is a function with that name
      * in the "library". If it's a callable, use that function.
      *
      * @throws BadParameterException if $kernel is not an int or callable
@@ -140,10 +140,10 @@ class KernelDensityEstimation
                     break;
                 default:
                     $kernel = ['StandardNormal', 'pdf'];
-                break;
+                    break;
             }
             $this->kernel = $kernel;
-        } else if (is_callable($kernel)) {
+        } elseif (is_callable($kernel)) {
             $this->kernel = $kernel;
         } else {
             throw new Exception\BadParameterException('Kernel must be an integer or a callable');
