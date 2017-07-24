@@ -37,6 +37,12 @@ class KernelDensityEstimation
      */
     protected $kernel;
 
+    public const NORMAL       = 0;
+    public const UNIFORM      = 1;
+    public const TRIANGULAR   = 2;
+    public const EPANECHNIKOV = 3;
+    public const TRICUBE      = 4;
+
     /**
      * constructor
      *
@@ -55,18 +61,14 @@ class KernelDensityEstimation
         $this->data = $data;
 
         if ($h === null) {
-            $this->h = (4 * Descriptive::StandardDeviation($data) ** 5 / 3 / $this->n) ** .2;
-        } else {
-            $this->h = $h;
+            $h = (4 * Descriptive::StandardDeviation($data) ** 5 / 3 / $this->n) ** .2;
         }
+        $this->setBandwidth($h);
+
         if ($kernel === null) {
-            $this->kernel = ['MathPHP\Probability\Distribution\Continuous\StandardNormal', 'pdf'];
-        } else {
-            $this->kernel = $kernel;
+            $kernel = ['StandardNormal', 'pdf'];
         }
-        if ($this->h <= 0) {
-            throw new Exception\OutOfBoundsException("h must be > 0. h = $this->h");
-        }
+        $this->setKernelFunction($kernel);
     }
     
     /**************************************************************************
@@ -86,6 +88,66 @@ class KernelDensityEstimation
             throw new Exception\OutOfBoundsException("Bandwidth must be > 0. h = $h");
         }
         $this->h = $h;
+    }
+
+    /**
+     * Set The Kernel Function
+     *
+     * If the parameter is a string, check that there is a function with that name 
+     * in the "library". If it's a callable, use that function.
+     *
+     * @throws BadParameterException if $kernel is not an int or callable
+     */
+    public function setKernelFunction($kernel)
+    {
+        if (is_int($kernel)) {
+            switch ($kernel) {
+                case self::UNIFORM:
+                    $kernel = function ($x) {
+                        if (abs($x) > 1) {
+                            return 0;
+                        } else {
+                            return .5;
+                        }
+                    };
+                    break;
+                case self::TRIANGULAR:
+                    $kernel = function ($x) {
+                        if (abs($x) > 1) {
+                            return 0;
+                        } else {
+                            return 1 - abs($x);
+                        }
+                    };
+                    break;
+                case self::EPANECHNIKOV:
+                    $kernel = function ($x) {
+                        if (abs($x) > 1) {
+                            return 0;
+                        } else {
+                            return .75 * (1 - $x ** 2);
+                        }
+                    };
+                    break;
+                case self::TRICUBE:
+                    $kernel = function ($x) {
+                        if (abs($x) > 1) {
+                            return 0;
+                        } else {
+                            return 70 / 81 * ((1 - abs($x) ** 3) ** 3);
+                        }
+                    };
+                    break;
+                default:
+                    $kernel = ['StandardNormal', 'pdf'];
+                break;
+            }
+            $this->kernel = $kernel;
+        } else if (is_callable($kernel)) {
+            $this->kernel = $kernel;
+        } else {
+            throw new Exception\BadParameterException('Kernel must be an integer or a callable');
+        }
     }
 
     /**
