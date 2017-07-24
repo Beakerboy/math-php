@@ -66,7 +66,7 @@ class KernelDensityEstimation
         $this->setBandwidth($h);
 
         if ($kernel === null) {
-            $kernel = ['StandardNormal', 'pdf'];
+            $kernel = self::NORMAL;
         }
         $this->setKernelFunction($kernel);
     }
@@ -139,14 +139,14 @@ class KernelDensityEstimation
                     };
                     break;
                 default:
-                    $kernel = ['StandardNormal', 'pdf'];
+                    $kernel = ['MathPHP\Probability\Distribution\Continuous\StandardNormal', 'pdf'];
                     break;
             }
             $this->kernel = $kernel;
         } elseif (is_callable($kernel)) {
             $this->kernel = $kernel;
         } else {
-            throw new Exception\BadParameterException('Kernel must be an integer or a callable');
+            throw new Exception\BadParameterException('Kernel must be an integer or a callable. Type is: ' . gettype($kernel));
         }
     }
 
