@@ -58,11 +58,11 @@ class KernelDensityEstimationTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider dataProviderForKernelDensityCustomBoth
      */
-    public function testDefaultKernelDensityCustomBoth(array $data, $h, $kernel, $x, $expected)
+    public function testDefaultKernelDensityCustomBoth($h, $kernel, $x, $expected)
     {
-        $KDE = new KernelDensityEstimation($data, $h, $kernel);
+        $KDE = new KernelDensityEstimation($this->data, $h, $kernel);
         $kernel2 = KernelDensityEstimation::TRICUBE
-        $KDE2 = new KernelDensityEstimation($data, $h, $kernel2);
+        $KDE2 = new KernelDensityEstimation($this->data, $h, $kernel2);
         $this->assertEquals($expected, $KDE->evaluate($x), '', 0.0001);
         $this->assertEquals($expected, $KDE2->evaluate($x), '', 0.0001);
     }
@@ -81,9 +81,28 @@ class KernelDensityEstimationTest extends \PHPUnit_Framework_TestCase
         };
 
         return [
-            [ $this->data, $h, $kernel, 1, 0.238712304 ],
-            [ $this->data, $h, $kernel, .1, 0.420794741 ],
-            [ $this->data, $h, $kernel, -1, 0.229056709 ],
+            [ $h, $kernel, 1, 0.238712304 ],
+            [ $h, $kernel, .1, 0.420794741 ],
+            [ $h, $kernel, -1, 0.229056709 ],
+        ];
+    }
+
+    /**
+     * @dataProvider dataProviderForTestKernels
+     */
+    public function testKernels($kernel, $x, $expected)
+    {
+        $KDE = new KernelDensityEstimation($this->data, 1, $kernel);
+        $this->assertEquals($expected, $KDE->evaluate($x), '', 0.0001);
+    }
+
+    public function dataProviderForTestKernels()
+    {
+        return [
+            [KernelDensityEstimation::UNIFORM, 1, .238],
+            [KernelDensityEstimation::TRIANGULAR, 1, .238],
+            [KernelDensityEstimation::EPANECHNIKOV, 1, .238],
+            
         ];
     }
 
