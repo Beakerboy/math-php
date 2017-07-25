@@ -99,9 +99,9 @@ class KernelDensityEstimationTest extends \PHPUnit_Framework_TestCase
     public function dataProviderForTestKernels()
     {
         return [
-            [KernelDensityEstimation::UNIFORM, 1, .238],
-            [KernelDensityEstimation::TRIANGULAR, 1, .238],
-            [KernelDensityEstimation::EPANECHNIKOV, 1, .238],
+            [KernelDensityEstimation::UNIFORM, 1, .25],
+            [KernelDensityEstimation::TRIANGULAR, 1, .235],
+            [KernelDensityEstimation::EPANECHNIKOV, 1, .2401905],
             
         ];
     }
