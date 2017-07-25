@@ -48,11 +48,11 @@ class KernelDensityEstimation
      *
      * @param array $data data used for the estimation
      * @param float $h the bandwidth
-     * @param callable $kernel a function used to generate the KDE
+     * @param callable or int $kernel a function used to generate the KDE
      *
      * @throws OutOfBoundsException if n is < 1 or h <= 0
      */
-    public function __construct(array $data, float $h = null, callable $kernel = null)
+    public function __construct(array $data, float $h = null, $kernel = null)
     {
         $this->n = count($data);
         if ($this->n === 0) {
