@@ -61,7 +61,7 @@ class KernelDensityEstimationTest extends \PHPUnit_Framework_TestCase
     public function testDefaultKernelDensityCustomBoth($h, $kernel, $x, $expected)
     {
         $KDE = new KernelDensityEstimation($this->data, $h, $kernel);
-        $kernel2 = KernelDensityEstimation::TRICUBE
+        $kernel2 = KernelDensityEstimation::TRICUBE;
         $KDE2 = new KernelDensityEstimation($this->data, $h, $kernel2);
         $this->assertEquals($expected, $KDE->evaluate($x), '', 0.0001);
         $this->assertEquals($expected, $KDE2->evaluate($x), '', 0.0001);
