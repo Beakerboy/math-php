@@ -68,7 +68,7 @@ class DiracDelta extends Continuous
      * The inverse of the CDF function
      *
      */
-    public static function inverse($p, ...$params)
+    public function inverse($p)
     {
         return 0;
     }
