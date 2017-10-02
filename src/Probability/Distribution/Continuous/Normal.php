@@ -80,7 +80,7 @@ class Normal extends Continuous
     {
         Support::checkLimits(self::SUPPORT_LIMITS, ['x' => $x]);
 
-        $μ = $this->$μ;
+        $μ = $this->μ;
         $σ = $this->σ;
         return 1/2 * ( 1 + Special::erf(($x - $μ) / ($σ * sqrt(2))) );
     }
