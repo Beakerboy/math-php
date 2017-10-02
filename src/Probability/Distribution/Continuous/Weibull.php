@@ -11,7 +11,7 @@ class Weibull extends Continuous
      * x ∈ [0,∞)
      * @var array
      */
-    const LIMITS = [
+    const SUPPORT_LIMITS = [
         'x' => '[0,∞)',
     ];
 
@@ -21,7 +21,7 @@ class Weibull extends Continuous
      * k ∈ (0,∞)
      * @var array
      */
-    const LIMITS = [
+    const PARAMETER_LIMITS = [
         'λ' => '(0,∞)',
         'k' => '(0,∞)',
     ];
