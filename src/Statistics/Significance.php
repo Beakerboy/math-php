@@ -204,7 +204,6 @@ class Significance
         // One- and two-tailed P values
         $studentT = new StudentT($ν);
         if ($Hₐ < $H₀) {
-            
             $p1 = $studentT->cdf($t);
         } else {
             $p1 = $studentT->above($t);
