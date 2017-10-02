@@ -10,7 +10,7 @@ class WeibullTest extends \PHPUnit_Framework_TestCase
      */
     public function testPDF($x, $k, $λ, $pdf)
     {
-        $weibull = new Weibull($k, $λ)
+        $weibull = new Weibull($k, $λ);
         $this->assertEquals($pdf, $weibull->pdf($x), '', 0.001);
     }
 
@@ -35,7 +35,7 @@ class WeibullTest extends \PHPUnit_Framework_TestCase
      */
     public function testCDF($x, $k, $λ, $cdf)
     {
-        $weibull = new Weibull($k, $λ)
+        $weibull = new Weibull($k, $λ);
         $p = $weibull->cdf($x);
         $this->assertEquals($cdf, $p, '', 0.001);
         if ($x >= 0) {
@@ -64,7 +64,7 @@ class WeibullTest extends \PHPUnit_Framework_TestCase
      */
     public function testMean($k, $λ, $μ)
     {
-        $weibull = new Weibull($k, $λ)
+        $weibull = new Weibull($k, $λ);
         $this->assertEquals($μ, $weibull->mean(), '', 0.0001);
     }
 
