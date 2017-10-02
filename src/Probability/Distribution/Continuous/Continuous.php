@@ -111,8 +111,8 @@ abstract class Continuous extends \MathPHP\Probability\Distribution\Distribution
     /**
      * Produce a random number with a particular distribution
      */
-    public static function rand(...$params)
+    public function rand()
     {
-        return static::inverse(random_int(0, \PHP_INT_MAX) / \PHP_INT_MAX, ...$params);
+        return $this->inverse(random_int(0, \PHP_INT_MAX) / \PHP_INT_MAX);
     }
 }
