@@ -28,6 +28,16 @@ class ChiSquared extends Continuous
         'k' => '[1,∞)',
     ];
 
+    /**
+     * Constructor
+     *
+     * @param number $k degrees of freedom parameter k >= 1
+     */
+    public function __construct($k)
+    {
+        parent::__construct($k);
+    }
+
     /** @var number Degrees of Freedom Parameter */
     protected $k;
 
