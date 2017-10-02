@@ -70,8 +70,6 @@ class Weibull extends Continuous
      * f(x) = 1 - ℯ⁻⁽x/λ⁾ for x ≥ 0
      * f(x) = 0           for x < 0
      *
-     * @param number $k shape parameter
-     * @param number $λ scale parameter
      * @param number $x percentile (value to evaluate)
      * @return float
      */
@@ -97,6 +95,8 @@ class Weibull extends Continuous
      */
     public function mean()
     {
+        $k = $this->k;
+        $λ = $this->λ;
         return $λ * Special::gamma(1 + 1 / $k);
     }
     
