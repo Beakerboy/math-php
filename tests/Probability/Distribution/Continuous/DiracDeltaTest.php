@@ -48,8 +48,9 @@ class DiracDeltaTest extends \PHPUnit_Framework_TestCase
     
     public function testRand()
     {
-        $this->assertEquals(0, DiracDelta::rand(), '', 0.0001);
-        $this->assertEquals(0, DiracDelta::rand(), '', 0.0001);
-        $this->assertEquals(0, DiracDelta::rand(), '', 0.0001);
+        $diracDelta = new DiracDelta();
+        $this->assertEquals(0, $diracDelta->rand(), '', 0.0001);
+        $this->assertEquals(0, $diracDelta->rand(), '', 0.0001);
+        $this->assertEquals(0, $diracDelta->rand(), '', 0.0001);
     }
 }
