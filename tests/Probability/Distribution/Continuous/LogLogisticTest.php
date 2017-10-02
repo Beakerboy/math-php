@@ -65,6 +65,6 @@ class LogLogisticTest extends \PHPUnit_Framework_TestCase
     public function testMeanNan()
     {
         $logLogistic = new LogLogistic(1, 1);
-        $this->assertNan($logLogistic::mean());
+        $this->assertNan($logLogistic->mean());
     }
 }
