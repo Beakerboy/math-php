@@ -90,7 +90,7 @@ class ChiSquared extends Continuous
      */
     public function cdf($x)
     {
-        Support::checkLimits(self::LIMITS, ['x' => $x]);
+        Support::checkLimits(self::SUPPORT_LIMITS, ['x' => $x]);
 
         $k = $this->k;
         // Numerator
