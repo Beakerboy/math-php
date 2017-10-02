@@ -38,7 +38,7 @@ abstract class Continuous extends \MathPHP\Probability\Distribution\Distribution
         $initial = $this->mean();
         if (is_nan($initial)) {
             $initial = $this->median();
-        }=
+        }
 
         $tolerance = .0000000001;
         $dif       = $tolerance + 1;
