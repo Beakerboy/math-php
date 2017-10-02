@@ -64,14 +64,13 @@ abstract class Continuous extends \MathPHP\Probability\Distribution\Distribution
      *
      * @param number $x₁ Lower bound
      * @param number $x₂ Upper bound
-     * @param array  ...$params Remaining parameters for each distribution
      *
      * @return number
      */
-    public static function between($x₁, $x₂, ...$params)
+    public function between($x₁, $x₂)
     {
-        $upper_area = static::cdf($x₂, ...$params);
-        $lower_area = static::cdf($x₁, ...$params);
+        $upper_area = $this->cdf($x₂);
+        $lower_area = $this->cdf($x₁);
         return $upper_area - $lower_area;
     }
   
@@ -83,13 +82,12 @@ abstract class Continuous extends \MathPHP\Probability\Distribution\Distribution
      *
      * @param number $x₁ Lower bound
      * @param number $x₂ Upper bound
-     * @param array  ...$params Remaining parameters for each distribution
      *
      * @return number
      */
-    public static function outside($x₁, $x₂, ...$params)
+    public function outside($x₁, $x₂)
     {
-        return 1 - self::between($x₁, $x₂, ...$params);
+        return 1 - self->between($x₁, $x₂);
     }
 
     /**
@@ -99,13 +97,12 @@ abstract class Continuous extends \MathPHP\Probability\Distribution\Distribution
      * P(above) = 1 - CDF(x)
      *
      * @param number $x
-     * @param array  ...$params Remaining parameters for each distribution
      *
      * @return number
      */
-    public static function above($x, ...$params)
+    public function above($x)
     {
-        return 1 - static::cdf($x, ...$params);
+        return 1 - $this->cdf($x);
     }
     
     /**
