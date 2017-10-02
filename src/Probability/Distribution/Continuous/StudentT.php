@@ -24,7 +24,7 @@ class StudentT extends Continuous
      * ν ∈ (0,∞)
      * @var array
      */
-    const LIMITS = [
+    const PARAMETER_LIMITS = [
         'ν' => '(0,∞)',
     ];
 
