@@ -73,12 +73,9 @@ class FTest extends \PHPUnit_Framework_TestCase
     
     public function testMeanNAN()
     {
-        
-        $f1 = new F(1, 0);
-        $f2 = new F(1,1);
-        $f3 = new F(1, 2);
+        $f1 = new F(1, 1);
+        $f2 = new F(1, 2);
         $this->assertNan($f1->mean());
         $this->assertNan($f2->mean());
-        $this->assertNan($f3->mean());
     }
 }
