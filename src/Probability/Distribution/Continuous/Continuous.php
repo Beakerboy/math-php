@@ -42,15 +42,13 @@ abstract class Continuous extends \MathPHP\Probability\Distribution\Distribution
 
         $tolerance = .0000000001;
         $dif       = $tolerance + 1;
-        $guess     = $params[0];
+        $guess     = $initial;
 
         while ($dif > $tolerance) {
-            // load the guess into the arguments
-            $params[0] = $guess;
-            $y         = $this->cdf($initial);
+            $y     = $this->cdf($guess);
             
             // Since the CDF is the integral of the PDF, the PDF is the derivative of the CDF
-            $slope = $this->pdf($initial);
+            $slope = $this->pdf($guess);
             $del_y = $target - $y;
             $guess = $del_y / $slope + $guess;
             $dif   = abs($del_y);
