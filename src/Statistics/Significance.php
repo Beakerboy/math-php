@@ -343,7 +343,7 @@ class Significance
             $χ² += (($O[$i] - $E[$i])**2) / $E[$i];
         }
 
-        $chiSquared = new ChiSquared($k)
+        $chiSquared = new ChiSquared($k);
         $p = $chiSquared->above($χ²);
 
         return [
