@@ -71,12 +71,13 @@ class Significance
         $z   = self::zScore($Hₐ, $H₀, $sem, self::Z_RAW_VALUE);
 
         // One- and two-tailed P values
+        $standardNormal = new StandardNormal();
         if ($Hₐ < $H₀) {
-            $p1 = StandardNormal::cdf($z);
+            $p1 = $standardNormal->cdf($z);
         } else {
-            $p1 = StandardNormal::above($z);
+            $p1 = $standardNormal->above($z);
         }
-        $p2 = StandardNormal::outside(-abs($z), abs($z));
+        $p2 = $standardNormal->outside(-abs($z), abs($z));
 
         return [
             'z'  => $z,
@@ -132,9 +133,10 @@ class Significance
         // Calculate z score (test statistic)
         $z = ($μ₁ - $μ₂ - $Δ) / sqrt((($σ₁**2) / $n₁) + (($σ₂**2) / $n₂));
 
+        $standardNormal = new StandardNormal();
         // One- and two-tailed P values
-        $p1 = StandardNormal::above(abs($z));
-        $p2 = StandardNormal::outside(-abs($z), abs($z));
+        $p1 = $standardNormal->above(abs($z));
+        $p2 = $standardNormal->outside(-abs($z), abs($z));
 
         return [
             'z'  => $z,
@@ -200,12 +202,14 @@ class Significance
         $ν = $n - 1;
 
         // One- and two-tailed P values
+        $studentT = new StudentT($ν);
         if ($Hₐ < $H₀) {
-            $p1 = StudentT::cdf($t, $ν);
+            
+            $p1 = $studentT->cdf($t);
         } else {
-            $p1 = StudentT::above($t, $ν);
+            $p1 = $studentT->above($t);
         }
-        $p2 = StudentT::outside(-abs($t), abs($t), $ν);
+        $p2 = $studentT->outside(-abs($t), abs($t), $ν);
 
         return [
             't'  => $t,
@@ -340,7 +344,8 @@ class Significance
             $χ² += (($O[$i] - $E[$i])**2) / $E[$i];
         }
 
-        $p = ChiSquared::above($χ², $k);
+        $chiSquared = new ChiSquared($k)
+        $p = $chiSquared->above($χ²);
 
         return [
             'chi-square' => $χ²,
