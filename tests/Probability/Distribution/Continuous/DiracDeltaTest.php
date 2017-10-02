@@ -40,9 +40,10 @@ class DiracDeltaTest extends \PHPUnit_Framework_TestCase
     
     public function testInverse()
     {
-        $this->assertEquals(0, DiracDelta::inverse(.5), '', 0.0001);
-        $this->assertEquals(0, DiracDelta::inverse(.1), '', 0.0001);
-        $this->assertEquals(0, DiracDelta::inverse(.7), '', 0.0001);
+        $diracDelta = new DiracDelta();
+        $this->assertEquals(0, $diracDelta->inverse(.5), '', 0.0001);
+        $this->assertEquals(0, $diracDelta->inverse(.1), '', 0.0001);
+        $this->assertEquals(0, $diracDelta->inverse(.7), '', 0.0001);
     }
     
     public function testRand()
