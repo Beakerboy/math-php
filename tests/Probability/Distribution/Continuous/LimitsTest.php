@@ -61,7 +61,7 @@ class LimitsTest extends \PHPUnit_Framework_TestCase
 
     public function testNormalParameterLimits()
     {
-        $this->limitTest(Continuous\Normal::LIMITS);
+        $this->limitTest(Continuous\Normal::PARAMETER_LIMITS);
     }
 
     public function testParetoParameterLimits()
