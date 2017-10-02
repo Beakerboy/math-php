@@ -41,7 +41,7 @@ class LimitsTest extends \PHPUnit_Framework_TestCase
 
     public function testFParameterLimits()
     {
-        $this->limitTest(Continuous\F::LIMITS);
+        $this->limitTest(Continuous\F::PARAMETER_LIMITS);
     }
 
     public function testLaplaceParameterLimits()
