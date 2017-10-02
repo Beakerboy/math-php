@@ -671,7 +671,8 @@ trait LeastSquares
         $d₁ = $n - $ν - 1;
         $d₂ = $ν;
 
-        return (F::cdf($F, $d₁, $d₂));
+        $fDist = new F($d₁, $d₂);
+        return ($fDist->cdf($F));
     }
 
     /**
