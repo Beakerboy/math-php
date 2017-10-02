@@ -12,7 +12,7 @@ class Weibull extends Continuous
      * @var array
      */
     const SUPPORT_LIMITS = [
-        'x' => '[0,∞)',
+        'x' => '(-∞,∞)',
     ];
 
     /**
