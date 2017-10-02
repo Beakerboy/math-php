@@ -47,7 +47,7 @@ class Weibull extends Continuous
      * @param number $x percentile (value to evaluate)
      * @return float
      */
-    public static function pdf($x)
+    public function pdf($x)
     {
         Support::checkLimits(self::SUPPORT_LIMITS, ['x' => $x]);
 
