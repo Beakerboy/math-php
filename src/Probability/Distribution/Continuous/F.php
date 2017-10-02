@@ -98,7 +98,7 @@ class F extends Continuous
      *
      * @return number
      */
-    public static function cdf($x)
+    public function cdf($x)
     {
         Support::checkLimits(self::SUPPORT_LIMITS, ['x' => $x]);
 
