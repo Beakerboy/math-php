@@ -29,19 +29,16 @@ abstract class Continuous extends \MathPHP\Probability\Distribution\Distribution
      * than the inverse is called as inverse($target, $d1, $d2)
      *
      * @param number $target   The area for which we are trying to find the $x
-     * @param array ...$params List of all the parameters that are needed for the CDF of the
-     *   calling class. This list must be absent the $x parameter.
      *
      * @todo check the parameter ranges.
      * @return $number
      */
-    public static function inverse($target, ...$params)
+    public function inverse($target)
     {
-        $initial = static::mean(...$params);
+        $initial = $this->mean();
         if (is_nan($initial)) {
-            $initial = static::median(...$params);
-        }
-        array_unshift($params, $initial);
+            $initial = $this->median();
+        }=
 
         $tolerance = .0000000001;
         $dif       = $tolerance + 1;
@@ -50,10 +47,10 @@ abstract class Continuous extends \MathPHP\Probability\Distribution\Distribution
         while ($dif > $tolerance) {
             // load the guess into the arguments
             $params[0] = $guess;
-            $y         = static::cdf(...$params);
+            $y         = $this->cdf($initial);
             
             // Since the CDF is the integral of the PDF, the PDF is the derivative of the CDF
-            $slope = static::pdf(...$params);
+            $slope = $this->pdf($initial);
             $del_y = $target - $y;
             $guess = $del_y / $slope + $guess;
             $dif   = abs($del_y);
