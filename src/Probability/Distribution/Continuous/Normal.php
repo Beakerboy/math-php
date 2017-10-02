@@ -51,7 +51,7 @@ class Normal extends Continuous
     {
         Support::checkLimits(self::SUPPORT_LIMITS, ['x' => $x]);
 
-        $μ = $this->$μ;
+        $μ = $this->μ;
         $σ = $this->σ;
         $π     = \M_PI;
         $σ√⟮2π⟯ = $σ * sqrt(2 * $π);
