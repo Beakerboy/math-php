@@ -78,7 +78,8 @@ class NoncentralT extends Continuous
     {
         Support::checkLimits(self::LIMITS, ['x' => $x, 'ν' => $ν, 'μ' => $μ]);
         if ($μ == 0) {
-            return StudentT::cdf($x, $ν);
+            $studentT = new StudentT($ν);
+            return $studentT->cdf($x);
         }
         if ($x >= 0) {
             return self::f($x, $ν, $μ);
