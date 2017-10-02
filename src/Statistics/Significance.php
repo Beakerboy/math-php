@@ -264,8 +264,9 @@ class Significance
         $ν = ($n₁ - 1) + ($n₂ - 1);
 
         // One- and two-tailed P values
-        $p1 = StudentT::above(abs($t), $ν);
-        $p2 = StudentT::outside(-abs($t), abs($t), $ν);
+        $studentT = new StudentT($ν);
+        $p1 = $studentT->above(abs($t));
+        $p2 = $studentT->outside(-abs($t), abs($t));
 
         return [
             't'  => $t,
