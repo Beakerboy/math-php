@@ -105,7 +105,7 @@ class Logistic extends Continuous
      */
     public function mean()
     {
-        return $μ;
+        return $this->μ;
     }
     
     /**
