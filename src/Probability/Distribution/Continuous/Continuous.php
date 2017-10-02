@@ -87,7 +87,7 @@ abstract class Continuous extends \MathPHP\Probability\Distribution\Distribution
      */
     public function outside($x₁, $x₂)
     {
-        return 1 - self->between($x₁, $x₂);
+        return 1 - $this->between($x₁, $x₂);
     }
 
     /**
