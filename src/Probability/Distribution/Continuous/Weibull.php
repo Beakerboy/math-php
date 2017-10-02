@@ -22,8 +22,8 @@ class Weibull extends Continuous
      * @var array
      */
     const PARAMETER_LIMITS = [
-        'λ' => '(0,∞)',
         'k' => '(0,∞)',
+        'λ' => '(0,∞)',
     ];
 
     
@@ -32,6 +32,17 @@ class Weibull extends Continuous
 
     /** @var number Scale Parameter */
     protected $λ;
+
+    /**
+     * Constructor
+     *
+     * @param number $k shape parameter k > 0
+     * @param number $λ scale parameter λ > 0
+     */
+    public function __construct($k, $λ)
+    {
+        parent::__construct($k, $λ);
+    }
 
     /**
      * Weibull distribution - probability density function
