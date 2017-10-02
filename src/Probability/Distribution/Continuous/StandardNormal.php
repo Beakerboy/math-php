@@ -48,7 +48,7 @@ class StandardNormal extends Continuous
     {
         Support::checkLimits(self::SUPPORT_LIMITS, ['z' => $z]);
 
-        $normal = new Normal(self::μ, self::σ)
+        $normal = new Normal(self::μ, self::σ);
         return $normal->pdf($z);
     }
 
@@ -64,7 +64,7 @@ class StandardNormal extends Continuous
     {
         Support::checkLimits(self::SUPPORT_LIMITS, ['z' => $z]);
 
-        $normal = new Normal(self::μ, self::σ)
+        $normal = new Normal(self::μ, self::σ);
         return $normal->cdf($z);
     }
     
