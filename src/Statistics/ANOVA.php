@@ -189,7 +189,8 @@ class ANOVA
 
         // Test statistics
         $F = $MSB / $MSW;
-        $P = F::above($F, $dfB, $dfW);
+        $fDist = new F($dfB, $dfW);
+        $P = $fDist->above($F);
 
         // Return ANOVA report
         return [
@@ -541,9 +542,10 @@ class ANOVA
         $FAB = $MSAB / $MSW;
 
         // P values
-        $PA  = F::above($FA, $dfA, $dfW);
-        $PB  = F::above($FB, $dfB, $dfW);
-        $PAB = F::above($FAB, $dfAB, $dfW);
+        $fDist = new F($dfA, $dfW);
+        $PA  = $fDist->above($FA);
+        $PB  = $fDist->above($FB);
+        $PAB = $fDist->above($FAB);
 
         // Return ANOVA report
         return [
