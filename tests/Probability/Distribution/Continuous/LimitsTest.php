@@ -21,17 +21,17 @@ class LimitsTest extends \PHPUnit_Framework_TestCase
 
     public function testBetaParameterLimits()
     {
-        $this->limitTest(Continuous\Beta::LIMITS);
+        $this->limitTest(Continuous\Beta::PARAMETER_LIMITS);
     }
 
     public function testCauchyParameterLimits()
     {
-        $this->limitTest(Continuous\Cauchy::LIMITS);
+        $this->limitTest(Continuous\Cauchy::PARAMETER_LIMITS);
     }
 
     public function testChiSquaredParameterLimits()
     {
-        $this->limitTest(Continuous\ChiSquared::LIMITS);
+        $this->limitTest(Continuous\ChiSquared::PARAMETER_LIMITS);
     }
 
     public function testExponentialParameterLimits()
@@ -51,12 +51,12 @@ class LimitsTest extends \PHPUnit_Framework_TestCase
 
     public function testLogisticParameterLimits()
     {
-        $this->limitTest(Continuous\Logistic::LIMITS);
+        $this->limitTest(Continuous\Logistic::PARAMETER_LIMITS);
     }
 
     public function testLogLogisticParameterLimits()
     {
-        $this->limitTest(Continuous\LogLogistic::LIMITS);
+        $this->limitTest(Continuous\LogLogistic::PARAMETER_LIMITS);
     }
 
     public function testNormalParameterLimits()
@@ -76,7 +76,7 @@ class LimitsTest extends \PHPUnit_Framework_TestCase
 
     public function testStudentTParameterLimits()
     {
-        $this->limitTest(Continuous\StudentT::LIMITS);
+        $this->limitTest(Continuous\StudentT::PARAMETER_LIMITS);
     }
 
     public function testUniformParameterLimits()
@@ -86,6 +86,6 @@ class LimitsTest extends \PHPUnit_Framework_TestCase
 
     public function testWeibullParameterLimits()
     {
-        $this->limitTest(Continuous\Weibull::LIMITS);
+        $this->limitTest(Continuous\Weibull::PARAMETER_LIMITS);
     }
 }
