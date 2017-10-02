@@ -7,19 +7,31 @@ use MathPHP\Functions\Support;
 class Weibull extends Continuous
 {
     /**
-     * Distribution parameter bounds limits
+     * Distribution support bounds limits
      * x ∈ [0,∞)
-     * λ ∈ (0,∞)
-     * k ∈ (0,∞)
-     * p ∈ [0,1]
      * @var array
      */
     const LIMITS = [
         'x' => '[0,∞)',
+    ];
+
+    /**
+     * Distribution parameter bounds limits
+     * λ ∈ (0,∞)
+     * k ∈ (0,∞)
+     * @var array
+     */
+    const LIMITS = [
         'λ' => '(0,∞)',
         'k' => '(0,∞)',
-        'p' => '[0,1]',
     ];
+
+    
+    /** @var number Shape Parameter */
+    protected $k;
+
+    /** @var number Scale Parameter */
+    protected $λ;
 
     /**
      * Weibull distribution - probability density function
@@ -32,15 +44,15 @@ class Weibull extends Continuous
      *
      * f(x) = 0                    for x < 0
      *
-     * @param number $k shape parameter
-     * @param number $λ scale parameter
      * @param number $x percentile (value to evaluate)
      * @return float
      */
-    public static function pdf($x, $k, $λ)
+    public static function pdf($x)
     {
-        Support::checkLimits(self::LIMITS, ['k' => $k, 'λ' => $λ]);
+        Support::checkLimits(self::SUPPORT_LIMITS, ['x' => $x]);
 
+        $k = $this->k;
+        $λ = $this->λ;
         if ($x < 0) {
             return 0;
         }
@@ -49,6 +61,7 @@ class Weibull extends Continuous
         $ℯ⁻⁽x／λ⁾ᵏ = exp(-pow($x / $λ, $k));
         return $k／λ * $⟮x／λ⟯ᵏ⁻¹ * $ℯ⁻⁽x／λ⁾ᵏ;
     }
+
     /**
      * Weibull distribution - cumulative distribution function
      * From 0 to x (lower CDF)
@@ -62,10 +75,12 @@ class Weibull extends Continuous
      * @param number $x percentile (value to evaluate)
      * @return float
      */
-    public static function cdf($x, $k, $λ)
+    public function cdf($x)
     {
-        Support::checkLimits(self::LIMITS, ['k' => $k, 'λ' => $λ]);
+        Support::checkLimits(self::SUPPORT_LIMITS, ['x' => $x]);
 
+        $k = $this->k;
+        $λ = $this->λ;
         if ($x < 0) {
             return 0;
         }
@@ -78,15 +93,10 @@ class Weibull extends Continuous
      *
      * μ = λΓ(1 + 1/k)
      *
-     * @param number $k shape parameter
-     * @param number $λ scale parameter
-     *
      * @return number
      */
-    public static function mean($k, $λ)
+    public function mean()
     {
-        Support::checkLimits(self::LIMITS, ['k' => $k, 'λ' => $λ]);
-
         return $λ * Special::gamma(1 + 1 / $k);
     }
     
@@ -96,16 +106,14 @@ class Weibull extends Continuous
      * Q(p;k,λ) = λ(-ln(1 - p))¹/ᵏ
      *
      * @param number $p
-     * @param number $k
-     * @param number $λ
      *
      * @return number
      */
-    public static function inverse($p, ...$params)
+    public function inverse($p)
     {
-        $k = $params[0];
-        $λ = $params[1];
-        Support::checkLimits(self::LIMITS, ['k' => $k, 'λ' => $λ, 'p' => $p]);
+        Support::checkLimits(['p' => '[0,1]'], ['p' => $p]);
+        $k = $this->k;
+        $λ = $this->λ;
 
         return $λ * (-1 * log(1 - $p))**(1/$k);
     }
