@@ -5,7 +5,7 @@ use MathPHP\Functions\Support;
 use MathPHP\Exception;
 
 abstract class Continuous extends \MathPHP\Probability\Distribution\Distribution
-{    
+{
     public function __construct(...$params)
     {
         $new_params = static::PARAMETER_LIMITS;
