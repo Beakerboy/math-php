@@ -120,7 +120,8 @@ class NoncentralT extends Continuous
     {
         Support::checkLimits(self::LIMITS, ['x' => $x, 'ν' => $ν, 'μ' => $μ]);
 
-        $Φ = StandardNormal::cdf(-$μ);
+        $standardNormal = new StandardNormal();
+        $Φ = $standardNormal->cdf(-$μ);
         $y = $x**2/($x**2 + $ν);
 
         $sum = $Φ;
