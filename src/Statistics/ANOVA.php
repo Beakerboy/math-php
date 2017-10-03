@@ -542,10 +542,12 @@ class ANOVA
         $FAB = $MSAB / $MSW;
 
         // P values
-        $fDist = new F($dfA, $dfW);
-        $PA  = $fDist->above($FA);
-        $PB  = $fDist->above($FB);
-        $PAB = $fDist->above($FAB);
+        $fDist1 = new F($dfA, $dfW);
+        $fDist2 = new F($dfB, $dfW);
+        $fDist3 = new F($dfAB, $dfW);
+        $PA  = $fDist1->above($FA);
+        $PB  = $fDist2->above($FB);
+        $PAB = $fDist3->above($FAB);
 
         // Return ANOVA report
         return [
