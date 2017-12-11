@@ -39,8 +39,8 @@ trait LeastSquaresAlgebraic
         $new_xs = Single::subtract($xs, $ave_x);
         $new_ys = Single::subtract($ys, $ave_y);
         
-        $num = array_sum(Multi::product($new_xs, $new_ys));
-        $den = array_sum(Multi::product($new_xs, $new_xs));
+        $num = array_sum(Multi::multiply($new_xs, $new_ys));
+        $den = array_sum(Multi::multiply($new_xs, $new_xs));
 
         $m = $num / $den;
         $b = $ave_y - $m * $ave_x;
