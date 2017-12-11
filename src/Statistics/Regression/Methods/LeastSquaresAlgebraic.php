@@ -1,16 +1,11 @@
 <?php
 namespace MathPHP\Statistics\Regression\Methods;
 
-use MathPHP\Statistics\Average;
-use MathPHP\Statistics\RandomVariable;
+use MathPHP\Exception;
 use MathPHP\Functions\Map\Single;
 use MathPHP\Functions\Map\Multi;
-use MathPHP\Probability\Distribution\Continuous\F;
-use MathPHP\Probability\Distribution\Continuous\StudentT;
 use MathPHP\LinearAlgebra\Matrix;
-use MathPHP\LinearAlgebra\ColumnVector;
-use MathPHP\LinearAlgebra\VandermondeMatrix;
-use MathPHP\Exception;
+use MathPHP\Statistics\Average;
 
 trait LeastSquaresAlgebraic
 {
