@@ -10,36 +10,6 @@ use MathPHP\Statistics\Average;
 trait LeastSquaresAlgebraic
 {
     /**
-     * Regression ys
-     * Since the actual xs may be translated for regression, we need to keep these
-     * handy for regression statistics.
-     * @var array
-     */
-    private $reg_ys;
-
-    /**
-     * Regression xs
-     * Since the actual xs may be translated for regression, we need to keep these
-     * handy for regression statistics.
-     * @var array
-     */
-    private $reg_xs;
-
-    /**
-     * Regression Yhat
-     * The Yhat for the regression xs.
-     * @var array
-     */
-    private $reg_Yhat;
-
-    /**
-     * Projection Matrix
-     * https://en.wikipedia.org/wiki/Projection_matrix
-     * @var Matrix
-     */
-    private $reg_P;
-
-    /**
      * Linear least squares fitting using algebra 
      *
      * Generalizing from a straight line (first degree polynomial):
