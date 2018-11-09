@@ -1,7 +1,9 @@
 <?php
-namespace MathPHP\LinearAlgebra;
+namespace MathPHP\Tests\LinearAlgebra;
 
-class VectorNormsTest extends \PHPUnit_Framework_TestCase
+use MathPHP\LinearAlgebra\Vector;
+
+class VectorNormsTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @dataProvider dataProviderForL1Norm

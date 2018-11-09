@@ -1,5 +1,11 @@
 <?php
-namespace MathPHP\LinearAlgebra;
+namespace MathPHP\Tests\LinearAlgebra;
+
+use MathPHP\LinearAlgebra\Matrix;
+use MathPHP\LinearAlgebra\MatrixFactory;
+use MathPHP\LinearAlgebra\SquareMatrix;
+use MathPHP\LinearAlgebra\Vector;
+use MathPHP\NumberTheory\Integer;
 
 /**
  * Tests of Matrix axioms
@@ -11,16 +17,21 @@ namespace MathPHP\LinearAlgebra;
  * Axioms tested:
  *  - Addition
  *    - r(A + B) = rA + rB
+ *    - A + (−A) = 0
  *  - Multiplication
  *    - (AB)C = A(BC)
  *    - A(B + C) = AB + BC
  *    - r(AB) = (rA)B = A(rB)
  *  - Identity
  *    - AI = A = IA
+ *    - I is involutory
  *  - Inverse
  *    - AA⁻¹ = I = A⁻¹A
  *    - (A⁻¹)⁻¹ = A
  *    - (AB)⁻¹ = B⁻¹A⁻¹
+ *    - A is invertible, Aᵀ is inveritble
+ *    - A is invertible, AAᵀ is inveritble
+ *    - A is invertible, AᵀA is inveritble
  *  - Transpose
  *    - (Aᵀ)ᵀ = A
  *    - (A⁻¹)ᵀ = (Aᵀ)⁻¹
@@ -45,10 +56,23 @@ namespace MathPHP\LinearAlgebra;
  *  - Symmetric matrix
  *    - A = Aᵀ
  *    - A⁻¹Aᵀ = I
+ *    - A + B is symmetric
+ *    - A - B is symmetric
+ *    - kA is symmetric
+ *    - AAᵀ is symmetric
+ *    - AᵀA is symmetric
+ *    - A is invertible symmetric, A⁻¹ is symmetric
+ *  - Skew-symmetric matrix
+ *    - The sum of two skew-symmetric matrices is skew-symmetric
+ *    - Scalar multiple of a skew-symmetric matrix is skew-symmetric
+ *    - The elements on the diagonal of a skew-symmetric matrix are zero, and therefore also its trace
+ *    - A is skew-symmetric, then det(A) ≥ 0
+ *    - A is a real skew-symmetric matrix, then I+A is invertible, where I is the identity matrix
  *  - Kronecker product
  *    - A ⊗ (B + C) = A ⊗ B + A ⊗ C
  *    - (A + B) ⊗ C = A ⊗ C + B ⊗ C
  *    - (A ⊗ B) ⊗ C = A ⊗ (B ⊗ C)
+ *    - (A ⊗ B)(C ⊗ D) = AC ⊗ BD
  *    - (kA) ⊗ B = A ⊗ (kB) = k(A ⊗ B)
  *    - (A ⊗ B)⁻¹ = A⁻¹ ⊗ B⁻¹
  *    - (A ⊗ B)ᵀ = Aᵀ ⊗ Bᵀ
@@ -68,9 +92,68 @@ namespace MathPHP\LinearAlgebra;
  *    - A and B are PD ⇒ A + B is PD
  *    - A and B are PD ⇒ ABA is PD
  *    - A and B are PD ⇒ BAB is PD
+ *  - Triangular
+ *    - Zero matrix is lower triangular
+ *    - Zero matrix is upper triangular
+ *    - Lᵀ is upper triangular
+ *    - Uᵀ is lower triangular
+ *    - LL is lower triangular
+ *    - UU is upper triangular
+ *    - L + L is lower triangular
+ *    - U + U is upper triangular
+ *    - L⁻¹ is lower triangular (If L is invertible)
+ *    - U⁻¹ is upper triangular (If U is invertible)
+ *    - kL is lower triangular
+ *    - kU is upper triangular
+ *    - L is invertible iif diagonal is all non zero
+ *    - U is invertible iif diagonal is all non zero
+ *  - Diagonal
+ *    - Zero matrix is diagonal
+ *    - Dᵀ is diagonal
+ *    - DD is diagonal
+ *    - D + D is diagonal
+ *    - D⁻¹ is diagonal (If D is invertible)
+ *    - kD is lower triangular
+ *    - D is invertible iif diagonal is all non zero
+ *  - Reduced row echelon form
+ *    - RREF is upper triangular
+ *  - Exchange matrix
+ *    - Jᵀ = J
+ *    - J⁻¹ = J
+ *    - tr(J) is 1 if n is odd, and 0 if n is even
+ *  - Signature matrix
+ *    - A is involutory
+ *  - Hilbert matrix
+ *    - H is symmetric
+ *    - H is positive definite
+ *  - Cholesky decomposition
+ *    - A = LLᵀ
+ *    - L is lower triangular
+ *    - Lᵀ is upper triangular
+ *  - Adjugate matrix
+ *    - adj⟮A⟯ = Cᵀ
+ *    - A adj⟮A⟯ = det⟮A⟯ I
+ *    - A⁻¹ = (1/det⟮A⟯) adj⟮A⟯
+ *    - adj⟮I⟯ = I
+ *    - adj⟮AB⟯ = adj⟮B⟯adj⟮A⟯
+ *    - adj⟮cA⟯ = cⁿ⁻¹ adj⟮A⟯
+ *    - adj⟮B⟯adj⟮A⟯ = det⟮B⟯B⁻¹ det⟮A⟯A⁻¹ = det⟮AB⟯⟮AB⟯⁻¹
+ *    - adj⟮Aᵀ⟯ = adj⟮A⟯ᵀ
+ *    - Aadj⟮A⟯ = adj⟮A⟯A = det⟮A⟯I
+ *  - Rank
+ *    - rank(A) ≤ min(m, n)
+ *    - Zero matrix has rank of 0
+ *    - If A is square matrix, then it is invertible only if rank = n (full rank)
+ *    - rank(AᵀA) = rank(AAᵀ) = rank(A) = rank(Aᵀ)
+ *  - Bi/tridiagonal - Hessenberg
+ *    - Lower bidiagonal matrix is upper Hessenberg
+ *    - Upper bidiagonal matrix is lower Hessenberg
+ *    - A matrix that is both upper Hessenberg and lower Hessenberg is a tridiagonal matrix
  */
-class MatrixAxiomsTest extends \PHPUnit_Framework_TestCase
+class MatrixAxiomsTest extends \PHPUnit\Framework\TestCase
 {
+    use \MathPHP\Tests\LinearAlgebra\MatrixDataProvider;
+
     /**
      * Axiom: r(A + B) = rA + rB
      * Order of scalar multiplication does not matter.
@@ -144,6 +227,76 @@ class MatrixAxiomsTest extends \PHPUnit_Framework_TestCase
                     [12, 14, 14, -6],
                     [4, 6, 4, -42],
                 ], -8
+            ],
+        ];
+    }
+
+    /**
+     * Axiom: A + (−A) = 0
+     * Adding the negate of a matrix is a zero matrix.
+     *
+     * @dataProvider dataProviderForNegateAdditionZeroMatrix
+     * @param        array $A
+     * @param        array $Z
+     * @throws       \Exception
+     */
+    public function testAddNegateIsZeroMatrix(array $A, array $Z)
+    {
+        $A  = MatrixFactory::create($A);
+        $−A = $A->negate();
+        $Z  = MatrixFactory::create($Z);
+
+        $this->assertEquals($Z, $A->add($−A));
+        $this->assertEquals($Z, $−A->add($A));
+    }
+
+    /**
+     * @return array [A, Z]
+     */
+    public function dataProviderForNegateAdditionZeroMatrix(): array
+    {
+        return [
+            [
+                [
+                    [0]
+                ],
+                [
+                    [0]
+                ]
+            ],
+            [
+                [
+                    [1]
+                ],
+                [
+                    [0]
+                ]
+            ],
+            [
+                [
+                    [1, 2, 3],
+                    [4, 5, 6],
+                    [7, 8, 9],
+                ],
+                [
+                    [0, 0, 0],
+                    [0, 0, 0],
+                    [0, 0, 0],
+                ],
+            ],
+            [
+                [
+                    [5, -4, 3, 2, -10],
+                    [5, 5, 5, -4, -4],
+                    [0, 0, -2, 4, 49],
+                    [4, 3, 0, 0, -1],
+                ],
+                [
+                    [0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0],
+                ]
             ],
         ];
     }
@@ -373,7 +526,7 @@ class MatrixAxiomsTest extends \PHPUnit_Framework_TestCase
      * Axiom: AI = A = IA
      * Matrix multiplied with the identity matrix is the original matrix.
      *
-     * @dataProvider dataProviderForMatrixTimesIdentityIsOriginalMatrix
+     * @dataProvider dataProviderForOneSquareMatrix
      */
     public function testMatrixTimesIdentityIsOriginalMatrix(array $A)
     {
@@ -386,66 +539,16 @@ class MatrixAxiomsTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($A->getMatrix(), $IA->getMatrix());
     }
 
-    public function dataProviderForMatrixTimesIdentityIsOriginalMatrix()
+    /**
+     * @testCase Axiom: I is involutory
+     * Identity matrix is involutory
+     */
+    public function testIdentityMatrixIsInvolutory()
     {
-        return [
-            [
-                [
-                    [1, 5],
-                    [4, 3],
-                ],
-            ],
-            [
-                [
-                    [5, 6],
-                    [2, 1],
-                ],
-            ],
-            [
-                [
-                    [3, 8, 5],
-                    [3, 6, 1],
-                    [9, 5, 8],
-                ],
-            ],
-            [
-                [
-                    [5, 3, 8],
-                    [6, 4, 5],
-                    [1, 8, 9],
-                ],
-            ],
-            [
-                [
-                    [-4, -2, 9],
-                    [3, 14, -6],
-                    [3, 9, 9],
-                ],
-            ],
-            [
-                [
-                    [8, 7, 8],
-                    [-5, 4, 1],
-                    [3, 5, 1],
-                ],
-            ],
-            [
-                [
-                    [4, 7, 7, 8],
-                    [3, 6, 4, 1],
-                    [-3, 6, 8, -3],
-                    [3, 2, 1, -54],
-                ],
-            ],
-            [
-                [
-                    [3, 2, 6, 7],
-                    [4, 3, -6, 2],
-                    [12, 14, 14, -6],
-                    [4, 6, 4, -42],
-                ],
-            ],
-        ];
+        foreach (range(1, 20) as $n) {
+            $A = MatrixFactory::identity($n);
+            $this->assertTrue($A->isInvolutory());
+        }
     }
 
     /**
@@ -600,7 +703,63 @@ class MatrixAxiomsTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($⟮AB⟯⁻¹->getMatrix(), $B⁻¹A⁻¹->getMatrix());
     }
-    
+
+    /**
+     * @testCase Axiom: A is invertible, Aᵀ is inveritble
+     * If A is an invertible matrix, then the tranpose is also inveritble
+     * @dataProvider dataProviderForInverse
+     * @param        array $A
+     */
+    public function testIfMatrixIsInvertibleThenTransposeIsInvertible(array $A)
+    {
+        $A  = MatrixFactory::create($A);
+        $Aᵀ = $A->transpose();
+
+        if ($A->isInvertible()) {
+            $this->assertTrue($Aᵀ->isInvertible());
+        } else {
+            $this->assertFalse($Aᵀ->isInvertible());
+        }
+    }
+
+    /**
+     * @testCase Axiom: A is invertible, AAᵀ is inveritble
+     * If A is an invertible matrix, then the product of A and tranpose of A is also inveritble
+     * @dataProvider dataProviderForInverse
+     * @param        array $A
+     */
+    public function testIfMatrixIsInvertibleThenProductOfMatrixAndTransposeIsInvertible(array $A)
+    {
+        $A   = MatrixFactory::create($A);
+        $Aᵀ  = $A->transpose();
+        $AAᵀ = $A->multiply($Aᵀ);
+
+        if ($A->isInvertible()) {
+            $this->assertTrue($AAᵀ->isInvertible());
+        } else {
+            $this->assertFalse($AAᵀ->isInvertible());
+        }
+    }
+
+    /**
+     * @testCase Axiom: A is invertible, AᵀA is inveritble
+     * If A is an invertible matrix, then the product of transpose and A is also inveritble
+     * @dataProvider dataProviderForInverse
+     * @param        array $A
+     */
+    public function testIfMatrixIsInvertibleThenProductOfTransposeAndMatrixIsInvertible(array $A)
+    {
+        $A   = MatrixFactory::create($A);
+        $Aᵀ  = $A->transpose();
+        $AᵀA = $Aᵀ->multiply($A);
+
+        if ($A->isInvertible()) {
+            $this->assertTrue($AᵀA->isInvertible());
+        } else {
+            $this->assertFalse($AᵀA->isInvertible());
+        }
+    }
+
     public function dataProviderForInverseProductIsReverseProductOfInverses()
     {
         return [
@@ -701,68 +860,6 @@ class MatrixAxiomsTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($⟮rA⟯ᵀ->getMatrix(), $rAᵀ->getMatrix());
     }
 
-    public function dataProviderForOneSquareMatrix()
-    {
-        return [
-            [
-                [
-                    [1, 5],
-                    [4, 3],
-                ],
-            ],
-            [
-                [
-                    [5, 6],
-                    [2, 1],
-                ],
-            ],
-            [
-                [
-                    [3, 8, 5],
-                    [3, 6, 1],
-                    [9, 5, 8],
-                ],
-            ],
-            [
-                [
-                    [5, 3, 8],
-                    [6, 4, 5],
-                    [1, 8, 9],
-                ],
-            ],
-            [
-                [
-                    [-4, -2, 9],
-                    [3, 14, -6],
-                    [3, 9, 9],
-                ],
-            ],
-            [
-                [
-                    [8, 7, 8],
-                    [-5, 4, 1],
-                    [3, 5, 1],
-                ],
-            ],
-            [
-                [
-                    [4, 7, 7, 8],
-                    [3, 6, 4, 1],
-                    [-3, 6, 8, -3],
-                    [3, 2, 1, -54],
-                ],
-            ],
-            [
-                [
-                    [3, 2, 6, 7],
-                    [4, 3, -6, 2],
-                    [12, 14, 14, -6],
-                    [4, 6, 4, -42],
-                ],
-            ],
-        ];
-    }
-
     /**
      * (AB)ᵀ = BᵀAᵀ
      * Transpose of a product of matrices equals the product of their transposes in reverse order.
@@ -805,60 +902,6 @@ class MatrixAxiomsTest extends \PHPUnit_Framework_TestCase
         $Aᵀ＋Bᵀ = $Aᵀ->add($Bᵀ);
 
         $this->assertEquals($⟮A＋B⟯ᵀ->getMatrix(), $Aᵀ＋Bᵀ->getMatrix());
-    }
-
-    public function dataProviderForTwoSquareMatrices()
-    {
-        return [
-            [
-                [
-                    [1, 5],
-                    [4, 3],
-                ],
-                [
-                    [5, 6],
-                    [2, 1],
-                ],
-            ],
-            [
-                [
-                    [3, 8, 5],
-                    [3, 6, 1],
-                    [9, 5, 8],
-                ],
-                [
-                    [5, 3, 8],
-                    [6, 4, 5],
-                    [1, 8, 9],
-                ],
-            ],
-            [
-                [
-                    [-4, -2, 9],
-                    [3, 14, -6],
-                    [3, 9, 9],
-                ],
-                [
-                    [8, 7, 8],
-                    [-5, 4, 1],
-                    [3, 5, 1],
-                ],
-            ],
-            [
-                [
-                    [4, 7, 7, 8],
-                    [3, 6, 4, 1],
-                    [-3, 6, 8, -3],
-                    [3, 2, 1, -54],
-                ],
-                [
-                    [3, 2, 6, 7],
-                    [4, 3, -6, 2],
-                    [12, 14, 14, -6],
-                    [4, 6, 4, -42],
-                ],
-            ],
-        ];
     }
 
     /**
@@ -942,7 +985,7 @@ class MatrixAxiomsTest extends \PHPUnit_Framework_TestCase
     {
         $A = MatrixFactory::create($A);
 
-        $LUP = $A->LUDecomposition();
+        $LUP = $A->luDecomposition();
 
         $L   = $LUP['L'];
         $U   = $LUP['U'];
@@ -963,7 +1006,7 @@ class MatrixAxiomsTest extends \PHPUnit_Framework_TestCase
     {
         $A = MatrixFactory::create($A);
 
-        $LUP = $A->LUDecomposition();
+        $LUP = $A->luDecomposition();
 
         $L   = $LUP['L'];
         $U   = $LUP['U'];
@@ -983,7 +1026,7 @@ class MatrixAxiomsTest extends \PHPUnit_Framework_TestCase
     {
         $A = MatrixFactory::create($A);
 
-        $LUP = $A->LUDecomposition();
+        $LUP = $A->luDecomposition();
 
         $P  = $LUP['P'];
         $Pᵀ = $P->transpose();
@@ -1007,7 +1050,7 @@ class MatrixAxiomsTest extends \PHPUnit_Framework_TestCase
     {
         $A = MatrixFactory::create($A);
 
-        $LUP = $A->LUDecomposition();
+        $LUP = $A->luDecomposition();
         $L   = $LUP['L'];
         $U   = $LUP['U'];
         $P   = $LUP['P'];
@@ -1033,7 +1076,7 @@ class MatrixAxiomsTest extends \PHPUnit_Framework_TestCase
     {
         $A = MatrixFactory::create($A);
 
-        $LUP = $A->LUDecomposition();
+        $LUP = $A->luDecomposition();
         $P   = $LUP['P'];
         $P⁻¹ = $P->inverse();
         $Pᵀ  = $P->transpose();
@@ -1079,201 +1122,10 @@ class MatrixAxiomsTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($x, $A⁻¹b, '', 0.001);
     }
 
-    public function dataProviderForSolve()
-    {
-        return [
-            [
-                [
-                    [3, 4],
-                    [2, -1],
-                ],
-                [5, 7],
-                [3, -1],
-                [0, 0],
-            ],
-            [
-                [
-                    [3, 1],
-                    [2, -1],
-                ],
-                [5, 0],
-                [1, 2],
-                [0, 0],
-            ],
-            [
-                [
-                    [3, 4],
-                    [5, 3],
-                ],
-                [-2, 4],
-                [2, -2],
-                [0, 0],
-            ],
-            [
-                [
-                    [1, 0, 0],
-                    [0, 1, 0],
-                    [0, 0, 1],
-                ],
-                [2, 3, -4],
-                [2, 3, -4],
-                [0, 0, 0],
-            ],
-            [
-                [
-                    [1, 1, -1],
-                    [3, 1, 1],
-                    [1, -1, 4],
-                ],
-                [1, 9, 8],
-                [3, -1, 1],
-                [0, 0, 0],
-            ],
-            [
-                [
-                    [2, 4, 1],
-                    [4, -10, 2],
-                    [1, 2, 4],
-                ],
-                [5, -8, 13],
-                [-1, 1, 3],
-                [0, 0, 0],
-            ],
-            [
-                [
-                    [1, 1, 1],
-                    [0, 2, 5],
-                    [2, 5, -1],
-                ],
-                [6, -4, 27],
-                [5, 3, -2],
-                [0, 0, 0],
-            ],
-            [
-                [
-                    [1, 2, 3],
-                    [2, -1, 1],
-                    [3, 0, -1],
-                ],
-                [9, 8, 3],
-                [2, -1, 3],
-                [0, 0, 0],
-            ],
-            [
-                [
-                    [2, 1, -3],
-                    [4, -2, 1],
-                    [3, 5, -2],
-                ],
-                [-4, 9, 5],
-                [2, 1, 3],
-                [0, 0, 0],
-            ],
-            [
-                [
-                    [4, 9, 0],
-                    [8, 0, 6],
-                    [0, 6, 6],
-                ],
-                [8, -1, -1],
-                [1/2, 2/3, -5/6],
-                [0, 0, 0],
-            ],
-            [
-                [
-                    [1, 1, 1],
-                    [1, -2, 2],
-                    [1, 2, -1],
-                ],
-                [0, 4, 2],
-                [4, -2, -2],
-                [0, 0, 0],
-            ],
-            [
-                [
-                    [3, 3, 4],
-                    [3, 5, 9],
-                    [5, 9, 17],
-                ],
-                [1, 2, 4],
-                [1, -2, 1],
-                [0, 0, 0],
-            ],
-            [
-                [
-                    [2, 1, 1],
-                    [-1, 1, -1],
-                    [1, 2, 3],
-                ],
-                [2, 3, -10],
-                [3, 1, -5],
-                [0, 0, 0],
-            ],
-            [
-                [
-                    [4, 2, -1, 3],
-                    [3, -4, 2, 5],
-                    [-2, 6, -5, -2],
-                    [5, 1, 6, -3],
-                ],
-                [16.9, -14, 25, 9.4],
-                [4.5, 1.6, -3.8, -2.7],
-                [0, 0, 0, 0],
-            ],
-            [
-                [
-                    [4, 2, -1, 3],
-                    [3, -4, 2, 5],
-                    [-2, 6, -5, -2],
-                    [5, 1, 6, -3],
-                ],
-                [-12, 34, 27, -19],
-                [-101.485, 101.242, 115.727, 102.394],
-                [0, 0, 0, 0],
-            ],
-            [
-                [
-                    [ 4,  1,  2,  -3],
-                    [-3,  3, -1,   4],
-                    [-1,  2,  5,   1],
-                    [ 5,  4,  3,  -1],
-                ],
-                [-16, 20, -4, -10],
-                [-1, 1, -2, 3],
-                [0, 0, 0, 0],
-            ],
-            [
-                [
-                    [ 4,  1,  2,  -3,  5],
-                    [-3,  3, -1,   4, -2],
-                    [-1,  2,  5,   1,  3],
-                    [ 5,  4,  3,  -1,  2],
-                    [ 1, -2,  3,  -4,  5],
-                ],
-                [-16, 20, -4, -10,  3],
-                [-15.354, 15.813, -1.770, -22.148, -6.660],
-                [0, 0, 0, 0, 0],
-            ],
-            [
-                [
-                    [1, 1, -2, 1, 3, -1],
-                    [2, -1, 1, 2, 1, -3],
-                    [1, 3, -3, -1, 2, 1],
-                    [5, 2, -1, -1, 2, 1],
-                    [-3, -1, 2, 3, 1, 3],
-                    [4, 3, 1, -6, -3, -2],
-                ],
-                [4, 20, -15, -3, 16, -27],
-                [1, -2, 3, 4, 2, -1],
-                [0, 0, 0, 0, 0, 0],
-            ],
-        ];
-    }
-
     /**
      * Axiom: A = Aᵀ
      * Symmetric matrix is the same as its transpose
-     * @dataProvider dataProviderForSymmetric
+     * @dataProvider dataProviderForSymmetricMatrix
      */
     public function testSymmetricEqualsTranspose(array $A)
     {
@@ -1287,7 +1139,7 @@ class MatrixAxiomsTest extends \PHPUnit_Framework_TestCase
     /**
      * Axiom: A⁻¹Aᵀ = I
      * Symmetric matrix inverse times tranpose equals identity matrix
-     * @dataProvider dataProviderForSymmetric
+     * @dataProvider dataProviderForSymmetricMatrix
      */
     public function testSymmetricInverseTranposeEqualsIdentity(array $A)
     {
@@ -1302,77 +1154,182 @@ class MatrixAxiomsTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($I->getMatrix(), $A⁻¹Aᵀ->getMatrix());
     }
 
-    public function dataProviderForSymmetric()
+    /**
+     * @testCase Axiom: A + B is symmetric
+     * If A and B are symmetric matrices with the sme size, then A + B is symmetric
+     * @dataProvider dataProviderForSymmetricMatrix
+     * @param array $A
+     */
+    public function testSymmetricMatricesSumIsSymmetric(array $M)
     {
-        return [
-            [
-                [
-                    [1],
-                ],
-            ],
-            [
-                [
-                    [1, 2],
-                    [2, 1],
-                ],
-            ],
-            [
-                [
-                    [4, 1],
-                    [1, -2],
-                ],
-            ],
-            [
-                [
-                    [4, -1],
-                    [-1, 9],
-                ],
-            ],
-            [
-                [
-                    [1, 2, 3],
-                    [2, 6, 4],
-                    [3, 4, 5],
-                ],
-            ],
-            [
-                [
-                    [1, 7, 3],
-                    [7, 4, -5],
-                    [3, -5, 6],
-                ],
-            ],
-            [
-                [
-                    [5, 6, 7],
-                    [6, 3, 2],
-                    [7, 2, 1],
-                ],
-            ],
-            [
-                [
-                    [2, 7, 3],
-                    [7, 9, 4],
-                    [3, 4, 7],
-                ],
-            ],
-            [
-                [
-                    [4, -1, -1, -1],
-                    [-1, 4, -1, -1],
-                    [-1, -1, 4, -1],
-                    [-1, -1, -1, 4],
-                ],
-            ],
-            [
-                [
-                    [1, 5, 6, 8],
-                    [5, 2, 7, 9],
-                    [6, 7, 3, 10],
-                    [8, 9, 10, 4],
-                ],
-            ],
-        ];
+        $A    = MatrixFactory::create($M);
+        $B    = MatrixFactory::create($M);
+        $A＋B = $A->add($B);
+
+        $this->assertTrue($A->isSymmetric());
+        $this->assertTrue($B->isSymmetric());
+        $this->assertTrue($A＋B->isSymmetric());
+    }
+
+    /**
+     * @testCase Axiom: A - B is symmetric
+     * If A and B are symmetric matrices with the sme size, then A - B is symmetric
+     * @dataProvider dataProviderForSymmetricMatrix
+     * @param array $A
+     */
+    public function testSymmetricMatricesDifferenceIsSymmetric(array $M)
+    {
+        $A   = MatrixFactory::create($M);
+        $B   = MatrixFactory::create($M);
+        $A−B = $A->subtract($B);
+
+        $this->assertTrue($A->isSymmetric());
+        $this->assertTrue($B->isSymmetric());
+        $this->assertTrue($A−B->isSymmetric());
+    }
+
+    /**
+     * @testCase Axiom: kA is symmetric
+     * If A is a symmetric matrix, kA is symmetric
+     * @dataProvider dataProviderForSymmetricMatrix
+     * @param array $A
+     */
+    public function testSymmetricMatricesTimesScalarIsSymmetric(array $M)
+    {
+        $A   = MatrixFactory::create($M);
+        $this->assertTrue($A->isSymmetric());
+
+        foreach (range(1, 10) as $k) {
+            $kA = $A->scalarMultiply($k);
+            $this->assertTrue($kA->isSymmetric());
+        }
+    }
+
+    /**
+     * @testCase Axiom: AAᵀ is symmetric
+     * If A is a symmetric matrix, AAᵀ is symmetric
+     * @dataProvider dataProviderForSymmetricMatrix
+     * @param array $A
+     */
+    public function testSymmetricMatrixTimesTransposeIsSymmetric(array $M)
+    {
+        $A   = MatrixFactory::create($M);
+        $Aᵀ  = $A->transpose();
+        $AAᵀ = $A->multiply($Aᵀ);
+
+        $this->assertTrue($A->isSymmetric());
+        $this->assertTrue($AAᵀ->isSymmetric());
+    }
+
+    /**
+     * @testCase Axiom: AᵀA is symmetric
+     * If A is a symmetric matrix, AᵀA is symmetric
+     * @dataProvider dataProviderForSymmetricMatrix
+     * @param array $A
+     */
+    public function testTransposeTimesSymmetricMatrixIsSymmetric(array $M)
+    {
+        $A   = MatrixFactory::create($M);
+        $Aᵀ  = $A->transpose();
+        $AᵀA = $Aᵀ->multiply($A);
+
+        $this->assertTrue($A->isSymmetric());
+        $this->assertTrue($AᵀA->isSymmetric());
+    }
+
+    /**
+     * @testCase Axiom: A is invertible symmetric, A⁻¹ is symmetric
+     * If A is an invertible symmetric matrix, the inverse of A is also symmetric
+     * @dataProvider dataProviderForSymmetricMatrix
+     * @param array $A
+     */
+    public function testMatrixIsInvertibleSummetricThenInverseIsSymmetric(array $M)
+    {
+        $A   = MatrixFactory::create($M);
+
+        if ($A->isInvertible() && $A->isSymmetric()) {
+            $A⁻¹ = $A->inverse();
+            $A⁻¹ = $A->map(
+                function ($x) {
+                    return round($x, 5); // Floating point adjustment
+                }
+            );
+            $this->assertTrue($A⁻¹->isSymmetric());
+        }
+    }
+
+    /**
+     * @testCase     Axiom: A is skew-symmetric, det(A) ≥ 0
+     *               If A is a skew-symmetric matrix, the determinant is greater than zero.
+     * @dataProvider dataProviderForSkewSymmetricMatrix
+     * @param        array $A
+     * @throws       \Exception
+     */
+    public function testMatrixIsSkewSymmetricDeterminantGreaterThanZero(array $A)
+    {
+        $A = MatrixFactory::create($A);
+
+        $this->assertTrue($A->isSkewSymmetric());
+        $this->assertGreaterThanOrEqual(0, $A->det());
+    }
+
+    /**
+     * @testCase     Axiom: The sum of two skew-symmetric matrices is skew-symmetric
+     * @dataProvider dataProviderForSkewSymmetricMatrix
+     * @param        array $A
+     * @throws       \Exception
+     */
+    public function testSumOfTwoSkewSymmetricMatricesIsSkewSymmetric(array $A)
+    {
+        $A = MatrixFactory::create($A);
+
+        $B = $A->add($A);
+        $this->assertTrue($B->isSkewSymmetric());
+    }
+
+    /**
+     * @testCase     Axiom: Scalar multiple of a skew-symmetric matrix is skew-symmetric
+     * @dataProvider dataProviderForSkewSymmetricMatrix
+     * @param        array $A
+     * @throws       \Exception
+     */
+    public function testScalarMultipleOfSkewSymmetricMatrixIsSkewSymmetric(array $A)
+    {
+        $A = MatrixFactory::create($A);
+
+        $B = $A->scalarMultiply(6);
+        $this->assertTrue($B->isSkewSymmetric());
+    }
+
+    /**
+     * @testCase     Axiom: The elements on the diagonal of a skew-symmetric matrix are zero, and therefore also its trace
+     * @dataProvider dataProviderForSkewSymmetricMatrix
+     * @param        array $A
+     * @throws       \Exception
+     */
+    public function testSkewSymmetricMatrixDiagonalElementsAreZeroAndThereforeTraceIsZero(array $A)
+    {
+        $A = MatrixFactory::create($A);
+
+        foreach ($A->getDiagonalElements() as $diagonal_element) {
+            $this->assertEquals(0, $diagonal_element);
+        }
+        $this->assertEquals(0, $A->trace());
+    }
+
+    /**
+     * @testCase     Axiom: A is a real skew-symmetric matrix, then I+A is invertible, where I is the identity matrix
+     * @dataProvider dataProviderForSkewSymmetricMatrix
+     * @param        array $A
+     * @throws       \Exception
+     */
+    public function testSkewSymmetricMatrixAddedToIdentityIsInvertible(array $A)
+    {
+        $A = MatrixFactory::create($A);
+        $I = MatrixFactory::identity($A->getN());
+
+        $I＋A = $I->add($A);
+        $this->assertTrue($I＋A->isInvertible());
     }
 
     /**
@@ -1426,123 +1383,32 @@ class MatrixAxiomsTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($⟮A⊗B⟯⊗C->getMatrix(), $A⊗⟮B⊗C⟯->getMatrix());
     }
 
-    public function dataProviderForThreeMatrices()
+    /**
+     * @testCase     Axiom: (A ⊗ B)(C ⊗ D) = AC ⊗ BD
+     *               Kronecker multiplication
+     * @dataProvider dataProviderForFourMatrices
+     * @param        array $A
+     * @param        array $B
+     * @param        array $C
+     * @param        array $D
+     * @throws       \Exception
+     */
+    public function testKroneckerProductMultiplication(array $A, array $B, array $C, array $D)
     {
-        return [
-            [
-                [
-                    [1],
-                ],
-                [
-                    [2],
-                ],
-                [
-                    [3],
-                ],
-            ],
-            [
-                [
-                    [1, 5, 3],
-                    [3, 6, 3],
-                    [6, 7, 8],
-                ],
-                [
-                    [6, 9, 9],
-                    [3, 5, 1],
-                    [3, 5, 12],
-                ],
-                [
-                    [7, 9, 6],
-                    [1, 9, 1],
-                    [10, 12, 4],
-                ],
-            ],
-            [
-                [
-                    [12, 21, 6],
-                    [-3, 11, -6],
-                    [3, 6, -3],
-                ],
-                [
-                    [3, 7, 8],
-                    [4, 4, 2],
-                    [6, -4, 1],
-                ],
-                [
-                    [-1, -1, -5],
-                    [8, 15, 15],
-                    [8, 6, -12],
-                ],
-            ],
-            [
-                [
-                    [1, 2],
-                    [0, -1],
-                ],
-                [
-                    [0, -1],
-                    [1, 1],
-                ],
-                [
-                    [2, 8],
-                    [2, 1],
-                ],
-            ],
-            [
-                [
-                    [1, 5, 3],
-                    [3, 6, 3],
-                    [6, 7, 8],
-                ],
-                [
-                    [6, 9, 9],
-                    [3, 5, 1],
-                    [3, 5, 12],
-                ],
-                [
-                    [6, 4, 9],
-                    [12, 3, -1],
-                    [10, 2, 15],
-                ],
-            ],
-            [
-                [
-                    [12, 21, 6],
-                    [-3, 11, -6],
-                    [3, 6, -3],
-                ],
-                [
-                    [3, 7, 8],
-                    [4, 4, 2],
-                    [6, -4, 1],
-                ],
-                [
-                    [1, 1, 5],
-                    [3, 4, 9],
-                    [3, 16, -2],
-                ],
-            ],
-            [
-                [
-                    [1, 2, 3, 4, 5],
-                    [2, 3, 4, 5, 6],
-                    [4, 5, 6, 7, 8],
-                    [6, 5, 4, 5, 7],
-                ],
-                [
-                    [1, 2, 5, 5, 6],
-                    [2, 3, 5, 5, 6],
-                    [5, 4, 5, 5, 6],
-                    [3, 2, 5, 5, 6],
-                ],
-                [
-                    [5, 5, 7, 8, 9],
-                    [4, 4, 7, 8, 9],
-                    [7, 6, 7, 6, 7],
-                    [9, 9, 9, 0, 0],
-                ]
-            ],
-        ];
+        $A = MatrixFactory::create($A);
+        $B = MatrixFactory::create($B);
+        $C = MatrixFactory::create($C);
+        $D = MatrixFactory::create($D);
+
+        $⟮A⊗B⟯ = $A->kroneckerProduct($B);
+        $⟮C⊗D⟯ = $C->kroneckerProduct($D);
+        $⟮A⊗B⟯⟮C⊗D⟯ = $⟮A⊗B⟯->multiply($⟮C⊗D⟯);
+
+        $AC = $A->multiply($C);
+        $BD = $B->multiply($D);
+        $AC⊗BD = $AC->kroneckerProduct($BD);
+
+        $this->assertEquals($⟮A⊗B⟯⟮C⊗D⟯->getMatrix(), $AC⊗BD->getMatrix());
     }
 
     /**
@@ -1804,106 +1670,6 @@ class MatrixAxiomsTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($−A->isNegativeDefinite());
     }
 
-    public function dataProviderForPositiveDefiniteMatrix(): array
-    {
-        return [
-            [
-                [
-                    [2, -1],
-                    [-1, 2],
-                ],
-            ],
-            [
-                [
-                    [1, -1],
-                    [-1, 4],
-                ],
-            ],
-            [
-                [
-                    [5, 2],
-                    [2, 3],
-                ],
-            ],
-            [
-                [
-                    [6, 4],
-                    [4, 5],
-                ],
-            ],
-            [
-                [
-                    [12, -12],
-                    [-12, 96],
-                ],
-            ],
-            [
-                [
-                    [2, -1, 0],
-                    [-1, 2, -1],
-                    [0, -1, 2],
-                ],
-            ],
-            [
-                [
-                    [2, -1, 1],
-                    [-1, 2, -1],
-                    [1, -1, 2],
-                ],
-            ],
-            [
-                [
-                    [1, 0, 0],
-                    [0, 3, 0],
-                    [0, 0, 2],
-                ],
-            ],
-            [
-                [
-                    [3, -2, 0],
-                    [-2, 2, 0],
-                    [0, 0, 2],
-                ],
-            ],
-            [
-                [
-                    [4, 1, -1],
-                    [1, 2, 1],
-                    [-1, 1, 2],
-                ],
-            ],
-            [
-                [
-                    [9, -3, 3, 9],
-                    [-3, 17, -1, -7],
-                    [3, -1, 17, 15],
-                    [9, -7, 15, 44],
-                ],
-            ],
-            [
-                [
-                    [14, 4, 9],
-                    [4, 14, -7],
-                    [9, -7, 14],
-                ],
-            ],
-            [
-                [
-                    [13, 0, -3],
-                    [0, 9, 9],
-                    [-3, 9, 10],
-                ],
-            ],
-            [
-                [
-                    [14, -7, -13],
-                    [-7, 6, 5],
-                    [-13, 5, 14],
-                ],
-            ],
-        ];
-    }
-
     /**
      * @testCase Axiom: Positive semidefiniteness A is PSD ⇔ -A is NSD
      * If A is positive semidefinite, then -A is negative definite.
@@ -1917,85 +1683,6 @@ class MatrixAxiomsTest extends \PHPUnit_Framework_TestCase
 
         $this->assertTrue($A->isPositiveSemidefinite());
         $this->assertTrue($−A->isNegativeSemidefinite());
-    }
-
-    public function dataProviderForPositiveSemidefiniteMatrix(): array
-    {
-        return [
-            [
-                [
-                    [0, 0],
-                    [0, 0],
-                ],
-            ],
-            [
-                [
-                    [1, 0],
-                    [0, 1],
-                ],
-            ],
-            [
-                [
-                    [1, 0],
-                    [0, 2],
-                ],
-            ],
-            [
-                [
-                    [1, 1],
-                    [1, 1],
-                ],
-            ],
-            [
-                [
-                    [2, -1],
-                    [-1, 2],
-                ],
-            ],
-            [
-                [
-                    [0, 0, 0],
-                    [0, 3, 0],
-                    [0, 0, 3],
-                ],
-            ],
-            [
-                [
-                    [2, -1, -1],
-                    [-1, 2, -1],
-                    [-1, -1, 2],
-                ],
-            ],
-            [
-                [
-                    [2, -1, 0],
-                    [-1, 2, -1],
-                    [0, -1, 2],
-                ],
-            ],
-            [
-                [
-                    [2, -1, 1],
-                    [-1, 2, -1],
-                    [1, -1, 2],
-                ],
-            ],
-            [
-                [
-                    [2, -1, 2],
-                    [-1, 2, -1],
-                    [2, -1, 2],
-                ],
-            ],
-            [
-                [
-                    [9, -3, 3, 9],
-                    [-3, 17, -1, -7],
-                    [3, -1, 17, 15],
-                    [9, -7, 15, 44],
-                ],
-            ],
-        ];
     }
 
     /**
@@ -2024,25 +1711,6 @@ class MatrixAxiomsTest extends \PHPUnit_Framework_TestCase
 
         $this->assertTrue($A->isNegativeDefinite());
         $this->assertTrue($A->isNegativeSemidefinite());
-    }
-
-    public function dataProviderForNegativeDefiniteMatrix(): array
-    {
-        return [
-            [
-                [
-                    [-1, 1],
-                    [1, -2],
-                ],
-            ],
-            [
-                [
-                    [-3, 0, 0],
-                    [0, -2, 0],
-                    [0, 0, -1],
-                ],
-            ],
-        ];
     }
 
     /**
@@ -2191,99 +1859,786 @@ class MatrixAxiomsTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($BAB->isPositiveDefinite());
     }
 
-    public function dataProviderForTwoPositiveDefiniteMatrixes(): array
+    /**
+     * @testCase Axiom: Zero matrix is lower triangular
+     */
+    public function testZeroMatrixIsLowerTriangular()
     {
-        return [
-            [
-                [
-                    [2, -1],
-                    [-1, 2],
-                ],
-                [
-                    [1, -1],
-                    [-1, 4],
-                ],
-            ],
-            [
-                [
-                    [5, 2],
-                    [2, 3],
-                ],
-                [
-                    [6, 4],
-                    [4, 5],
-                ],
-            ],
-            [
-                [
-                    [12, -12],
-                    [-12, 96],
-                ],
-                [
-                    [6, 4],
-                    [4, 5],
-                ],
-            ],
-            [
-                [
-                    [2, -1, 0],
-                    [-1, 2, -1],
-                    [0, -1, 2],
-                ],
-                [
-                    [2, -1, 1],
-                    [-1, 2, -1],
-                    [1, -1, 2],
-                ],
-            ],
-            [
-                [
-                    [1, 0, 0],
-                    [0, 3, 0],
-                    [0, 0, 2],
-                ],
-                [
-                    [3, -2, 0],
-                    [-2, 2, 0],
-                    [0, 0, 2],
-                ],
-            ],
-            [
-                [
-                    [4, 1, -1],
-                    [1, 2, 1],
-                    [-1, 1, 2],
-                ],
-                [
-                    [3, -2, 0],
-                    [-2, 2, 0],
-                    [0, 0, 2],
-                ],
-            ],
-            [
-                [
-                    [14, 4, 9],
-                    [4, 14, -7],
-                    [9, -7, 14],
-                ],
-                [
-                    [13, 0, -3],
-                    [0, 9, 9],
-                    [-3, 9, 10],
-                ],
-            ],
-            [
-                [
-                    [14, -7, -13],
-                    [-7, 6, 5],
-                    [-13, 5, 14],
-                ],
-                [
-                    [13, 0, -3],
-                    [0, 9, 9],
-                    [-3, 9, 10],
-                ],
-            ],
-        ];
+        foreach (range(1, 20) as $m) {
+            $L = MatrixFactory::zero($m, $m);
+            $this->assertTrue($L->isLowerTriangular());
+        }
+    }
+
+    /**
+     * @testCase Axiom: Zero matrix is upper triangular
+     */
+    public function testZeroMatrixIsUpperTriangular()
+    {
+        foreach (range(1, 20) as $m) {
+            $L = MatrixFactory::zero($m, $m);
+            $this->assertTrue($L->isUpperTriangular());
+        }
+    }
+
+    /**
+     * @testCase Axiom: Zero matrix is diagonal
+     */
+    public function testZeroMatrixIsDiagonal()
+    {
+        foreach (range(1, 20) as $m) {
+            $L = MatrixFactory::zero($m, $m);
+            $this->assertTrue($L->isDiagonal());
+        }
+    }
+
+    /**
+     * @testCase Axiom: Lᵀ is upper triangular
+     * Transpose of a lower triangular matrix is upper triagular
+     * @dataProvider dataProviderForLowerTriangularMatrix
+     * @param array $L
+     */
+    public function testTransposeOfLowerTriangularMatrixIsUpperTriangular(array $L)
+    {
+        $L  = MatrixFactory::create($L);
+        $Lᵀ = $L->Transpose();
+
+        $this->assertTrue($L->isLowerTriangular());
+        $this->assertTrue($Lᵀ->isUpperTriangular());
+    }
+
+    /**
+     * @testCase Axiom: Uᵀ is lower triangular
+     * Transpose of an upper triangular matrix is lower triagular
+     * @dataProvider dataProviderForUpperTriangularMatrix
+     * @param array $U
+     */
+    public function testTransposeOfUpperTriangularMatrixIsLowerTriangular(array $U)
+    {
+        $U  = MatrixFactory::create($U);
+        $Uᵀ = $U->Transpose();
+
+        $this->assertTrue($U->isUpperTriangular());
+        $this->assertTrue($Uᵀ->isLowerTriangular());
+    }
+
+    /**
+     * @testCase Axiom: LL is lower triangular
+     * Product of two lower triangular matrices is lower triangular
+     * @dataProvider dataProviderForLowerTriangularMatrix
+     * @param array $L
+     */
+    public function testProductOfTwoLowerTriangularMatricesIsLowerTriangular(array $L)
+    {
+        $L  = MatrixFactory::create($L);
+        $LL = $L->multiply($L);
+
+        $this->assertTrue($L->isLowerTriangular());
+        $this->assertTrue($LL->isLowerTriangular());
+    }
+
+    /**
+     * @testCase Axiom: UU is upper triangular
+     * Product of two upper triangular matrices is upper triangular
+     * @dataProvider dataProviderForUpperTriangularMatrix
+     * @param array $U
+     */
+    public function testProductOfTwoUpperTriangularMatricesIsUpperTriangular(array $U)
+    {
+        $U  = MatrixFactory::create($U);
+        $UU = $U->multiply($U);
+
+        $this->assertTrue($U->isUpperTriangular());
+        $this->assertTrue($UU->isUpperTriangular());
+    }
+
+    /**
+     * @testCase Axiom: L + L is lower triangular
+     * Sum of two lower triangular matrices is lower triangular
+     * @dataProvider dataProviderForLowerTriangularMatrix
+     * @param array $L
+     */
+    public function testSumOfTwoLowerTriangularMatricesIsLowerTriangular(array $L)
+    {
+        $L    = MatrixFactory::create($L);
+        $L＋L = $L->add($L);
+
+        $this->assertTrue($L->isLowerTriangular());
+        $this->assertTrue($L＋L->isLowerTriangular());
+    }
+
+    /**
+     * @testCase Axiom: U + U is upper triangular
+     * Sum of two upper triangular matrices is upper triangular
+     * @dataProvider dataProviderForUpperTriangularMatrix
+     * @param array $U
+     */
+    public function testSumOfTwoUpperTriangularMatricesIsUpperTriangular(array $U)
+    {
+        $U    = MatrixFactory::create($U);
+        $U＋U = $U->add($U);
+
+        $this->assertTrue($U->isUpperTriangular());
+        $this->assertTrue($U＋U->isUpperTriangular());
+    }
+
+    /**
+     * @testCase Axiom: L⁻¹ is lower triangular (If L is invertible)
+     * The inverse of an invertible lower triangular matrix is lower triangular
+     * @dataProvider dataProviderForLowerTriangularMatrix
+     * @param array $L
+     */
+    public function testInverseOfInvertibleLowerTriangularMatrixIsLowerTriangular(array $L)
+    {
+        $L = MatrixFactory::create($L);
+        $this->assertTrue($L->isLowerTriangular());
+
+        if ($L->isInvertible()) {
+            $L⁻¹ = $L->inverse();
+            $this->assertTrue($L⁻¹->isLowerTriangular());
+        }
+    }
+
+    /**
+     * @testCase Axiom: U⁻¹ is upper triangular (If U is invertible)
+     * The inverse of an invertible upper triangular matrix is upper triangular
+     * @dataProvider dataProviderForUpperTriangularMatrix
+     * @param array $U
+     */
+    public function testInverseOfInvertibleUpperTriangularMatrixIsUpperTriangular(array $U)
+    {
+        $U = MatrixFactory::create($U);
+        $this->assertTrue($U->isUpperTriangular());
+
+        if ($U->isInvertible()) {
+            $U⁻¹ = $U->inverse();
+            $this->assertTrue($U⁻¹->isUpperTriangular());
+        }
+    }
+
+    /**
+     * @testCase Axiom: kL is lower triangular
+     * Product of a lower triangular matrix by a constant is lower triangular
+     * @dataProvider dataProviderForLowerTriangularMatrix
+     * @param array $L
+     */
+    public function testProductOfLowerTriangularMatrixByConstantIsLowerTriangular(array $L)
+    {
+        $L = MatrixFactory::create($L);
+        $this->assertTrue($L->isLowerTriangular());
+
+        foreach (range(1, 10) as $k) {
+            $kL = $L->scalarMultiply($k);
+            $this->assertTrue($kL->isLowerTriangular());
+        }
+    }
+
+    /**
+     * @testCase Axiom: kU is upper triangular
+     * Product of a upper triangular matrix by a constant is upper triangular
+     * @dataProvider dataProviderForUpperTriangularMatrix
+     * @param array $U
+     */
+    public function testProductOfUpperTriangularMatrixByConstantIsUpperTriangular(array $U)
+    {
+        $U = MatrixFactory::create($U);
+        $this->assertTrue($U->isUpperTriangular());
+
+        foreach (range(1, 10) as $k) {
+            $kU = $U->scalarMultiply($k);
+            $this->assertTrue($kU->isUpperTriangular());
+        }
+    }
+
+    /**
+     * @testCase Axiom: L is invertible iff diagonal is all non zero
+     * Lower triangular matrix is invertible if and only if its diagonal entries are all non zero
+     * @dataProvider dataProviderForLowerTriangularMatrix
+     * @param array $L
+     */
+    public function testLowerTriangularMatrixIsInvertibleIfAndOnlyIfDigaonalEntriesAreAllNonZero(array $L)
+    {
+        $L = MatrixFactory::create($L);
+        $this->assertTrue($L->isLowerTriangular());
+
+        $zeros = array_filter(
+            $L->getDiagonalElements(),
+            function ($x) {
+                return $x == 0;
+            }
+        );
+
+        if (count($zeros) == 0) {
+            $this->assertTrue($L->isInvertible());
+        } else {
+            $this->assertFalse($L->isInvertible());
+        }
+    }
+
+    /**
+     * @testCase Axiom: U is invertible iff diagonal is all non zero
+     * Upper triangular matrix is invertible if and only if its diagonal entries are all non zero
+     * @dataProvider dataProviderForUpperTriangularMatrix
+     * @param array $U
+     */
+    public function testUpperTriangularMatrixIsInvertibleIfAndOnlyIfDigaonalEntriesAreAllNonZero(array $U)
+    {
+        $U = MatrixFactory::create($U);
+        $this->assertTrue($U->isUpperTriangular());
+
+        $zeros = array_filter(
+            $U->getDiagonalElements(),
+            function ($x) {
+                return $x == 0;
+            }
+        );
+
+        if (count($zeros) == 0) {
+            $this->assertTrue($U->isInvertible());
+        } else {
+            $this->assertFalse($U->isInvertible());
+        }
+    }
+
+    /**
+     * @testCase Axiom: Dᵀ is diagonal
+     * Transpose of a diagonal matrix is diagonal
+     * @dataProvider dataProviderForDiagonalMatrix
+     * @param array $D
+     */
+    public function testTransposeOfDiagonalMatrixIsDiagonal(array $D)
+    {
+        $D  = MatrixFactory::create($D);
+        $Dᵀ = $D->Transpose();
+
+        $this->assertTrue($D->isDiagonal());
+        $this->assertTrue($Dᵀ->isDiagonal());
+    }
+
+    /**
+     * @testCase Axiom: DD is diagonal
+     * Product of two diagonal matrices is diagonal
+     * @dataProvider dataProviderForDiagonalMatrix
+     * @param array $D
+     */
+    public function testProductOfTwoDiagonalMatricesIsDiagonal(array $D)
+    {
+        $D  = MatrixFactory::create($D);
+        $DD = $D->multiply($D);
+
+        $this->assertTrue($D->isDiagonal());
+        $this->assertTrue($DD->isDiagonal());
+    }
+
+    /**
+     * @testCase Axiom: D + D is diagonal
+     * Sum of two diagonal matrices is diagonal
+     * @dataProvider dataProviderForDiagonalMatrix
+     * @param array $D
+     */
+    public function testSumOfTwoDiagonalMatricesIsDiagonal(array $D)
+    {
+        $D    = MatrixFactory::create($D);
+        $D＋D = $D->add($D);
+
+        $this->assertTrue($D->isDiagonal());
+        $this->assertTrue($D＋D->isDiagonal());
+    }
+
+    /**
+     * @testCase Axiom: D⁻¹ is diagonal (If D is invertible)
+     * The inverse of an invertible diagonal matrix is diagonal
+     * @dataProvider dataProviderForDiagonalMatrix
+     * @param array $D
+     */
+    public function testInverseOfInvertibleDiagonalMatrixIsDiagonal(array $D)
+    {
+        $D = MatrixFactory::create($D);
+        $this->assertTrue($D->isDiagonal());
+
+        if ($D->isInvertible()) {
+            $D⁻¹ = $D->inverse();
+            $this->assertTrue($D⁻¹->isDiagonal());
+        }
+    }
+
+    /**
+     * @testCase Axiom: kD is Diagonal
+     * Product of a diagonal matrix by a constant is diagonal
+     * @dataProvider dataProviderForDiagonalMatrix
+     * @param array $D
+     */
+    public function testProductOfDiagonalMatrixByConstantIsDiagonal(array $D)
+    {
+        $D = MatrixFactory::create($D);
+        $this->assertTrue($D->isDiagonal());
+
+        foreach (range(1, 10) as $k) {
+            $kD = $D->scalarMultiply($k);
+            $this->assertTrue($kD->isDiagonal());
+        }
+    }
+
+    /**
+     * @testCase Axiom: D is invertible iff diagonal is all non zero
+     * Diagonal matrix is invertible if and only if its diagonal entries are all non zero
+     * @dataProvider dataProviderForDiagonalMatrix
+     * @param array $D
+     */
+    public function testDiagonalMatrixIsInvertibleIfAndOnlyIfDigaonalEntriesAreAllNonZero(array $D)
+    {
+        $D = MatrixFactory::create($D);
+        $this->assertTrue($D->isDiagonal());
+
+        $zeros = array_filter(
+            $D->getDiagonalElements(),
+            function ($x) {
+                return $x == 0;
+            }
+        );
+
+        if (count($zeros) == 0) {
+            $this->assertTrue($D->isInvertible());
+        } else {
+            $this->assertFalse($D->isInvertible());
+        }
+    }
+
+    /**
+     * @testCase Axiom: Reduced row echelon form is upper triangular
+     * @dataProvider dataProviderForOneSquareMatrix
+     * @param array $A
+     */
+    public function testReducedRowEchelonFormIsUpperTriangular(array $A)
+    {
+        $A    = MatrixFactory::create($A);
+        $rref = $A->rref();
+
+        $this->assertTrue($rref->isUpperTriangular());
+    }
+
+    /**
+     * @testCase Axiom: Jᵀ = J
+     * Transpose of an exchange matrix is itself
+     */
+    public function testTransposeOfExchangeMatrix()
+    {
+        foreach (range(1, 20) as $n) {
+            $J  = MatrixFactory::exchange($n);
+            $Jᵀ = $J->transpose();
+            $this->assertEquals($J, $Jᵀ);
+            $this->assertEquals($J->getMatrix(), $Jᵀ->getMatrix());
+        }
+    }
+
+    /**
+     * @testCase Axiom: J⁻¹ = J
+     * Inverse of an exchange matrix is itself
+     */
+    public function testInverseOfExchangeMatrix()
+    {
+        foreach (range(1, 20) as $n) {
+            $J  = MatrixFactory::exchange($n);
+            $J⁻¹ = $J->inverse();
+            $this->assertEquals($J->getMatrix(), $J⁻¹->getMatrix());
+        }
+    }
+
+    /**
+     * @testCase Axiom: tr(J) is 1 if n is odd, and 0 if n is even
+     * Trace of J is 1 if n is odd, and 0 is n is even.
+     */
+    public function testTraceOfExchangeMatrix()
+    {
+        foreach (range(1, 20) as $n) {
+            $J    = MatrixFactory::exchange($n);
+            $tr⟮J⟯ = $J->trace();
+
+            if (Integer::isOdd($n)) {
+                $this->assertEquals(1, $tr⟮J⟯);
+            } else {
+                $this->assertEquals(0, $tr⟮J⟯);
+            }
+        }
+    }
+
+    /**
+     * @testCase Axiom: Signature matrix is involutory
+     * @dataProvider dataProviderForSignatureMatrix
+     * @param array $A
+     */
+    public function testSignatureMatrixIsInvolutory(array $A)
+    {
+        $A = MatrixFactory::create($A);
+
+        $this->assertTrue($A->isSignature());
+        $this->assertTrue($A->isInvolutory());
+    }
+
+    /**
+     * @testCase Axiom: Hilbert matrix is symmetric
+     */
+    public function testHilbertMatrixIsSymmetric()
+    {
+        foreach (range(1, 10) as $n) {
+            $H = MatrixFactory::hilbert($n);
+            $this->assertTrue($H->isSymmetric());
+        }
+    }
+
+    /**
+     * @testCase Axiom: Hilbert matrix is positive definite
+     */
+    public function testHilbertMatrixIsPositiveDefinite()
+    {
+        foreach (range(1, 10) as $n) {
+            $H = MatrixFactory::hilbert($n);
+            $this->assertTrue($H->isPositiveDefinite());
+        }
+    }
+
+    /**
+     * @testCase     Axiom: A = LLᵀ (Cholesky decomposition)
+     * @dataProvider dataProviderForPositiveDefiniteMatrix
+     * @param        array $A
+     */
+    public function testCholeskyDecompositionLTimesLTransposeIsA(array $A)
+    {
+        $A   = MatrixFactory::create($A);
+        $L   = $A->choleskyDecomposition();
+        $Lᵀ  = $L->transpose();
+        $LLᵀ = $L->multiply($Lᵀ);
+
+        $this->assertEquals($A, $LLᵀ);
+        $this->assertEquals($A->getMatrix(), $LLᵀ->getMatrix());
+    }
+
+    /**
+     * @testCase     Axiom: L is lower triangular (Cholesky decomposition)
+     * @dataProvider dataProviderForPositiveDefiniteMatrix
+     * @param        array $A
+     */
+    public function testCholeskyDecompositionLIsLowerTriangular(array $A)
+    {
+        $A = MatrixFactory::create($A);
+        $L = $A->choleskyDecomposition();
+
+        $this->assertTrue($L->isLowerTriangular());
+    }
+
+    /**
+     * @testCase     Axiom: Lᵀ is upper triangular (Cholesky decomposition)
+     * @dataProvider dataProviderForPositiveDefiniteMatrix
+     * @param        array $A
+     */
+    public function testCholeskyDecompositionLTransposeIsUpperTriangular(array $A)
+    {
+        $A  = MatrixFactory::create($A);
+        $L  = $A->choleskyDecomposition();
+        $Lᵀ = $L->transpose();
+
+        $this->assertTrue($Lᵀ->isUpperTriangular());
+    }
+
+    /**
+     * @testCase     Axiom: adj⟮A⟯ = Cᵀ
+     *               Adjugate matrix equals the transpose of the cofactor matrix
+     * @dataProvider dataProviderForSquareMatrixGreaterThanOne
+     * @param        array $A
+     */
+    public function testAdjugateIsTransoseOfCofactorMatrix(array $A)
+    {
+        $A     = MatrixFactory::create($A);
+        $adj⟮A⟯ = $A->adjugate();
+        $Cᵀ    = $A->cofactorMatrix()->transpose();
+
+        $this->assertEquals($adj⟮A⟯, $Cᵀ, '', 0.00001);
+    }
+
+    /**
+     * @testCase     Axiom: A adj⟮A⟯ = det⟮A⟯ I
+     *               The product of A with its adjugate yields a diagonal matrix whose diagonal entries are det(A)
+     * @dataProvider dataProviderForSquareMatrixGreaterThanOne
+     * @param        array $A
+     */
+    public function testAdjugateTimesAIsIdentityMatrixTimesDeterminantOfA(array $A)
+    {
+        $A     = MatrixFactory::create($A);
+        $adj⟮A⟯ = $A->adjugate();
+        $Aadj⟮A⟯ = $A->multiply($adj⟮A⟯);
+
+        $I     = MatrixFactory::identity($A->getN());
+        $det⟮A⟯ = $A->det();
+        $det⟮A⟯I = $I->scalarMultiply($det⟮A⟯);
+
+        $this->assertEquals($Aadj⟮A⟯, $det⟮A⟯I, '', 0.00001);
+    }
+
+    /**
+     * @testCase     Axiom: adj⟮A⟯ = det⟮A⟯A⁻¹
+     *               The product of A with its adjugate yields a diagonal matrix whose diagonal entries are det(A)
+     * @dataProvider dataProviderForNonsingularMatrix
+     * @param        array $A
+     */
+    public function testAdjugateEqualsInverseOfATimesDeterminant(array $A)
+    {
+        $A     = MatrixFactory::create($A);
+        $A⁻¹   = $A->inverse();
+        $adj⟮A⟯ = $A->adjugate();
+        $det⟮A⟯ = $A->det();
+        $det⟮A⟯A⁻¹ = $A⁻¹->scalarMultiply($det⟮A⟯);
+
+        $this->assertEquals($adj⟮A⟯, $det⟮A⟯A⁻¹, '', 0.00001);
+    }
+
+    /**
+     * @testCase     Axiom: A⁻¹ = (1/det⟮A⟯) adj⟮A⟯
+     *               The inverse of a matrix is equals to one over the determinant multiplied by the adjugate
+     * @dataProvider dataProviderForNonsingularMatrix
+     * @param        array $A
+     */
+    public function testInverseEqualsOneOverDetTimesAdjugate(array $A)
+    {
+        $A             = MatrixFactory::create($A);
+        $A⁻¹           = $A->inverse();
+        $adj⟮A⟯         = $A->adjugate();
+        $det⟮A⟯         = $A->det();
+        $⟮1／det⟮A⟯⟯adj⟮A⟯ = $adj⟮A⟯->scalarMultiply(1/$det⟮A⟯);
+
+        $this->assertEquals($A⁻¹, $⟮1／det⟮A⟯⟯adj⟮A⟯, '', 0.00001);
+    }
+
+    /**
+     * @testCase     Axiom: adj⟮I⟯ = I
+     *               The adjugate of identity matrix is identity matrix
+     * @dataProvider dataProviderForIdentityMatrix
+     * @param        array $A
+     */
+    public function testAdjugateOfIdenetityMatrixIsIdentity(array $I)
+    {
+        $I     = MatrixFactory::create($I);
+        $adj⟮I⟯ = $I->adjugate();
+
+        $this->assertEquals($adj⟮I⟯, $I, '', 0.00001);
+    }
+
+    /**
+     * @testCase     Axiom: adj⟮AB⟯ = adj⟮B⟯adj⟮A⟯
+     *               The adjugate of AB equals the adjugate of B times the adjugate of A
+     * @dataProvider dataProviderForTwoNonsingularMatrixes
+     * @param        array $A
+     * @param        array $B
+     */
+    public function testAdjugateABEqualsAdjugateBTimesAdjugateA(array $A, array $B)
+    {
+        $A      = MatrixFactory::create($A);
+        $B      = MatrixFactory::create($B);
+        $AB     = $A->multiply($B);
+        $adj⟮A⟯  = $A->adjugate();
+        $adj⟮B⟯  = $B->adjugate();
+        $adj⟮AB⟯ = $AB->adjugate();
+        $adj⟮B⟯adj⟮A⟯ = $adj⟮B⟯->multiply($adj⟮A⟯);
+
+        $this->assertEquals($adj⟮AB⟯, $adj⟮B⟯adj⟮A⟯, '', 0.00001);
+    }
+
+    /**
+     * @testCase     Axiom: adj⟮cA⟯ = cⁿ⁻¹ adj⟮A⟯
+     *               The adjugate of a matrix times a scalar equals the adjugate of the matrix then times a scalar raised to n - 1
+     * @dataProvider dataProviderForNonsingularMatrix
+     * @param        array $A
+     */
+    public function testAdjugateAtimesCEqualsAdjugateATimesCRaisedToNMinusOne(array $A)
+    {
+        $c             = 4;
+        $A             = MatrixFactory::create($A);
+        $cA            = $A->scalarMultiply($c);
+        $adj⟮A⟯         = $A->adjugate();
+        $adj⟮cA⟯        = $cA->adjugate();
+        $cⁿ⁻¹          = pow($c, $A->getN() - 1);
+        $cⁿ⁻¹adj⟮A⟯     = $adj⟮A⟯->scalarMultiply($cⁿ⁻¹);
+
+        $this->assertEquals($adj⟮cA⟯, $cⁿ⁻¹adj⟮A⟯, '', 0.00001);
+    }
+
+    /**
+     * @testCase     Axiom: adj⟮B⟯adj⟮A⟯ = det⟮B⟯B⁻¹ det⟮A⟯A⁻¹ = det⟮AB⟯⟮AB⟯⁻¹
+     *               The adjugate of B times adjugate A equals the determinant of B times inverse of B times determinant of A times inverse of A
+     *               which equals the determinant of AB times the inverse of AB
+     * @dataProvider dataProviderForTwoNonsingularMatrixes
+     * @param        array $A
+     * @param        array $B
+     */
+    public function testAdjugateBTimesAdjugateAEqualsDetBTimesInverseBTimesDetATimesInverseAEqualsDetABTimesInverseAB(array $A, array $B)
+    {
+        $A      = MatrixFactory::create($A);
+        $B      = MatrixFactory::create($B);
+        $A⁻¹    = $A->inverse();
+        $B⁻¹    = $B->inverse();
+        $AB     = $A->multiply($B);
+        $⟮AB⟯⁻¹  = $AB->inverse();
+        $adj⟮A⟯  = $A->adjugate();
+        $adj⟮B⟯  = $B->adjugate();
+        $det⟮A⟯  = $A->det();
+        $det⟮B⟯  = $B->det();
+        $det⟮AB⟯ = $AB->det();
+
+        $det⟮A⟯A⁻¹ = $A⁻¹->scalarMultiply($det⟮A⟯);
+        $det⟮B⟯B⁻¹ = $B⁻¹->scalarMultiply($det⟮B⟯);
+
+        $adj⟮B⟯adj⟮A⟯       = $adj⟮B⟯->multiply($adj⟮A⟯);
+        $det⟮B⟯B⁻¹det⟮A⟯A⁻¹ = $det⟮B⟯B⁻¹->multiply($det⟮A⟯A⁻¹);
+        $det⟮AB⟯⟮AB⟯⁻¹      = $⟮AB⟯⁻¹->scalarMultiply($det⟮AB⟯);
+
+        $this->assertEquals($adj⟮B⟯adj⟮A⟯, $det⟮B⟯B⁻¹det⟮A⟯A⁻¹, '', 0.001);
+        $this->assertEquals($det⟮B⟯B⁻¹det⟮A⟯A⁻¹, $det⟮AB⟯⟮AB⟯⁻¹, '', 0.001);
+        $this->assertEquals($adj⟮B⟯adj⟮A⟯, $det⟮AB⟯⟮AB⟯⁻¹, '', 0.001);
+    }
+
+    /**
+     * @testCase     Axiom: adj⟮Aᵀ⟯ = adj⟮A⟯ᵀ
+     *               The adjugate of a matrix transpase equals the transpose of a matrix adjugate
+     * @dataProvider dataProviderForNonsingularMatrix
+     * @param        array $A
+     */
+    public function testAdjugateOfTransposeEqualsTransposeOfAdjugate(array $A)
+    {
+        $A       = MatrixFactory::create($A);
+        $Aᵀ      = $A->transpose();
+        $adj⟮A⟯   = $A->adjugate();
+        $adj⟮Aᵀ⟯  = $Aᵀ->adjugate();
+        $adj⟮A⟯ᵀ  = $adj⟮A⟯->transpose();
+
+
+        $this->assertEquals($adj⟮Aᵀ⟯, $adj⟮A⟯ᵀ, '', 0.00001);
+    }
+
+    /**
+     * @testCase     Axiom: Aadj⟮A⟯ = adj⟮A⟯A = det⟮A⟯I
+     *               A matrix times its adjugate equals the adjugate times the matrix which equals the identity matrix times the determinant
+     * @dataProvider dataProviderForNonsingularMatrix
+     * @param        array $A
+     */
+    public function testMatrixTimesItsAdjugateEqualsAdjugateTimesMatrixEqualsDetTimesIdentity(array $A)
+    {
+        $A      = MatrixFactory::create($A);
+        $adj⟮A⟯  = $A->adjugate();
+        $Aadj⟮A⟯ = $A->multiply($adj⟮A⟯);
+        $adj⟮A⟯A = $adj⟮A⟯->multiply($A);
+        $det⟮A⟯  = $A->det();
+        $I      = MatrixFactory::identity($A->getN());
+        $det⟮A⟯I = $I->scalarMultiply($det⟮A⟯);
+
+        $this->assertEquals($Aadj⟮A⟯, $adj⟮A⟯A, '', 0.0001);
+        $this->assertEquals($Aadj⟮A⟯, $det⟮A⟯I, '', 0.0001);
+        $this->assertEquals($adj⟮A⟯A, $det⟮A⟯I, '', 0.0001);
+    }
+
+    /**
+     * @testCase     Axiom: rank(A) ≤ min(m, n)
+     *               The rank of a matrix is less than or equal to the minimum dimension of the matrix
+     * @dataProvider dataProviderForSingleMatrix
+     * @param        array $A
+     */
+    public function testRankLessThanMinDimension(array $A)
+    {
+        $A = MatrixFactory::create($A);
+
+        $this->assertLessThanOrEqual(min($A->getM(), $A->getN()), $A->rank());
+    }
+
+    /**
+     * @testCase Axiom: Zero matrix has rank of 0
+     */
+    public function testZeroMatrixHasRankOfZero()
+    {
+        foreach (range(1, 10) as $m) {
+            foreach (range(1, 10) as $n) {
+                $A = MatrixFactory::zero($m, $n);
+                $this->assertEquals(0, $A->rank());
+            }
+        }
+    }
+
+    /**
+     * @testCase     Axiom: If A is square matrix, then it is invertible only if rank = n (full rank)
+     * @dataProvider dataProviderForSquareMatrix
+     * @param        array $A
+     */
+    public function testSquareMatrixInvertibleIfFullRank(array $A)
+    {
+        $A    = MatrixFactory::create($A);
+        $rank = $A->rank();
+
+        if ($rank === $A->getM()) {
+            $this->assertTrue($A->isInvertible());
+        } else {
+            $this->assertFalse($A->isInvertible());
+        }
+    }
+
+    /**
+     * @testCase     Axiom: rank(AᵀA) = rank(AAᵀ) = rank(A) = rank(Aᵀ)
+     * @dataProvider dataProviderForSingleMatrix
+     * @param        array $A
+     */
+    public function testRankTransposeEqualities(array $A)
+    {
+        $A   = MatrixFactory::create($A);
+        $Aᵀ  = $A->transpose();
+        $AᵀA = $Aᵀ->multiply($A);
+        $AAᵀ = $A->multiply($Aᵀ);
+
+        $rank⟮A⟯   = $A->rank();
+        $rank⟮Aᵀ⟯  = $A->rank();
+        $rank⟮AᵀA⟯ = $A->rank();
+        $rank⟮AAᵀ⟯ = $A->rank();
+
+        $this->assertEquals($rank⟮A⟯, $rank⟮Aᵀ⟯);
+        $this->assertEquals($rank⟮A⟯, $rank⟮AᵀA⟯);
+        $this->assertEquals($rank⟮A⟯, $rank⟮AAᵀ⟯);
+        $this->assertEquals($rank⟮Aᵀ⟯, $rank⟮AᵀA⟯);
+        $this->assertEquals($rank⟮Aᵀ⟯, $rank⟮AAᵀ⟯);
+        $this->assertEquals($rank⟮AᵀA⟯, $rank⟮AAᵀ⟯);
+    }
+
+    /**
+     * @testCase     Axiom: Lower bidiagonal matrix is upper Hessenberg
+     * @dataProvider dataProviderForLowerBidiagonalMatrix
+     * @param        array $A
+     */
+    public function testLowerBidiagonalMatrixIsUpperHessenberg(array $A)
+    {
+        $A = MatrixFactory::create($A);
+
+        $this->assertTrue($A->isLowerBidiagonal());
+        $this->assertTrue($A->isUpperHessenberg());
+    }
+
+    /**
+     * @testCase     Axiom: Upper bidiagonal matrix is lower Hessenberg
+     * @dataProvider dataProviderForUpperBidiagonalMatrix
+     * @param        array $A
+     */
+    public function testUpperBidiagonalMatrixIsLowerHessenberg(array $A)
+    {
+        $A = MatrixFactory::create($A);
+
+        $this->assertTrue($A->isUpperBidiagonal());
+        $this->assertTrue($A->isLowerHessenberg());
+    }
+
+    /**
+     * @testCase     Axiom: A matrix that is both upper Hessenberg and lower Hessenberg is a tridiagonal matrix
+     * @dataProvider dataProviderForTridiagonalMatrix
+     * @param        array $A
+     */
+    public function testTridiagonalMatrixIsUpperAndLowerHessenberg(array $A)
+    {
+        $A = MatrixFactory::create($A);
+
+        $this->assertTrue($A->isTridiagonal());
+        $this->assertTrue($A->isUpperHessenberg());
+        $this->assertTrue($A->isLowerHessenberg());
     }
 }

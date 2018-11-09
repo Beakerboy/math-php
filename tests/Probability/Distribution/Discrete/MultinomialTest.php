@@ -1,17 +1,27 @@
 <?php
-namespace MathPHP\Probability\Distribution\Discrete;
+namespace MathPHP\Tests\Probability\Distribution\Discrete;
 
-class MultinomialTest extends \PHPUnit_Framework_TestCase
+use MathPHP\Probability\Distribution\Discrete\Multinomial;
+use MathPHP\Exception;
+
+class MultinomialTest extends \PHPUnit\Framework\TestCase
 {
     /**
+     * @testCase     pmf
      * @dataProvider dataProviderForPMF
+     * @param        array $frequencies
+     * @param        array $probabilities
      */
     public function testPMF(array $frequencies, array $probabilities, $pmf)
     {
-        $this->assertEquals($pmf, Multinomial::PMF($frequencies, $probabilities), '', 0.001);
+        $multinomial = new Multinomial($probabilities);
+        $this->assertEquals($pmf, $multinomial->pmf($frequencies), '', 0.001);
     }
 
-    public function dataProviderForPMF()
+    /**
+     * @return array
+     */
+    public function dataProviderForPMF(): array
     {
         return [
             [ [1, 1], [0.5, 0.5], 0.5 ],
@@ -23,15 +33,25 @@ class MultinomialTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
+    /**
+     * @testCase pmf throws Exception\BadDataException if the number of frequencies does not match the number of probabilities
+     */
     public function testPMFExceptionCountFrequenciesAndProbabilitiesDoNotMatch()
     {
-        $this->setExpectedException('MathPHP\Exception\BadDataException');
-        Multinomial::PMF([1, 2,3], [0.3, 0.4, 0.2, 0.1]);
+        $probabilities = [0.3, 0.4, 0.2, 0.1];
+        $frequencies   = [1, 2, 3];
+        $multinomial   = new Multinomial($probabilities);
+
+        $this->expectException(Exception\BadDataException::class);
+        $multinomial->pmf($frequencies);
     }
 
+    /**
+     * @testCase constructor throws Exception\BadDataException if the probabilities do not add up to 1
+     */
     public function testPMFExceptionProbabilitiesDoNotAddUpToOne()
     {
-        $this->setExpectedException('MathPHP\Exception\BadDataException');
-        Multinomial::PMF([1, 2,3], [0.3, 0.2, 0.1]);
+        $this->expectException(Exception\BadDataException::class);
+        $multinomial = new Multinomial([0.3, 0.2, 0.1]);
     }
 }

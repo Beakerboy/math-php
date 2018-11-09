@@ -1,7 +1,11 @@
 <?php
-namespace MathPHP\LinearAlgebra;
+namespace MathPHP\Tests\LinearAlgebra;
 
-class VectorOperationsTest extends \PHPUnit_Framework_TestCase
+use MathPHP\LinearAlgebra\Vector;
+use MathPHP\LinearAlgebra\Matrix;
+use MathPHP\Exception;
+
+class VectorOperationsTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @dataProvider dataProviderForDotProduct
@@ -37,7 +41,7 @@ class VectorOperationsTest extends \PHPUnit_Framework_TestCase
         $A = new Vector([1, 2]);
         $B = new Vector([1, 2, 3]);
 
-        $this->setExpectedException('MathPHP\Exception\VectorException');
+        $this->expectException(Exception\VectorException::class);
         $A->dotProduct($B);
     }
 
@@ -121,7 +125,7 @@ class VectorOperationsTest extends \PHPUnit_Framework_TestCase
         $A = new Vector($A);
         $B = new Vector($B);
 
-        $this->setExpectedException('MathPHP\Exception\VectorException');
+        $this->expectException(Exception\VectorException::class);
         $A->crossProduct($B);
     }
 
@@ -398,7 +402,7 @@ class VectorOperationsTest extends \PHPUnit_Framework_TestCase
         $A = new Vector([1, 2, 3]);
         $B = new Vector([1, 2]);
 
-        $this->setExpectedException('MathPHP\Exception\VectorException');
+        $this->expectException(Exception\VectorException::class);
         $A->add($B);
     }
 
@@ -447,7 +451,7 @@ class VectorOperationsTest extends \PHPUnit_Framework_TestCase
         $A = new Vector([1, 2, 3]);
         $B = new Vector([1, 2]);
 
-        $this->setExpectedException('MathPHP\Exception\VectorException');
+        $this->expectException(Exception\VectorException::class);
         $A->subtract($B);
     }
 
@@ -534,7 +538,7 @@ class VectorOperationsTest extends \PHPUnit_Framework_TestCase
     {
         $A = new Vector([1, 2, 3]);
 
-        $this->setExpectedException('MathPHP\Exception\VectorException');
+        $this->expectException(Exception\VectorException::class);
         $A->perpendicular();
     }
 
@@ -571,7 +575,7 @@ class VectorOperationsTest extends \PHPUnit_Framework_TestCase
         $A = new Vector([1, 2, 3]);
         $B = new Vector([1, 2, 3]);
 
-        $this->setExpectedException('MathPHP\Exception\VectorException');
+        $this->expectException(Exception\VectorException::class);
         $A->perpDotProduct($B);
     }
 

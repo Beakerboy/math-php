@@ -1,5 +1,8 @@
 <?php
-namespace MathPHP\LinearAlgebra;
+namespace MathPHP\Tests\LinearAlgebra;
+
+use MathPHP\LinearAlgebra\Vector;
+use MathPHP\LinearAlgebra\Matrix;
 
 /**
  * Tests of Vector axioms
@@ -44,7 +47,7 @@ namespace MathPHP\LinearAlgebra;
  *    - projᵇA ⋅ perpᵇA = 0
  *    - |projᵇA⊥ ⋅ perpᵇA| = |projᵇA| |perpᵇA|
  */
-class VectorAxiomsTest extends \PHPUnit_Framework_TestCase
+class VectorAxiomsTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Axiom: |x|₂ ≤ |x|₁ ≤ √n |x|₂

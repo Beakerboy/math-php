@@ -1,7 +1,10 @@
 <?php
-namespace MathPHP\NumericalAnalysis\NumericalDifferentiation;
+namespace MathPHP\Tests\NumericalAnalysis\NumericalDifferentiation;
 
-class SecondDerivativeMidpointFormulaTest extends \PHPUnit_Framework_TestCase
+use MathPHP\NumericalAnalysis\NumericalDifferentiation\SecondDerivativeMidpointFormula;
+use MathPHP\Exception;
+
+class SecondDerivativeMidpointFormulaTest extends \PHPUnit\Framework\TestCase
 {
     public function testZeroError()
     {
@@ -109,5 +112,24 @@ class SecondDerivativeMidpointFormulaTest extends \PHPUnit_Framework_TestCase
         $expected = $f’’($target);
         $actual = SecondDerivativeMidpointFormula::differentiate($target, $points);
         $this->assertEquals($expected, $actual);
+    }
+
+    public function testTargetException()
+    {
+        // f(x) = 13x² -92x + 96
+        $f = function ($x) {
+            return 13 * $x**2 - 92 * $x + 96;
+        };
+
+        $points = [[0, $f(0)], [2, $f(2)], [4, $f(4)]];
+
+        $f’’ = function ($x) {
+            return 26;
+        };
+
+        $this->expectException(Exception\BadDataException::class);
+        $target   = 87348738473;
+        $expected = $f’’($target);
+        $actual   = SecondDerivativeMidpointFormula::differentiate($target, $points);
     }
 }

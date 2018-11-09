@@ -1,5 +1,7 @@
 <?php
-namespace MathPHP\SetTheory;
+namespace MathPHP\Tests\SetTheory;
+
+use MathPHP\SetTheory\Set;
 
 /**
  * Tests of Set axioms
@@ -43,7 +45,7 @@ namespace MathPHP\SetTheory;
  *  - Power set
  *    - |S| = n, then |P(S)| = 2ⁿ
  */
-class SetAxiomsTest extends \PHPUnit_Framework_TestCase
+class SetAxiomsTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Axiom: Ø ⊆ A

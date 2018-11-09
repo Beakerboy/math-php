@@ -1,8 +1,16 @@
 <?php
-namespace MathPHP\LinearAlgebra;
+namespace MathPHP\Tests\LinearAlgebra;
 
-class MatrixFactorTest extends \PHPUnit_Framework_TestCase
+use MathPHP\LinearAlgebra\Matrix;
+use MathPHP\LinearAlgebra\MatrixFactory;
+use MathPHP\LinearAlgebra\SquareMatrix;
+use MathPHP\LinearAlgebra\Vector;
+use MathPHP\Exception;
+
+class MatrixFactoryTest extends \PHPUnit\Framework\TestCase
 {
+    use \MathPHP\Tests\LinearAlgebra\MatrixDataProvider;
+
     /**
      * @dataProvider dataProviderForDiagonalMatrix
      */
@@ -10,8 +18,8 @@ class MatrixFactorTest extends \PHPUnit_Framework_TestCase
     {
         $A = MatrixFactory::create($A);
 
-        $this->assertInstanceOf('MathPHP\LinearAlgebra\DiagonalMatrix', $A);
-        $this->assertInstanceOf('MathPHP\LinearAlgebra\Matrix', $A);
+        $this->assertInstanceOf(\MathPHP\LinearAlgebra\DiagonalMatrix::class, $A);
+        $this->assertInstanceOf(\MathPHP\LinearAlgebra\Matrix::class, $A);
     }
 
     public function dataProviderForDiagonalMatrix()
@@ -31,8 +39,8 @@ class MatrixFactorTest extends \PHPUnit_Framework_TestCase
     {
         $A = MatrixFactory::create($A);
 
-        $this->assertInstanceOf('MathPHP\LinearAlgebra\SquareMatrix', $A);
-        $this->assertInstanceOf('MathPHP\LinearAlgebra\Matrix', $A);
+        $this->assertInstanceOf(SquareMatrix::class, $A);
+        $this->assertInstanceOf(Matrix::class, $A);
     }
 
     public function dataProviderForSquareMatrix()
@@ -64,9 +72,9 @@ class MatrixFactorTest extends \PHPUnit_Framework_TestCase
     {
         $A = MatrixFactory::create($A, $n);
 
-        $this->assertInstanceOf('MathPHP\LinearAlgebra\VandermondeSquareMatrix', $A);
-        $this->assertInstanceOf('MathPHP\LinearAlgebra\SquareMatrix', $A);
-        $this->assertInstanceOf('MathPHP\LinearAlgebra\Matrix', $A);
+        $this->assertInstanceOf(\MathPHP\LinearAlgebra\VandermondeSquareMatrix::class, $A);
+        $this->assertInstanceOf(\MathPHP\LinearAlgebra\SquareMatrix::class, $A);
+        $this->assertInstanceOf(\MathPHP\LinearAlgebra\Matrix::class, $A);
     }
 
     public function dataProviderForVandermondeSquareMatrix()
@@ -94,8 +102,8 @@ class MatrixFactorTest extends \PHPUnit_Framework_TestCase
     {
         $A = MatrixFactory::create($A, $n);
 
-        $this->assertInstanceOf('MathPHP\LinearAlgebra\VandermondeMatrix', $A);
-        $this->assertInstanceOf('MathPHP\LinearAlgebra\Matrix', $A);
+        $this->assertInstanceOf(\MathPHP\LinearAlgebra\VandermondeMatrix::class, $A);
+        $this->assertInstanceOf(\MathPHP\LinearAlgebra\Matrix::class, $A);
     }
 
     public function dataProviderForVandermondeMatrix()
@@ -123,11 +131,17 @@ class MatrixFactorTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider dataProviderForArrayOfVectors
      */
-    public function testCreateArrayOfVectors(array $A, array $expected)
+    public function testCreateArrayOfVectors(array $vectors, array $expected)
     {
-        $A = MatrixFactory::create($A);
+        $vectors = array_map(
+            function ($vector) {
+                return new Vector($vector);
+            },
+            $vectors
+        );
+        $A = MatrixFactory::create($vectors);
 
-        $this->assertInstanceOf('MathPHP\LinearAlgebra\Matrix', $A);
+        $this->assertInstanceOf(Matrix::class, $A);
         $this->assertEquals($expected, $A->getMatrix());
     }
 
@@ -136,7 +150,7 @@ class MatrixFactorTest extends \PHPUnit_Framework_TestCase
         return [
             [
                 [
-                    new Vector([1, 2]),
+                    [1, 2],
                 ],
                 [
                     [1],
@@ -145,8 +159,8 @@ class MatrixFactorTest extends \PHPUnit_Framework_TestCase
             ],
             [
                 [
-                    new Vector([1, 2]),
-                    new Vector([3, 4]),
+                    [1, 2],
+                    [3, 4],
                 ],
                 [
                     [1, 3],
@@ -155,9 +169,9 @@ class MatrixFactorTest extends \PHPUnit_Framework_TestCase
             ],
             [
                 [
-                    new Vector([1, 2]),
-                    new Vector([3, 4]),
-                    new Vector([5, 6]),
+                    [1, 2],
+                    [3, 4],
+                    [5, 6],
                 ],
                 [
                     [1, 3, 5],
@@ -166,9 +180,9 @@ class MatrixFactorTest extends \PHPUnit_Framework_TestCase
             ],
             [
                 [
-                    new Vector([1, 2, 3]),
-                    new Vector([3, 4, 5]),
-                    new Vector([5, 6, 6]),
+                    [1, 2, 3],
+                    [3, 4, 5],
+                    [5, 6, 6],
                 ],
                 [
                     [1, 3, 5],
@@ -186,7 +200,7 @@ class MatrixFactorTest extends \PHPUnit_Framework_TestCase
             new Vector([4, 5, 6]),
         ];
 
-        $this->setExpectedException('MathPHP\Exception\MatrixException');
+        $this->expectException(Exception\MatrixException::class);
         $A = MatrixFactory::create($A);
     }
 
@@ -197,9 +211,9 @@ class MatrixFactorTest extends \PHPUnit_Framework_TestCase
     {
         $A = MatrixFactory::create($A);
 
-        $this->assertInstanceOf('MathPHP\LinearAlgebra\FunctionSquareMatrix', $A);
-        $this->assertInstanceOf('MathPHP\LinearAlgebra\SquareMatrix', $A);
-        $this->assertInstanceOf('MathPHP\LinearAlgebra\Matrix', $A);
+        $this->assertInstanceOf(\MathPHP\LinearAlgebra\FunctionSquareMatrix::class, $A);
+        $this->assertInstanceOf(\MathPHP\LinearAlgebra\SquareMatrix::class, $A);
+        $this->assertInstanceOf(\MathPHP\LinearAlgebra\Matrix::class, $A);
     }
 
     public function dataProviderForFunctionSquareMatrix()
@@ -237,8 +251,8 @@ class MatrixFactorTest extends \PHPUnit_Framework_TestCase
     {
         $A = MatrixFactory::create($A);
 
-        $this->assertInstanceOf('MathPHP\LinearAlgebra\FunctionMatrix', $A);
-        $this->assertInstanceOf('MathPHP\LinearAlgebra\Matrix', $A);
+        $this->assertInstanceOf(\MathPHP\LinearAlgebra\FunctionMatrix::class, $A);
+        $this->assertInstanceOf(\MathPHP\LinearAlgebra\Matrix::class, $A);
     }
 
     public function dataProviderForFunctionMatrix()
@@ -278,12 +292,12 @@ class MatrixFactorTest extends \PHPUnit_Framework_TestCase
     {
         $A = MatrixFactory::create($A);
 
-        $this->assertInstanceOf('MathPHP\LinearAlgebra\Matrix', $A);
+        $this->assertInstanceOf(\MathPHP\LinearAlgebra\Matrix::class, $A);
 
-        $this->assertNotInstanceOf('MathPHP\LinearAlgebra\SquareMatrix', $A);
-        $this->assertNotInstanceOf('MathPHP\LinearAlgebra\FunctionMatrix', $A);
-        $this->assertNotInstanceOf('MathPHP\LinearAlgebra\VandermondeMatrix', $A);
-        $this->assertNotInstanceOf('MathPHP\LinearAlgebra\DiagonalMatrix', $A);
+        $this->assertNotInstanceOf(\MathPHP\LinearAlgebra\SquareMatrix::class, $A);
+        $this->assertNotInstanceOf(\MathPHP\LinearAlgebra\FunctionMatrix::class, $A);
+        $this->assertNotInstanceOf(\MathPHP\LinearAlgebra\VandermondeMatrix::class, $A);
+        $this->assertNotInstanceOf(\MathPHP\LinearAlgebra\DiagonalMatrix::class, $A);
     }
 
     public function dataProviderForMatrix()
@@ -310,7 +324,7 @@ class MatrixFactorTest extends \PHPUnit_Framework_TestCase
     {
         $A = [];
 
-        $this->setExpectedException('MathPHP\Exception\BadDataException');
+        $this->expectException(Exception\BadDataException::class);
         $M = MatrixFactory::create($A);
     }
 
@@ -321,7 +335,7 @@ class MatrixFactorTest extends \PHPUnit_Framework_TestCase
             [[2], [3], [4]],
         ];
 
-        $this->setExpectedException('MathPHP\Exception\IncorrectTypeException');
+        $this->expectException(Exception\IncorrectTypeException::class);
         MatrixFactory::create($A);
     }
 
@@ -373,12 +387,169 @@ class MatrixFactorTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
+    /**
+     * @testCase     downshiftPermutation
+     * @dataProvider dataProviderForDownshiftPermutation
+     * @param        int $n
+     * @param        array $R
+     * @throws       \Exception
+     */
+    public function testDownshiftPermutation(int $n, array $R)
+    {
+        $R = new SquareMatrix($R);
+        $this->assertEquals($R, MatrixFactory::downshiftPermutation($n));
+    }
+
+    /**
+     * @return array [n, R]
+     */
+    public function dataProviderForDownshiftPermutation(): array
+    {
+        return [
+            [
+                1,
+                [
+                    [1]
+                ]
+            ],
+            [
+                2,
+                [
+                    [0, 1],
+                    [1, 0],
+                ]
+            ],
+            [
+                3,
+                [
+                    [0, 0, 1],
+                    [1, 0, 0],
+                    [0, 1, 0],
+                ]
+            ],
+            [
+                4,
+                [
+                    [0, 0, 0, 1],
+                    [1, 0, 0, 0],
+                    [0, 1, 0, 0],
+                    [0, 0, 1, 0],
+                ]
+            ],
+        ];
+    }
+
+    /**
+     * @testCase     upshiftPermutation
+     * @dataProvider dataProviderForUpshiftPermutation
+     * @param        int $n
+     * @param        array $R
+     * @throws       \Exception
+     */
+    public function testUpshiftPermutation(int $n, array $R)
+    {
+        $R = new SquareMatrix($R);
+        $this->assertEquals($R, MatrixFactory::upshiftPermutation($n));
+    }
+
+    /**
+     * @return array [n, R]
+     */
+    public function dataProviderForUpshiftPermutation(): array
+    {
+        return [
+            [
+                1,
+                [
+                    [1]
+                ]
+            ],
+            [
+                2,
+                [
+                    [0, 1],
+                    [1, 0],
+                ]
+            ],
+            [
+                3,
+                [
+                    [0, 1, 0],
+                    [0, 0, 1],
+                    [1, 0, 0],
+                ]
+            ],
+            [
+                4,
+                [
+                    [0, 1, 0, 0],
+                    [0, 0, 1, 0],
+                    [0, 0, 0, 1],
+                    [1, 0, 0, 0],
+                ]
+            ],
+        ];
+    }
+
     public function testIdentityExceptionNLessThanZero()
     {
-        $this->setExpectedException('MathPHP\Exception\OutOfBoundsException');
+        $this->expectException(Exception\OutOfBoundsException::class);
         MatrixFactory::identity(-1);
     }
 
+    /**
+     * @dataProvider dataProviderForExchange
+     */
+    public function testExchange(int $n, $x, array $R)
+    {
+        $R = new SquareMatrix($R);
+        $this->assertEquals($R, MatrixFactory::exchange($n, $x));
+    }
+
+    public function dataProviderForExchange()
+    {
+        return [
+            [
+                1, 1, [[1]],
+            ],
+            [
+                2, 1, [
+                    [0, 1],
+                    [1, 0],
+                ]
+            ],
+            [
+                3, 1, [
+                    [0, 0, 1],
+                    [0, 1, 0],
+                    [1, 0, 0]
+                ]
+            ],
+            [
+                4, 1, [
+                    [0, 0, 0, 1],
+                    [0, 0, 1, 0],
+                    [0, 1, 0, 0],
+                    [1, 0, 0, 0],
+                ]
+            ],
+            [
+                4, 5, [
+                    [0, 0, 0, 5],
+                    [0, 0, 5, 0],
+                    [0, 5, 0, 0],
+                    [5, 0, 0, 0],
+                ]
+            ],
+
+        ];
+    }
+
+    public function testExchangeExceptionNLessThanZero()
+    {
+        $this->expectException(Exception\OutOfBoundsException::class);
+        MatrixFactory::exchange(-1);
+    }
 
     /**
      * @dataProvider dataProviderForZero
@@ -426,7 +597,7 @@ class MatrixFactorTest extends \PHPUnit_Framework_TestCase
 
     public function testZeroExceptionRowsLessThanOne()
     {
-        $this->setExpectedException('MathPHP\Exception\OutOfBoundsException');
+        $this->expectException(Exception\OutOfBoundsException::class);
         MatrixFactory::zero(0, 2);
     }
 
@@ -476,7 +647,7 @@ class MatrixFactorTest extends \PHPUnit_Framework_TestCase
 
     public function testOneExceptionRowsLessThanOne()
     {
-        $this->setExpectedException('MathPHP\Exception\OutOfBoundsException');
+        $this->expectException(Exception\OutOfBoundsException::class);
         MatrixFactory::one(0, 2);
     }
 
@@ -647,7 +818,7 @@ class MatrixFactorTest extends \PHPUnit_Framework_TestCase
      */
     public function testEyeExceptions(int $m, int $n, int $k, int $x)
     {
-        $this->setExpectedException('MathPHP\Exception\OutOfBoundsException');
+        $this->expectException(Exception\OutOfBoundsException::class);
         $A = MatrixFactory::eye($m, $n, $k, $x);
     }
 
@@ -660,5 +831,24 @@ class MatrixFactorTest extends \PHPUnit_Framework_TestCase
             [2, 2, 2, 1],
             [2, 2, 3, 1],
         ];
+    }
+
+    /**
+     * @testCase     hilbert creates the expected Hilbert matrix
+     * @dataProvider dataProviderForHilbertMatrix
+     * @param        int $n
+     * @param        array $H
+     */
+    public function testHilbertMatrix($n, $H)
+    {
+        $H = MatrixFactory::create($H);
+
+        $this->assertEquals($H, MatrixFactory::hilbert($n));
+    }
+
+    public function testHilbertExceptionNLessThanZero()
+    {
+        $this->expectException(Exception\OutOfBoundsException::class);
+        MatrixFactory::hilbert(-1);
     }
 }

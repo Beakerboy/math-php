@@ -25,24 +25,26 @@ class ParametricRegression extends Regression
     {
         return $this->getEquation();
     }
+
     /**
      * Get the equation
      * Uses the model's getModelEquation method.
      *
      * @return string
      */
-    public function getEquation()
+    public function getEquation(): string
     {
-        return call_user_func([get_class($this), 'getModelEquation'], $this->parameters);
+        return $this->getModelEquation($this->parameters);
     }
+
     /**
      * Get the parameters
      * Uses the model's getModelParameters method.
      *
      * @return array
      */
-    public function getParameters()
+    public function getParameters(): array
     {
-        return call_user_func([get_class($this), 'getModelParameters'], $this->parameters);
+        return $this->getModelParameters($this->parameters);
     }
 }

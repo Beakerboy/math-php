@@ -1,7 +1,10 @@
 <?php
-namespace MathPHP\NumericalAnalysis\RootFinding;
+namespace MathPHP\Tests\NumericalAnalysis\RootFinding;
 
-class FixedPointIterationTest extends \PHPUnit_Framework_TestCase
+use MathPHP\NumericalAnalysis\RootFinding\FixedPointIteration;
+use MathPHP\Exception;
+
+class FixedPointIterationTest extends \PHPUnit\Framework\TestCase
 {
     public function testSolve()
     {
@@ -51,7 +54,7 @@ class FixedPointIterationTest extends \PHPUnit_Framework_TestCase
         $b        = 3;
         $p        = 0;
 
-        $this->setExpectedException('MathPHP\Exception\OutOfBoundsException');
+        $this->expectException(Exception\OutOfBoundsException::class);
         $x = FixedPointIteration::solve($func, $a, $b, $p, $tol);
     }
 
@@ -66,7 +69,7 @@ class FixedPointIterationTest extends \PHPUnit_Framework_TestCase
         $b        = 3;
         $p        = 3;
 
-        $this->setExpectedException('MathPHP\Exception\BadDataException');
+        $this->expectException(Exception\BadDataException::class);
         $x = FixedPointIteration::solve($func, $a, $b, $p, $tol);
     }
 
@@ -81,7 +84,7 @@ class FixedPointIterationTest extends \PHPUnit_Framework_TestCase
         $b        = 3;
         $p        = -1;
 
-        $this->setExpectedException('MathPHP\Exception\OutOfBoundsException');
+        $this->expectException(Exception\OutOfBoundsException::class);
         $x = FixedPointIteration::solve($func, $a, $b, $p, $tol);
     }
 }

@@ -1,8 +1,9 @@
 <?php
+namespace MathPHP\Tests\NumericalAnalysis\NumericalIntegration;
 
-namespace MathPHP\NumericalAnalysis\NumericalIntegration;
+use MathPHP\NumericalAnalysis\NumericalIntegration\TrapezoidalRule;
 
-class TrapezoidalRuleTest extends \PHPUnit_Framework_TestCase
+class TrapezoidalRuleTest extends \PHPUnit\Framework\TestCase
 {
     public function testSolvePolynomial()
     {

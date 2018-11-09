@@ -1,7 +1,10 @@
 <?php
-namespace MathPHP\LinearAlgebra;
+namespace MathPHP\Tests\LinearAlgebra;
 
-class VandermondeMatrixTest extends \PHPUnit_Framework_TestCase
+use MathPHP\LinearAlgebra\VandermondeMatrix;
+use MathPHP\LinearAlgebra\Matrix;
+
+class VandermondeMatrixTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @dataProvider dataProviderForTestConstructor
@@ -11,8 +14,8 @@ class VandermondeMatrixTest extends \PHPUnit_Framework_TestCase
         $M = new VandermondeMatrix($M, $n);
         $V = new Matrix($V);
 
-        $this->assertInstanceOf('MathPHP\LinearAlgebra\VandermondeMatrix', $M);
-        $this->assertInstanceOf('MathPHP\LinearAlgebra\Matrix', $M);
+        $this->assertInstanceOf(VandermondeMatrix::class, $M);
+        $this->assertInstanceOf(Matrix::class, $M);
         
         $m = $V->getM();
         for ($i = 0; $i < $m; $i++) {

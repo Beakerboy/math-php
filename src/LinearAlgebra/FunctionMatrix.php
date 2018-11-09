@@ -1,9 +1,23 @@
 <?php
 namespace MathPHP\LinearAlgebra;
 
+use MathPHP\Exception;
+
 class FunctionMatrix extends Matrix
 {
-    public function evaluate(array $params)
+    /**
+     * Evaluate
+     *
+     * @param array $params
+     *
+     * @return Matrix
+     *
+     * @throws Exception\BadDataException
+     * @throws Exception\IncorrectTypeException
+     * @throws Exception\MathException
+     * @throws Exception\MatrixException
+     */
+    public function evaluate(array $params): Matrix
     {
         $m = $this->m;
         $n = $this->n;

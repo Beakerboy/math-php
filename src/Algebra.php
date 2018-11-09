@@ -1,7 +1,8 @@
 <?php
 namespace MathPHP;
 
-use MathPHP\Arithmetic;
+use MathPHP\Number\Complex;
+use MathPHP\Functions\Map\Single;
 
 class Algebra
 {
@@ -47,7 +48,7 @@ class Algebra
      *
      * @return array [gcd, a', b']
      */
-    public static function extendedGCD(int $a, int $b): array
+    public static function extendedGcd(int $a, int $b): array
     {
         // Base cases
         if ($a == 0) {
@@ -165,12 +166,16 @@ class Algebra
      * @param  number $a x² coefficient
      * @param  number $b x coefficient
      * @param  number $c constant coefficient
+     * @param  bool $return_complex Whether to return complex numbers or NANs if imaginary roots
      *
-     * @return array  [x₁, x₂]   roots of the equation, or
-     *                [NAN, NAN] if discriminant is negative, or
-     *                [x]        if a = 0 and formula isn't quadratics
+     * @return float[]|Complex[]  [x₁, x₂]           roots of the equation, or
+     *                            [NAN, NAN]         if discriminant is negative, or
+     *                            [Complex, Complex] if discriminant is negative and complex option is on or
+     *                            [x]                if a = 0 and formula isn't quadratics
+     *
+     * @throws Exception\IncorrectTypeException
      */
-    public static function quadratic($a, $b, $c): array
+    public static function quadratic($a, $b, $c, bool $return_complex = false): array
     {
         // Formula not quadratic (a = 0)
         if ($a === 0) {
@@ -180,13 +185,18 @@ class Algebra
         // Discriminant intermediate calculation and imaginary number check
         $⟮b² − 4ac⟯ = self::discriminant($a, $b, $c);
         if ($⟮b² − 4ac⟯ < 0) {
-            return [\NAN, \NAN];
+            if (!$return_complex) {
+                return [\NAN, \NAN];
+            }
+            $complex = new Number\Complex(0, sqrt(-1 * $⟮b² − 4ac⟯));
+            $x₁ = $complex->multiply(-1)->subtract($b)->divide(2 * $a);
+            $x₂ = $complex->subtract($b)->divide(2 * $a);
+        } else {
+            // Standard quadratic equation case
+            $√⟮b² − 4ac⟯ = sqrt(self::discriminant($a, $b, $c));
+            $x₁         = (-$b - $√⟮b² − 4ac⟯) / (2*$a);
+            $x₂         = (-$b + $√⟮b² − 4ac⟯) / (2*$a);
         }
-
-        // Standard quadratic equation case
-        $√⟮b² − 4ac⟯ = sqrt(self::discriminant($a, $b, $c));
-        $x₁         = (-$b - $√⟮b² − 4ac⟯) / (2*$a);
-        $x₂         = (-$b + $√⟮b² − 4ac⟯) / (2*$a);
 
         return [$x₁, $x₂];
     }
@@ -197,13 +207,13 @@ class Algebra
      *
      * Δ = b² - 4ac
      *
-     * @param  number $a x² coefficient
-     * @param  number $b x coefficient
-     * @param  number $c constant coefficient
+     * @param  float $a x² coefficient
+     * @param  float $b x coefficient
+     * @param  float $c constant coefficient
      *
-     * @return number
+     * @return float
      */
-    public static function discriminant($a, $b, $c)
+    public static function discriminant(float $a, float $b, float $c): float
     {
         return $b**2 - (4 * $a * $c);
     }
@@ -282,18 +292,21 @@ class Algebra
      * z₂ = Complex conjugate; therefore, NAN
      * z₃ = Complex conjugate; therefore, NAN
      *
-     * @param  int $a₃  z³ coefficient
-     * @param  int $a₂  z² coefficient
-     * @param  int $a₁  z  coefficient
-     * @param  int $a₀     constant coefficient
+     * @param  number $a₃ z³         coefficient
+     * @param  number $a₂ z²         coefficient
+     * @param  number $a₁ z          coefficient
+     * @param  number $a₀ constant coefficient
+     * @param  bool $return_complex whether to return complex numbers
      *
-     * @return array of roots (three real roots, or one real root and two NANs because complex numbers not yet supported)
-     *                        (If $a₃ = 0, then only two roots of quadratic equation)
+     * @return float[]|Complex[] array of roots (three real roots, or one real root and two NANs because complex numbers not yet supported)
+     *                           (If $a₃ = 0, then only two roots of quadratic equation)
+     *
+     * @throws Exception\IncorrectTypeException
      */
-    public static function cubic($a₃, $a₂, $a₁, $a₀): array
+    public static function cubic($a₃, $a₂, $a₁, $a₀, bool $return_complex = false): array
     {
         if ($a₃ === 0) {
-            return self::quadratic($a₂, $a₁, $a₀);
+            return self::quadratic($a₂, $a₁, $a₀, $return_complex);
         }
 
         // Take coefficient a₃ of z³ to be 1
@@ -326,7 +339,7 @@ class Algebra
         $T = Arithmetic::cubeRoot($R - sqrt($D));
 
         // All roots are real, and at least two are equal
-        if ($D === 0 || ($D > -self::ZERO_TOLERANCE && $D < self::ZERO_TOLERANCE)) {
+        if ($D == 0 || ($D > -self::ZERO_TOLERANCE && $D < self::ZERO_TOLERANCE)) {
             $z₁ = -$a₂ / 3 - ($S + $T) / 2;
             $z₂ = $S + $T - $a₂ / 3;
             $z₃ = -$a₂ / 3 - ($S + $T) / 2;
@@ -337,6 +350,115 @@ class Algebra
         // D > 0: One root is real, and two are are complex conjugates
         $z₁ = $S + $T - $a₂ / 3;
 
-        return [$z₁, \NAN, \NAN];
+        if (!$return_complex) {
+            return [$z₁, \NAN, \NAN];
+        } else {
+            $quad_a = 1;
+            $quad_b = $a₂ + $z₁;
+            $quad_c = $a₁ + $quad_b * $z₁;
+            $complex_roots = self::quadratic($quad_a, $quad_b, $quad_c, true);
+            return array_merge([$z₁], $complex_roots);
+        }
+    }
+
+    /**
+     * Quartic equation
+     * An equation having the form: a₄z⁴ + a₃z³ + a₂z² + a₁z + a₀ = 0
+     * https://en.wikipedia.org/wiki/Quartic_function
+     *
+     * @param  number $a₄ z⁴          coefficient
+     * @param  number $a₃ z³          coefficient
+     * @param  number $a₂ z²          coefficient
+     * @param  number $a₁ z           coefficient
+     * @param  number $a₀             constant coefficient
+     * @param  bool   $return_complex whether to return complex numbers
+     *
+     * @return float[]|Complex[] array of roots
+     *
+     * @throws Exception\IncorrectTypeException
+     */
+    public static function quartic($a₄, $a₃, $a₂, $a₁, $a₀, bool $return_complex = false): array
+    {
+        // Not actually quartic.
+        if ($a₄ === 0) {
+            return self::cubic($a₃, $a₂, $a₁, $a₀, $return_complex);
+        }
+
+        // Take coefficient a₄ of z⁴ to be 1
+        $a₃ = $a₃ / $a₄;
+        $a₂ = $a₂ / $a₄;
+        $a₁ = $a₁ / $a₄;
+        $a₀ = $a₀ / $a₄;
+        $a₄ = 1;
+
+        // Has a zero root.
+        if ($a₀ == 0) {
+            return array_merge([0], self::cubic($a₄, $a₃, $a₂, $a₁, $return_complex));
+        }
+        
+        // Is Biquadratic
+        if ($a₃ == 0 && $a₁ == 0) {
+            $quadratic_roots = self::quadratic($a₄, $a₂, $a₀, $return_complex);
+
+            // Sort so any complex roots are at the end of the array.
+            rsort($quadratic_roots);
+            $z₊ = $quadratic_roots[0];
+            $z₋ = $quadratic_roots[1];
+            if (!$return_complex) {
+                return [sqrt($z₊), -1 * sqrt($z₊), sqrt($z₋), -1 * sqrt($z₋)];
+            } else {
+                $Cz₊ = new Complex($z₊, 0);
+                $Cz₋ = new Complex($z₋, 0);
+                $z₁ = $z₊ < 0 ? $Cz₊->sqrt()  : sqrt($z₊);
+                $z₂ = $z₊ < 0 ? $z₁->negate() : $z₁ * -1;
+                $z₃ = $z₋ < 0 ? $Cz₋->sqrt()  : sqrt($z₋);
+                $z₄ = $z₋ < 0 ? $z₃->negate() : $z₃ * -1;
+                return [$z₁, $z₂, $z₃, $z₄];
+            }
+        }
+        
+        // Is a depressed quartic
+        // y⁴ + py² + qy + r = 0
+        if ($a₃ == 0) {
+            $p = $a₂;
+            $q = $a₁;
+            $r = $a₀;
+            // Create the resolvent cubic.
+            // 8m³ + 8pm² + (2p² - 8r)m - q² = 0
+            $cubic_roots = self::cubic(8, 8 * $p, 2 * $p ** 2 - 8 * $r, -1 * $q ** 2, $return_complex);
+            
+            // $z₁ will always be a real number, so select it.
+            $m             = $cubic_roots[0];
+            $roots1        = self::quadratic(1, sqrt(2*$m), $p / 2 + $m - $q/2/sqrt(2*$m), $return_complex);
+            $roots2        = self::quadratic(1, -1 * sqrt(2*$m), $p / 2 + $m + $q/2/sqrt(2*$m), $return_complex);
+            $discriminant1 = self::discriminant(1, sqrt(2*$m), $p / 2 + $m - $q/2/sqrt(2*$m));
+            $discriminant2 = self::discriminant(1, -1 * sqrt(2*$m), $p / 2 + $m + $q/2/sqrt(2*$m));
+            
+            // sort the real roots first.
+            $sorted_results = $discriminant1>$discriminant2 ? array_merge($roots1, $roots2) : array_merge($roots2, $roots1);
+            return $sorted_results;
+        }
+
+        // Create the factors for a depressed quartic.
+        $p = $a₂ - (3 * $a₃ ** 2 / 8);
+        $q = $a₁ + $a₃ ** 3 / 8 - $a₃ * $a₂ / 2;
+        $r = $a₀ - 3 * $a₃ ** 4 / 256 + $a₃ ** 2 * $a₂ / 16 - $a₃ * $a₁ / 4;
+        
+        $depressed_quartic_roots = self::quartic(1, 0, $p, $q, $r, $return_complex);
+        
+        // The roots for this polynomial are the roots of the depressed polynomial minus a₃/4.
+        if (!$return_complex) {
+            return Single::subtract($depressed_quartic_roots, $a₃ / 4);
+        } else {
+            $quartic_roots = [];
+            foreach ($depressed_quartic_roots as $key => $root) {
+                if (is_float($root)) {
+                    $quartic_roots[$key] = $root - $a₃ / 4;
+                } else {
+                    $quartic_roots[$key] = $root->subtract($a₃ / 4);
+                }
+            }
+            return $quartic_roots;
+        }
     }
 }

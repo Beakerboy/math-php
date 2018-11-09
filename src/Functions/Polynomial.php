@@ -1,6 +1,10 @@
 <?php
-
 namespace MathPHP\Functions;
+
+use MathPHP\Algebra;
+use MathPHP\Exception;
+use MathPHP\Number\ObjectArithmetic;
+use MathPHP\Functions\Map;
 
 /**
  * A convenience class for one-dimension polynomials.
@@ -41,7 +45,7 @@ namespace MathPHP\Functions;
  *
  * https://en.wikipedia.org/wiki/Polynomial
  */
-class Polynomial
+class Polynomial implements ObjectArithmetic
 {
     private $degree;
     private $coefficients;
@@ -56,14 +60,16 @@ class Polynomial
      * When a polynomial is instantiated, set the coefficients and degree of
      * that polynomial as its object parameters.
      *
-     * @param array $coefficients An array of coefficients in decreasing powers.
+     * @param array  $coefficients An array of coefficients in decreasing powers
      *                            Example: new Polynomial([1, 2, 3]) will create
      *                            a polynomial that looks like x² + 2x + 3.
+     * @param string $variable
      */
-    public function __construct(array $coefficients, $variable = "x")
+    public function __construct(array $coefficients, string $variable = "x")
     {
         // Remove coefficients that are leading zeros
-        for ($i = 0; $i < count($coefficients); $i++) {
+        $initial_count = count($coefficients);
+        for ($i = 0; $i < $initial_count; $i++) {
             if ($coefficients[$i] != 0) {
                 break;
             }
@@ -149,7 +155,7 @@ class Polynomial
      *
      * @param number $x₀ The value at which we are evaluting our polynomial
      *
-     * @return number The result of our polynomial evaluated at $x₀
+     * @return float The result of our polynomial evaluated at $x₀
      */
     public function __invoke($x₀): float
     {
@@ -175,6 +181,24 @@ class Polynomial
         return $polynomial($x₀);
     }
 
+    /**
+     * Check that our input is either a number or a Polynomial
+     * Convert any numbers to Polynomial objects
+     *
+     * @param mixed $input The variable to check
+     * @return Polynomial
+     * @throws Exception\IncorrectTypeException
+     */
+    private function checkNumericOrPolynomial($input): Polynomial
+    {
+        if ($input instanceof Polynomial) {
+            return $input;
+        } elseif (is_numeric($input)) {
+            return new Polynomial([$input]);
+        } else {
+            throw new Exception\IncorrectTypeException('Input must be a Polynomial or a number');
+        }
+    }
     /**
      * Getter method for the degree of a polynomial
      *
@@ -208,7 +232,7 @@ class Polynomial
     /**
      * Setter method for the dependent variable of a polynomial
      *
-     * @param string The new dependent variable of a polynomial object
+     * @param string $variable The new dependent variable of a polynomial object
      */
     public function setVariable(string $variable)
     {
@@ -220,7 +244,7 @@ class Polynomial
      * Example: $polynomial = new Polynomial([1, -8, 12, 3]); // x³ - 8x² + 12x + 3
      *          $derivative = $polynomial->differentiate();   // 3x² - 16x + 12
      *
-     * @return object The derivative of our polynomial object, also a polynomial object
+     * @return Polynomial The derivative of our polynomial object, also a polynomial object
      */
     public function differentiate(): Polynomial
     {
@@ -244,7 +268,7 @@ class Polynomial
      *
      * Note that this method assumes the constant of integration to be 0.
      *
-     * @return object The integral of our polynomial object, also a polynomial object
+     * @return Polynomial The integral of our polynomial object, also a polynomial object
      */
     public function integrate(): Polynomial
     {
@@ -266,36 +290,54 @@ class Polynomial
      *          $integral   = $polynomial->integrate();     // x³ - 8x² + 12x
      *          $sum        = $polynomial->add($integral);  // x³ - 5x² - 4x + 12
      *
-     * @param object $polynomial The polynomial we are adding to our current polynomial
+     * @param mixed $polynomial The polynomial or scaler we are adding to our current polynomial
      *
-     * @return object The sum of our polynomial objects, also a polynomial object
+     * @return Polynomial The sum of our polynomial objects, also a polynomial object
+     *
+     * @throws Exception\IncorrectTypeException
      */
-    public function add(Polynomial $polynomial): Polynomial
+    public function add($polynomial): Polynomial
     {
-        // Calculate the degree of the sum of the polynomials
-        $sumDegree       = max($this->degree, $polynomial->degree);
+        $polynomial = $this->checkNumericOrPolynomial($polynomial);
 
-        // Reverse the coefficients arrays so you can sum component-wise
-        $coefficientsA = array_reverse($this->coefficients);
-        $coefficientsB = array_reverse($polynomial->coefficients);
+        $coefficientsA = $this->coefficients;
+        $coefficientsB = $polynomial->coefficients;
 
-        // Start with an array of coefficients that all equal 0
-        $sumCoefficients = array_fill(0, $sumDegree+1, 0);
-
-        // Iterate through each degree. Get coefficients by summing component-wise.
-        for ($i = 0; $i < $sumDegree + 1; $i++) {
-            // Calculate the degree of the current sum
-            $degree = $sumDegree - $i;
-
-            // Get the coefficient of the i-th degree term from each polynomial if it exists, otherwise use 0
-            $a = $coefficientsA[$i] ?? 0;
-            $b = $coefficientsB[$i] ?? 0;
-
-            // The new coefficient is the sum of the original coefficients
-            $sumCoefficients[$degree] = $sumCoefficients[$degree] + $a + $b;
+        // If degrees are unequal, make coefficient array sizes equal so we can do component-wise addition
+        $degreeDifference = $this->getDegree() - $polynomial->getDegree();
+        if ($degreeDifference !== 0) {
+            $zeroArray = array_fill(0, abs($degreeDifference), 0);
+            if ($degreeDifference < 0) {
+                $coefficientsA = array_merge($zeroArray, $coefficientsA);
+            } else {
+                $coefficientsB = array_merge($zeroArray, $coefficientsB);
+            }
         }
 
-        return new Polynomial($sumCoefficients);
+        $coefficientsSum = Map\Multi::add($coefficientsA, $coefficientsB);
+
+        return new Polynomial($coefficientsSum);
+    }
+
+    /**
+     * Return a new polynomial that is the difference of the current polynomial and an
+     * input polynomial
+     * Example: $polynomial = new Polynomial([3, -16, 12]);        // 3x² - 16x + 12
+     *          $integral   = $polynomial->diferentiate();         // 6x - 16
+     *          $difference = $polynomial->subtract($derivative);  // 3x² - 22x + 28
+     *
+     * @param mixed $polynomial The polynomial or scaler we are subtracting from our current polynomial
+     *
+     * @return Polynomial The defference of our polynomial objects, also a polynomial object
+     *
+     * @throws Exception\IncorrectTypeException
+     */
+    public function subtract($polynomial): Polynomial
+    {
+        $polynomial = $this->checkNumericOrPolynomial($polynomial);
+        $additiveInverse = $polynomial->negate();
+
+        return $this->add($additiveInverse);
     }
 
     /**
@@ -305,14 +347,17 @@ class Polynomial
      *          $integral   = $polynomial->integrate();          // x² - 16x
      *          $product    = $polynomial->multiply($integral);  // 2x³ - 48x² + 256x
      *
-     * @param object $polynomial The polynomial we are multiplying with our current polynomial
+     * @param mixed $polynomial The polynomial or scaler we are multiplying with our current polynomial
      *
-     * @return object The product of our polynomial objects, also a polynomial object
+     * @return Polynomial The product of our polynomial objects, also a polynomial object
+     *
+     * @throws Exception\IncorrectTypeException
      */
-    public function multiply(Polynomial $polynomial): Polynomial
+    public function multiply($polynomial): Polynomial
     {
+        $polynomial = $this->checkNumericOrPolynomial($polynomial);
         // Calculate the degree of the product of the polynomials
-        $productDegree       = $this->degree + $polynomial->degree;
+        $productDegree = $this->degree + $polynomial->degree;
 
         // Reverse the coefficients arrays so you can multiply component-wise
         $coefficientsA = array_reverse($this->coefficients);
@@ -336,5 +381,42 @@ class Polynomial
         }
 
         return new Polynomial($productCoefficients);
+    }
+
+    /**
+     * Return a new polynomial that is the negated version.
+     *
+     * @return Polynomial that is negated
+     */
+    public function negate(): Polynomial
+    {
+        return new Polynomial(
+            Map\Single::multiply($this->coefficients, -1)
+        );
+    }
+
+    /**
+     * Calculate the roots of a polynomial
+     *
+     * Closed form solutions only exist if the degree is less than 5
+     *
+     * @return array of roots
+     *
+     * @throws Exception\IncorrectTypeException
+     */
+    public function roots(): array
+    {
+        switch ($this->degree) {
+            case 1:
+                return [-1 * $this->coefficients[1] / $this->coefficients[0]];
+            case 2:
+                return Algebra::quadratic(...$this->coefficients);
+            case 3:
+                return Algebra::cubic(...$this->coefficients);
+            case 4:
+                return Algebra::quartic(...$this->coefficients);
+            default:
+                return [\NAN];
+        }
     }
 }

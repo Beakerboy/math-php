@@ -1,14 +1,17 @@
 <?php
-namespace MathPHP\Probability\Distribution\Discrete;
+namespace MathPHP\Tests\Probability\Distribution\Discrete;
 
-class ShiftedGeometricTest extends \PHPUnit_Framework_TestCase
+use MathPHP\Probability\Distribution\Discrete\ShiftedGeometric;
+
+class ShiftedGeometricTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @dataProvider dataProviderForPMF
      */
     public function testPMF(int $k, float $p, float $pmf)
     {
-        $this->assertEquals($pmf, ShiftedGeometric::PMF($k, $p), '', 0.001);
+        $shiftedGeometric = new ShiftedGeometric($p);
+        $this->assertEquals($pmf, $shiftedGeometric->pmf($k), '', 0.001);
     }
 
     public function dataProviderForPMF()
@@ -31,7 +34,8 @@ class ShiftedGeometricTest extends \PHPUnit_Framework_TestCase
      */
     public function testCDF(int $k, float $p, float $cdf)
     {
-        $this->assertEquals($cdf, ShiftedGeometric::CDF($k, $p), '', 0.001);
+        $shiftedGeometric = new ShiftedGeometric($p);
+        $this->assertEquals($cdf, $shiftedGeometric->cdf($k), '', 0.001);
     }
 
     public function dataProviderForCDF()

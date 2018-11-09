@@ -2,7 +2,6 @@
 namespace MathPHP\Functions;
 
 use MathPHP\Probability\Combinatorics;
-use MathPHP\Statistics\RandomVariable;
 use MathPHP\Functions\Map\Single;
 use MathPHP\Exception;
 
@@ -17,7 +16,7 @@ class Special
      * sgn(x) = {  0 if x = 0
      *          {  1 if x > 0
      *
-     * @param number $x
+     * @param float $x
      *
      * @return int
      */
@@ -32,6 +31,10 @@ class Special
     /**
      * Sign function (signum function) - sgn
      * Convenience wrapper for signum function.
+     *
+     * @param float $x
+     *
+     * @return int
      */
     public static function sgn(float $x): int
     {
@@ -54,22 +57,24 @@ class Special
      *
      * For real numbers: use Lanczos approximation
      *
-     * @param number $n
+     * @param float $n
      *
-     * @return number
+     * @return float
+     *
+     * @throws Exception\OutOfBoundsException
      */
-    public static function gamma($n)
+    public static function gamma(float $n): float
     {
         // Basic integer/factorial cases
         if ($n == 0) {
             return \INF;
         }
         // Negative integer, or negative int as a float (Ex: from beta(-0.1, -0.9) since it will call Γ(x + y))
-        if ((is_int($n) || is_numeric($n) && abs($n - round($n)) < 0.00001) && $n < 0) {
+        if ((abs($n - round($n)) < 0.00001) && $n < 0) {
             return -\INF;
         }
-        // Positive integer, or postive int as a float (Ex: from beta(0.1, 0.9) since it will call Γ(x + y))
-        if ((is_int($n) || is_numeric($n) && abs($n - round($n)) < 0.00001) && $n > 0) {
+        // Positive integer, or positive int as a float (Ex: from beta(0.1, 0.9) since it will call Γ(x + y))
+        if ((abs($n - round($n)) < 0.00001) && $n > 0) {
             return Combinatorics::factorial(round($n) - 1);
         }
 
@@ -100,11 +105,13 @@ class Special
     /**
      * Gamma function convenience method
      *
-     * @param number $n
+     * @param float $n
      *
-     * @return number
+     * @return float
+     *
+     * @throws Exception\OutOfBoundsException
      */
-    public static function Γ($n)
+    public static function Γ(float $n): float
     {
         return self::gamma($n);
     }
@@ -136,22 +143,24 @@ class Special
      *
      *  use pre-computed p coefficients: g = 7, n = 9
      *
-     * @param number $z
+     * @param float $z
      *
-     * @return number
+     * @return float
+     *
+     * @throws Exception\OutOfBoundsException
      */
-    public static function gammaLanczos($z)
+    public static function gammaLanczos(float $z): float
     {
         // Basic integer/factorial cases
         if ($z == 0) {
             return \INF;
         }
         // Negative integer, or negative int as a float
-        if ((is_int($z) || is_numeric($z) && abs($z - round($z)) < 0.00001) && $z < 0) {
+        if ((abs($z - round($z)) < 0.00001) && $z < 0) {
             return -\INF;
         }
-        // Positive integer, or postive int as a float (Ex: from beta(0.1, 0.9) since it will call Γ(x + y))
-        if ((is_int($z) || is_numeric($z) && abs($z - round($z)) < 0.00001) && $z > 0) {
+        // Positive integer, or positive int as a float (Ex: from beta(0.1, 0.9) since it will call Γ(x + y))
+        if ((abs($z - round($z)) < 0.00001) && $z > 0) {
             return Combinatorics::factorial(round($z) - 1);
         }
 
@@ -219,22 +228,24 @@ class Special
      *  Γ(n)≈ √2π ℯ⁻ⁿ  /  - | n + ----------- |
      *                √   n  \    12n - 1/10n /
      *
-     * @param number $n
+     * @param float $n
      *
-     * @return number
+     * @return float
+     *
+     * @throws Exception\OutOfBoundsException
      */
-    public static function gammaStirling($n)
+    public static function gammaStirling(float $n): float
     {
         // Basic integer/factorial cases
         if ($n == 0) {
             return \INF;
         }
         // Negative integer, or negative int as a float
-        if ((is_int($n) || is_numeric($n) && abs($n - round($n)) < 0.00001) && $n < 0) {
+        if ((abs($n - round($n)) < 0.00001) && $n < 0) {
             return -\INF;
         }
         // Positive integer, or postive int as a float
-        if ((is_int($n) || is_numeric($n) && abs($n - round($n)) < 0.00001) && $n > 0) {
+        if ((abs($n - round($n)) < 0.00001) && $n > 0) {
             return Combinatorics::factorial(round($n) - 1);
         }
 
@@ -260,14 +271,17 @@ class Special
      * https://en.wikipedia.org/wiki/Beta_function
      *
      *           Γ(x)Γ(y)
-     * B(x, y) = --------
+     * β(x, y) = --------
      *           Γ(x + y)
      *
-     * @param  int    $x
-     * @param  int    $y
+     * @param  float $x
+     * @param  float $y
+     *
      * @return float
+     *
+     * @throws Exception\OutOfBoundsException
      */
-    public static function beta($x, $y): float
+    public static function beta(float $x, float $y): float
     {
         if ($x == 0 || $y == 0) {
             return \INF;
@@ -280,6 +294,47 @@ class Special
     }
 
     /**
+     * Beta function convenience method
+     *
+     * @param  float $x
+     * @param  float $y
+     *
+     * @return float
+     *
+     * @throws Exception\OutOfBoundsException
+     */
+    public static function β(float $x, float $y): float
+    {
+        return self::beta($x, $y);
+    }
+
+    /**
+     * Multivariate Beta function
+     * https://en.wikipedia.org/wiki/Beta_function#Multivariate_beta_function
+     *
+     *                     Γ(α₁)Γ(α₂) ⋯ Γ(αn)
+     * B(α₁, α₂, ... αn) = ------------------
+     *                      Γ(α₁ + α₂ ⋯ αn)
+     *
+     * @param float[] $αs
+     *
+     * @return float
+     *
+     * @throws Exception\OutOfBoundsException
+     */
+    public static function multivariateBeta(array $αs): float
+    {
+        $∏Γ⟮α⟯ = 1;
+        foreach ($αs as $α) {
+            $∏Γ⟮α⟯ *= self::Γ($α);
+        }
+
+        $Γ⟮∑α⟯ = self::Γ(array_sum($αs));
+
+        return $∏Γ⟮α⟯ / $Γ⟮∑α⟯;
+    }
+
+    /**
      * Logistic function (logistic sigmoid function)
      * A logistic function or logistic curve is a common "S" shape (sigmoid curve).
      * https://en.wikipedia.org/wiki/Logistic_function
@@ -289,14 +344,14 @@ class Special
      *        1 + ℯ⁻ᵏ⁽ˣ⁻ˣ⁰⁾
      *
      *
-     * @param number $x₀ x-value of the sigmoid's midpoint
-     * @param number $L  the curve's maximum value
-     * @param number $k  the steepness of the curve
-     * @param number $x
+     * @param float $x₀ x-value of the sigmoid's midpoint
+     * @param float $L  the curve's maximum value
+     * @param float $k  the steepness of the curve
+     * @param float $x
      *
      * @return float
      */
-    public static function logistic($x₀, $L, $k, $x)
+    public static function logistic(float $x₀, float $L, float $k, float $x): float
     {
         $ℯ⁻ᵏ⁽ˣ⁻ˣ⁰⁾ = exp(-$k * ($x - $x₀));
 
@@ -313,11 +368,11 @@ class Special
      * S(t) = -------
      *        1 + ℯ⁻ᵗ
      *
-     * @param  number $t
+     * @param  float $t
      *
      * @return float
      */
-    public static function sigmoid($t)
+    public static function sigmoid(float $t): float
     {
         $ℯ⁻ᵗ = exp(-$t);
 
@@ -339,11 +394,11 @@ class Special
      * p = 0.3275911
      * a₁ = 0.254829592, a₂ = −0.284496736, a₃ = 1.421413741, a₄ = −1.453152027, a₅ = 1.061405429
      *
-     * @param  number $x
+     * @param  float $x
      *
-     * @return number
+     * @return float
      */
-    public static function errorFunction($x)
+    public static function errorFunction(float $x): float
     {
         if ($x == 0) {
             return 0;
@@ -367,11 +422,11 @@ class Special
      * Error function (Gauss error function)
      * Convenience method for errorFunction
      *
-     * @param  number $x
+     * @param  float $x
      *
-     * @return number
+     * @return float
      */
-    public static function erf($x)
+    public static function erf(float $x): float
     {
         return self::errorFunction($x);
     }
@@ -382,9 +437,9 @@ class Special
      *
      * @param  number $x
      *
-     * @return number
+     * @return float
      */
-    public static function complementaryErrorFunction($x)
+    public static function complementaryErrorFunction($x): float
     {
         return 1 - self::erf($x);
     }
@@ -393,11 +448,11 @@ class Special
      * Complementary error function (erfc)
      * Convenience method for complementaryErrorFunction
      *
-     * @param  number $x
+     * @param  float $x
      *
-     * @return number
+     * @return float
      */
-    public static function erfc($x)
+    public static function erfc(float $x): float
     {
         return 1 - self::erf($x);
     }
@@ -406,14 +461,14 @@ class Special
      * Upper Incomplete Gamma Function - Γ(s,x)
      * https://en.wikipedia.org/wiki/Incomplete_gamma_function
      *
-     * @param number $s shape parameter > 0
-     * @param number $x lower limit of integration
+     * @param float $s shape parameter > 0
+     * @param float $x lower limit of integration
      *
-     * @return number
+     * @return float
      *
-     * @throws OutOfBoundsException if s is <= 0
+     * @throws Exception\OutOfBoundsException if s is <= 0
      */
-    public static function upperIncompleteGamma($s, $x)
+    public static function upperIncompleteGamma(float $s, float $x): float
     {
         if ($s <= 0) {
             throw new Exception\OutOfBoundsException("S must be > 0. S = $s");
@@ -433,12 +488,12 @@ class Special
      * γ(s,x) =  -------- | 1 + ----- + ---------- + --------------- + ... |
      *            s * eˣ   \     s+1    (s+1)(s+2)   (s+1)(s+2)(s+3)      /
      *
-     * @param  $s
-     * @param  $x
+     * @param float $s
+     * @param float $x
      *
-     * @return number
+     * @return float
      */
-    public static function lowerIncompleteGamma($s, $x)
+    public static function lowerIncompleteGamma(float $s, float $x): float
     {
         if ($s == 1) {
             return 1 - exp(-1 * $x);
@@ -471,34 +526,37 @@ class Special
      * γ - Convenience method for lower incomplete gamma function
      * https://en.wikipedia.org/wiki/Incomplete_gamma_function#Lower_incomplete_Gamma_function
      *
-     * @param  $s
-     * @param  $x
+     * @param float $s
+     * @param float $x
      *
-     * @return number
+     * @return float
      */
-    public static function γ($s, $x)
+    public static function γ(float $s, float $x): float
     {
         return self::lowerIncompleteGamma($s, $x);
     }
-    
+
     /**
      * Incomplete Beta Function - B(x;a,b)
      *
      * Generalized form of the beta function
      * https://en.wikipedia.org/wiki/Beta_function#Incomplete_beta_function
      *
-     * @param  $x Upper limit of the integration 0 ≦ x ≦ 1
-     * @param  $a Shape parameter a > 0
-     * @param  $b Shape parameter b > 0
+     * @param float $x Upper limit of the integration 0 ≦ x ≦ 1
+     * @param float $a Shape parameter a > 0
+     * @param float $b Shape parameter b > 0
      *
-     * @return number
+     * @return float
+     *
+     * @throws Exception\BadDataException
+     * @throws Exception\BadParameterException
+     * @throws Exception\OutOfBoundsException
      */
-    public static function incompleteBeta($x, $a, $b)
+    public static function incompleteBeta(float $x, float $a, float $b): float
     {
-        
         return self::regularizedIncompleteBeta($x, $a, $b) * self::beta($a, $b);
     }
-    
+
     /**
      * Regularized incomplete beta function - Iₓ(a, b)
      *
@@ -520,14 +578,18 @@ class Special
      *
      * This algorithm is valid when both a and b are greater than 1
      *
-     * @param int $m the number of α and β parameters to calculate
-     * @param  $x Upper limit of the integration 0 ≦ x ≦ 1
-     * @param  $a Shape parameter a > 1
-     * @param  $b Shape parameter b > 1
+     * @param int   $m the number of α and β parameters to calculate
+     * @param float $x Upper limit of the integration 0 ≦ x ≦ 1
+     * @param float $a Shape parameter a > 1
+     * @param float $b Shape parameter b > 1
      *
-     * @return number
+     * @return float
+     *
+     * @throws Exception\BadDataException
+     * @throws Exception\BadParameterException
+     * @throws Exception\OutOfBoundsException
      */
-    private static function iBetaCF(int $m, $x, $a, $b)
+    private static function iBetaCF(int $m, float $x, float $a, float $b): float
     {
         $limits = [
         'x'  => '[0, 1]',
@@ -535,8 +597,13 @@ class Special
         'b'  => '(1,∞)',
         ];
         Support::checkLimits($limits, ['x' => $x, 'a' => $a, 'b' => $b]);
+
         $beta     = self::beta($a, $b);
         $constant = $x**$a * (1 - $x)**$b / $beta;
+
+        $α_array = [];
+        $β_array = [];
+
         for ($i = 0; $i < $m; $i++) {
             if ($i == 0) {
                 $α = 1;
@@ -549,6 +616,8 @@ class Special
             $α_array[]      = $α;
             $β_array[]      = $β;
         }
+
+        $fraction_array = [];
         for ($i = $m - 1; $i >= 0; $i--) {
             if ($i == $m - 1) {
                 $fraction_array[$i] = $α_array[$i] / $β_array[$i];
@@ -570,13 +639,17 @@ class Special
      * http://www.boost.org/doc/libs/1_35_0/libs/math/doc/sf_and_dist/html/math_toolkit/special/sf_beta/ibeta_function.html
      * https://github.com/boostorg/math/blob/develop/include/boost/math/special_functions/beta.hpp
      *
-     * @param  $x Upper limit of the integration 0 ≦ x ≦ 1
-     * @param  $a Shape parameter a > 0
-     * @param  $b Shape parameter b > 0
+     * @param float $x Upper limit of the integration 0 ≦ x ≦ 1
+     * @param float $a Shape parameter a > 0
+     * @param float $b Shape parameter b > 0
      *
-     * @return number
+     * @return float
+     *
+     * @throws Exception\BadDataException
+     * @throws Exception\BadParameterException
+     * @throws Exception\OutOfBoundsException
      */
-    public static function regularizedIncompleteBeta($x, $a, $b)
+    public static function regularizedIncompleteBeta(float $x, float $a, float $b): float
     {
         $limits = [
         'x'  => '[0, 1]',
@@ -609,6 +682,7 @@ class Special
             
             // We will calculate the continuous fraction with a minimum depth of 10.
             $m        = 10;        // Counter
+            $I = 0;
             do {
                 $I_new = self::iBetaCF($m, $x, $a, $b);
                 if ($m > 10) {
@@ -656,15 +730,15 @@ class Special
      *   ₁F₁ = ₁F₁n₋₁ + ∏  -----------------  = ₁F₁n₋₁ + ∏n
      *                  1   (b + n - 1) * n
      *
-     * @param int   $p      the number of parameters in the numerator
-     * @param int   $q      the number of parameters in the denominator
-     * @param array $params a collection of the a, b, and z parameters
+     * @param int     $p      the number of parameters in the numerator
+     * @param int     $q      the number of parameters in the denominator
+     * @param float[] $params a collection of the a, b, and z parameters
      *
-     * @return number
+     * @return float
      *
-     * @throws BadParameterException if the number of parameters is incorrect
+     * @throws Exception\BadParameterException if the number of parameters is incorrect
      */
-    public static function generalizedHypergeometric(int $p, int $q, ...$params)
+    public static function generalizedHypergeometric(int $p, int $q, float ...$params): float
     {
         $n = count($params);
         if ($n !== $p + $q + 1) {
@@ -690,7 +764,7 @@ class Special
 
         return $sum;
     }
-    
+
     /**
      * Confluent Hypergeometric Function
      *
@@ -703,17 +777,19 @@ class Special
      *        ‾‾‾‾
      *        n=0
      *
-     * @param number $a the numerator value
-     * @param number $b the denominator value
-     * @param number $z
+     * @param float $a the numerator value
+     * @param float $b the denominator value
+     * @param float $z
      *
-     * @return number
+     * @return float
+     *
+     * @throws Exception\BadParameterException
      */
-    public static function confluentHypergeometric($a, $b, $z)
+    public static function confluentHypergeometric(float $a, float $b, float $z): float
     {
         return self::generalizedHypergeometric(1, 1, $a, $b, $z);
     }
-    
+
     /**
      * Hypergeometric Function
      *
@@ -726,16 +802,17 @@ class Special
      *        ‾‾‾‾
      *        n=0
      *
-     * @param number $a the first numerator value
-     * @param number $b the second numerator value
-     * @param number $c the denominator value
-     * @param number $z |z| < 1
+     * @param float $a the first numerator value
+     * @param float $b the second numerator value
+     * @param float $c the denominator value
+     * @param float $z |z| < 1
      *
-     * @return number
+     * @return float
      *
-     * @throws OutOfBoundsExpcetion if |z| >= 1
+     * @throws Exception\OutOfBoundsException if |z| >= 1
+     * @throws Exception\BadParameterException
      */
-    public static function hypergeometric($a, $b, $c, $z)
+    public static function hypergeometric(float $a, float $b, float $c, float $z): float
     {
         if (abs($z) >= 1) {
              throw new Exception\OutOfBoundsException('|z| must be < 1. |z| = ' . abs($z));
@@ -757,7 +834,7 @@ class Special
      *          ∑ ℯᶻᵢ
      *         ⁱ⁼¹
      *
-     * @param  array  $𝐳
+     * @param  float[] $𝐳
      *
      * @return array
      */

@@ -1,7 +1,9 @@
 <?php
-namespace MathPHP\Functions;
+namespace MathPHP\Tests\Functions;
 
-class ArithmeticTest extends \PHPUnit_Framework_TestCase
+use MathPHP\Functions\Arithmetic;
+
+class ArithmeticTest extends \PHPUnit\Framework\TestCase
 {
     public function testSum()
     {

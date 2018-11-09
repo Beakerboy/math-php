@@ -1,9 +1,13 @@
 <?php
-namespace MathPHP\LinearAlgebra;
+namespace MathPHP\Tests\LinearAlgebra;
 
+use MathPHP\LinearAlgebra\MatrixFactory;
+use MathPHP\LinearAlgebra\Matrix;
+use MathPHP\LinearAlgebra\SquareMatrix;
+use MathPHP\LinearAlgebra\Vector;
 use MathPHP\Exception;
 
-class MatrixOperationsTest extends \PHPUnit_Framework_TestCase
+class MatrixOperationsTest extends \PHPUnit\Framework\TestCase
 {
 
     public function setUp()
@@ -26,7 +30,7 @@ class MatrixOperationsTest extends \PHPUnit_Framework_TestCase
         $R  = MatrixFactory::create($R);
         $R2 = $A->add($B);
         $this->assertEquals($R, $R2);
-        $this->assertInstanceOf('MathPHP\LinearAlgebra\Matrix', $R2);
+        $this->assertInstanceOf(Matrix::class, $R2);
     }
 
     public function dataProviderForAdd()
@@ -76,7 +80,7 @@ class MatrixOperationsTest extends \PHPUnit_Framework_TestCase
             [1, 2]
         ]);
 
-        $this->setExpectedException('MathPHP\Exception\MatrixException');
+        $this->expectException(Exception\MatrixException::class);
         $A->add($B);
     }
 
@@ -91,7 +95,7 @@ class MatrixOperationsTest extends \PHPUnit_Framework_TestCase
             [2, 3],
         ]);
 
-        $this->setExpectedException('MathPHP\Exception\MatrixException');
+        $this->expectException(Exception\MatrixException::class);
         $A->add($B);
     }
 
@@ -105,7 +109,7 @@ class MatrixOperationsTest extends \PHPUnit_Framework_TestCase
         $R  = MatrixFactory::create($R);
         $R2 = $A->directSum($B);
         $this->assertEquals($R, $R2);
-        $this->assertInstanceOf('MathPHP\LinearAlgebra\Matrix', $R2);
+        $this->assertInstanceOf(Matrix::class, $R2);
     }
 
     public function dataProviderForDirectSum()
@@ -233,7 +237,7 @@ class MatrixOperationsTest extends \PHPUnit_Framework_TestCase
         $A   = new Matrix($A);
         $B   = new Matrix($B);
 
-        $this->setExpectedException(Exception\MatrixException::class);
+        $this->expectException(Exception\MatrixException::class);
         $A⊕B = $A->kroneckerSum($B);
     }
 
@@ -284,7 +288,7 @@ class MatrixOperationsTest extends \PHPUnit_Framework_TestCase
         $R  = MatrixFactory::create($R);
         $R2 = $A->subtract($B);
         $this->assertEquals($R, $R2);
-        $this->assertInstanceOf('MathPHP\LinearAlgebra\Matrix', $R2);
+        $this->assertInstanceOf(Matrix::class, $R2);
     }
 
     public function dataProviderForSubtract()
@@ -334,7 +338,7 @@ class MatrixOperationsTest extends \PHPUnit_Framework_TestCase
             [1, 2]
         ]);
 
-        $this->setExpectedException('MathPHP\Exception\MatrixException');
+        $this->expectException(Exception\MatrixException::class);
         $A->subtract($B);
     }
 
@@ -349,7 +353,7 @@ class MatrixOperationsTest extends \PHPUnit_Framework_TestCase
             [2, 3],
         ]);
 
-        $this->setExpectedException('MathPHP\Exception\MatrixException');
+        $this->expectException(Exception\MatrixException::class);
         $A->subtract($B);
     }
 
@@ -362,7 +366,7 @@ class MatrixOperationsTest extends \PHPUnit_Framework_TestCase
         $B  = MatrixFactory::create($B);
         $R  = MatrixFactory::create($R);
         $R2 = $A->multiply($B);
-        $this->assertInstanceOf('MathPHP\LinearAlgebra\Matrix', $R2);
+        $this->assertInstanceOf(Matrix::class, $R2);
         $this->assertEquals($R, $R2);
     }
 
@@ -410,7 +414,7 @@ class MatrixOperationsTest extends \PHPUnit_Framework_TestCase
         $B  = new Vector($B);
         $R  = MatrixFactory::create($R);
         $R2 = $A->multiply($B);
-        $this->assertInstanceOf('MathPHP\LinearAlgebra\Matrix', $R2);
+        $this->assertInstanceOf(Matrix::class, $R2);
         $this->assertEquals($R, $R2);
     }
 
@@ -512,7 +516,7 @@ class MatrixOperationsTest extends \PHPUnit_Framework_TestCase
             [2, 3, 4],
         ]);
 
-        $this->setExpectedException('MathPHP\Exception\MatrixException');
+        $this->expectException(Exception\MatrixException::class);
         $A->multiply($B);
     }
 
@@ -529,7 +533,7 @@ class MatrixOperationsTest extends \PHPUnit_Framework_TestCase
             [3, 4, 5],
         ];
 
-        $this->setExpectedException('MathPHP\Exception\IncorrectTypeException');
+        $this->expectException(Exception\IncorrectTypeException::class);
         $A->multiply($B);
     }
 
@@ -542,7 +546,7 @@ class MatrixOperationsTest extends \PHPUnit_Framework_TestCase
         $B  = new Vector($B);
         $R  = new Vector($R);
         $R2 = $A->vectorMultiply($B);
-        $this->assertInstanceOf('MathPHP\LinearAlgebra\Vector', $R2);
+        $this->assertInstanceOf(\MathPHP\LinearAlgebra\Vector::class, $R2);
         $this->assertEquals($R, $R2);
     }
 
@@ -618,7 +622,7 @@ class MatrixOperationsTest extends \PHPUnit_Framework_TestCase
         ]);
         $B = new Vector([1, 2, 3, 4, 5]);
 
-        $this->setExpectedException('MathPHP\Exception\MatrixException');
+        $this->expectException(Exception\MatrixException::class);
         $A->vectorMultiply($B);
     }
 
@@ -679,6 +683,76 @@ class MatrixOperationsTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
+    /**
+     * @testCase     negate
+     * @dataProvider dataProviderForNegate
+     * @param        array $A
+     * @param        array $−A
+     * @throws       \Exception
+     */
+    public function testNegate(array $A, array $−A)
+    {
+        $A  = MatrixFactory::create($A);
+        $−A = MatrixFactory::create($−A);
+
+        $this->assertEquals($−A, $A->negate());
+    }
+
+    /**
+     * @return array [A, −A]
+     */
+    public function dataProviderForNegate(): array
+    {
+        return [
+            [
+                [
+                    [0]
+                ],
+                [
+                    [0]
+                ],
+            ],
+            [
+                [
+                    [1]
+                ],
+                [
+                    [-1]
+                ],
+            ],
+            [
+                [
+                    [-1]
+                ],
+                [
+                    [1]
+                ],
+            ],
+            [
+                [
+                    [1, 2],
+                    [3, 4],
+                ],
+                [
+                    [-1, -2],
+                    [-3, -4],
+                ],
+            ],
+            [
+                [
+                    [1, -2, 3],
+                    [-4, 5, -6],
+                    [7, -8, 9],
+                ],
+                [
+                    [-1, 2, -3],
+                    [4, -5, 6],
+                    [-7, 8, -9],
+                ]
+            ],
+        ];
+    }
+
     public function testScalarMultiplyExceptionKNotNumber()
     {
         $A = MatrixFactory::create([
@@ -686,7 +760,7 @@ class MatrixOperationsTest extends \PHPUnit_Framework_TestCase
             [2, 3, 4],
         ]);
 
-        $this->setExpectedException('MathPHP\Exception\BadParameterException');
+        $this->expectException(Exception\BadParameterException::class);
         $A->scalarMultiply('k');
     }
 
@@ -754,7 +828,7 @@ class MatrixOperationsTest extends \PHPUnit_Framework_TestCase
             [2, 3, 4],
         ]);
 
-        $this->setExpectedException('MathPHP\Exception\BadParameterException');
+        $this->expectException(Exception\BadParameterException::class);
         $A->scalarDivide('k');
     }
 
@@ -765,7 +839,7 @@ class MatrixOperationsTest extends \PHPUnit_Framework_TestCase
             [2, 3, 4],
         ]);
 
-        $this->setExpectedException('MathPHP\Exception\BadParameterException');
+        $this->expectException(Exception\BadParameterException::class);
         $A->scalarDivide(0);
     }
 
@@ -884,7 +958,7 @@ class MatrixOperationsTest extends \PHPUnit_Framework_TestCase
             [2, 3],
             [3, 4],
         ]);
-        $this->setExpectedException('MathPHP\Exception\MatrixException');
+        $this->expectException(Exception\MatrixException::class);
         $A->trace();
     }
 
@@ -1049,7 +1123,7 @@ class MatrixOperationsTest extends \PHPUnit_Framework_TestCase
             [5, 6],
         ]);
 
-        $this->setExpectedException('MathPHP\Exception\MatrixException');
+        $this->expectException(Exception\MatrixException::class);
         $A->augment($B);
     }
 
@@ -1108,7 +1182,7 @@ class MatrixOperationsTest extends \PHPUnit_Framework_TestCase
             [3, 4],
         ]);
 
-        $this->setExpectedException('MathPHP\Exception\MatrixException');
+        $this->expectException(Exception\MatrixException::class);
         $this->assertEquals($A->augmentIdentity());
     }
 
@@ -1212,7 +1286,7 @@ class MatrixOperationsTest extends \PHPUnit_Framework_TestCase
             [5, 6],
         ]);
 
-        $this->setExpectedException('MathPHP\Exception\MatrixException');
+        $this->expectException(Exception\MatrixException::class);
         $A->augmentBelow($B);
     }
 
@@ -1279,7 +1353,7 @@ class MatrixOperationsTest extends \PHPUnit_Framework_TestCase
             [2, 3, 4, 5],
         ]);
 
-        $this->setExpectedException('MathPHP\Exception\MatrixException');
+        $this->expectException(Exception\MatrixException::class);
         $A->hadamardProduct($B);
     }
 
@@ -2150,6 +2224,605 @@ class MatrixOperationsTest extends \PHPUnit_Framework_TestCase
                 ],
                 -512
             ],
+            [
+                [
+                    [2, -1, 4, 3, 2, 3, 4, 4],
+                    [-1, 2, 3, 2, 1, 2, 3, 3],
+                    [4, 3, 2, 1, 2, 3, 4, 4],
+                    [2, 1, 2, 1, 2, 1, 2, 2],
+                    [3, 2, 3, 2, 1, 2, 3, 3],
+                    [3, 2, 3, 2, 1, 2, 1, 2],
+                    [4, 3, 4, 3, 2, 1, 2, 2],
+                    [4, 3, 4, 3, 2, 2, 2, 2],
+                ],
+                -96,
+            ],
+            [
+                [
+                    [0, 3, 2, 1, 2, 2, 3, 3],
+                    [3, 0, 1, 2, 3, 3, 4, 4],
+                    [2, 1, 0, 1, 2, 2, 3, 3],
+                    [1, 2, 1, 0, 1, 1, 2, 2],
+                    [2, 3, 2, 1, 0, 2, 3, 3],
+                    [2, 3, 2, 1, 2, 0, 1, 2],
+                    [3, 4, 3, 2, 3, 1, 0, 2],
+                    [3, 4, 3, 2, 3, 2, 2, 0],
+                ],
+                -640
+            ],
+            [
+                [
+                    [1, 3, 2, 1, 2, 2, 3, 3],
+                    [4, 0, 1, 2, 3, 3, 4, 4],
+                    [3, 1, 0, 1, 2, 2, 3, 3],
+                    [2, 2, 1, 0, 1, 1, 2, 2],
+                    [3, 3, 2, 1, 0, 2, 3, 3],
+                    [3, 3, 2, 1, 2, 0, 1, 2],
+                    [4, 4, 3, 2, 3, 1, 0, 2],
+                    [4, 4, 3, 2, 3, 2, 2, 0],
+                ],
+                -736
+            ],
+            [
+                [
+                    [1, 4, 3, 2, 3, 3, 4, 4],
+                    [0, 3, 2, 1, 2, 2, 3, 3],
+                    [2, 1, 0, 1, 2, 2, 3, 3],
+                    [1, 2, 1, 0, 1, 1, 2, 2],
+                    [2, 3, 2, 1, 0, 2, 3, 3],
+                    [2, 3, 2, 1, 2, 0, 1, 2],
+                    [3, 4, 3, 2, 3, 1, 0, 2],
+                    [3, 4, 3, 2, 3, 2, 2, 0],
+                ],
+                96
+            ],
+            [
+                [
+                    [1, 4, 3, 2, 3, 3, 4, 4],
+                    [0, 3, 2, 1, 2, 2, 3, 3],
+                    [3, 0, 1, 2, 3, 3, 4, 4],
+                    [1, 2, 1, 0, 1, 1, 2, 2],
+                    [2, 3, 2, 1, 0, 2, 3, 3],
+                    [2, 3, 2, 1, 2, 0, 1, 2],
+                    [3, 4, 3, 2, 3, 1, 0, 2],
+                    [3, 4, 3, 2, 3, 2, 2, 0],
+                ],
+                0
+            ],
+            [
+                [
+                    [1, 4, 3, 2, 3, 3, 4, 4],
+                    [0, 3, 2, 1, 2, 2, 3, 3],
+                    [3, 0, 1, 2, 3, 3, 4, 4],
+                    [2, 1, 0, 1, 2, 2, 3, 3],
+                    [2, 3, 2, 1, 0, 2, 3, 3],
+                    [2, 3, 2, 1, 2, 0, 1, 2],
+                    [3, 4, 3, 2, 3, 1, 0, 2],
+                    [3, 4, 3, 2, 3, 2, 2, 0],
+                ],
+                -224
+            ],
+            [
+                [
+                    [1, 4, 3, 2, 3, 3, 4, 4],
+                    [0, 3, 2, 1, 2, 2, 3, 3],
+                    [3, 0, 1, 2, 3, 3, 4, 4],
+                    [2, 1, 0, 1, 2, 2, 3, 3],
+                    [1, 2, 1, 0, 1, 1, 2, 2],
+                    [2, 3, 2, 1, 2, 0, 1, 2],
+                    [3, 4, 3, 2, 3, 1, 0, 2],
+                    [3, 4, 3, 2, 3, 2, 2, 0],
+                ],
+                -96
+            ],
+            [
+                [
+                    [1, 4, 3, 2, 3, 3, 4, 4],
+                    [0, 3, 2, 1, 2, 2, 3, 3],
+                    [3, 0, 1, 2, 3, 3, 4, 4],
+                    [2, 1, 0, 1, 2, 2, 3, 3],
+                    [1, 2, 1, 0, 1, 1, 2, 2],
+                    [2, 3, 2, 1, 0, 2, 3, 3],
+                    [3, 4, 3, 2, 3, 1, 0, 2],
+                    [3, 4, 3, 2, 3, 2, 2, 0],
+                ],
+                0
+            ],
+            [
+                [
+                    [1, 4, 3, 2, 3, 3, 4, 4],
+                    [0, 3, 2, 1, 2, 2, 3, 3],
+                    [3, 0, 1, 2, 3, 3, 4, 4],
+                    [2, 1, 0, 1, 2, 2, 3, 3],
+                    [1, 2, 1, 0, 1, 1, 2, 2],
+                    [2, 3, 2, 1, 0, 2, 3, 3],
+                    [2, 3, 2, 1, 2, 0, 1, 2],
+                    [3, 4, 3, 2, 3, 2, 2, 0],
+                ],
+                -64
+            ],
+            [
+                [
+                    [1, 4, 3, 2, 3, 3, 4, 4],
+                    [0, 3, 2, 1, 2, 2, 3, 3],
+                    [3, 0, 1, 2, 3, 3, 4, 4],
+                    [2, 1, 0, 1, 2, 2, 3, 3],
+                    [1, 2, 1, 0, 1, 1, 2, 2],
+                    [2, 3, 2, 1, 0, 2, 3, 3],
+                    [2, 3, 2, 1, 2, 0, 1, 2],
+                    [3, 4, 3, 2, 3, 1, 0, 2],
+                ],
+                64
+            ],
+            [
+                [
+                    [1, 3, 2, 1, 2, 2, 3, 3],
+                    [4, 0, 1, 2, 3, 3, 4, 4],
+                    [3, 1, 0, 1, 2, 2, 3, 3],
+                    [2, 2, 1, 0, 1, 1, 2, 2],
+                    [3, 3, 2, 1, 0, 2, 3, 3],
+                    [3, 3, 2, 1, 2, 0, 1, 2],
+                    [4, 4, 3, 2, 3, 1, 0, 2],
+                    [4, 4, 3, 2, 3, 2, 2, 0],
+                ],
+                -736
+            ],
+            [
+                [
+                    [0, 4, 3, 2, 3, 3, 4, 4],
+                    [4, 0, 1, 2, 3, 3, 4, 4],
+                    [3, 1, 0, 1, 2, 2, 3, 3],
+                    [2, 2, 1, 0, 1, 1, 2, 2],
+                    [3, 3, 2, 1, 0, 2, 3, 3],
+                    [3, 3, 2, 1, 2, 0, 1, 2],
+                    [4, 4, 3, 2, 3, 1, 0, 2],
+                    [4, 4, 3, 2, 3, 2, 2, 0],
+                ],
+                -1472
+            ],
+            [
+                [
+                    [0, 4, 3, 2, 3, 3, 4, 4],
+                    [1, 3, 2, 1, 2, 2, 3, 3],
+                    [3, 1, 0, 1, 2, 2, 3, 3],
+                    [2, 2, 1, 0, 1, 1, 2, 2],
+                    [3, 3, 2, 1, 0, 2, 3, 3],
+                    [3, 3, 2, 1, 2, 0, 1, 2],
+                    [4, 4, 3, 2, 3, 1, 0, 2],
+                    [4, 4, 3, 2, 3, 2, 2, 0],
+                ],
+                0
+            ],
+            [
+                [
+                    [0, 4, 3, 2, 3, 3, 4, 4],
+                    [1, 3, 2, 1, 2, 2, 3, 3],
+                    [4, 0, 1, 2, 3, 3, 4, 4],
+                    [2, 2, 1, 0, 1, 1, 2, 2],
+                    [3, 3, 2, 1, 0, 2, 3, 3],
+                    [3, 3, 2, 1, 2, 0, 1, 2],
+                    [4, 4, 3, 2, 3, 1, 0, 2],
+                    [4, 4, 3, 2, 3, 2, 2, 0],
+                ],
+                0
+            ],
+            [
+                [
+                    [0, 4, 3, 2, 3, 3, 4, 4],
+                    [1, 3, 2, 1, 2, 2, 3, 3],
+                    [4, 0, 1, 2, 3, 3, 4, 4],
+                    [3, 1, 0, 1, 2, 2, 3, 3],
+                    [3, 3, 2, 1, 0, 2, 3, 3],
+                    [3, 3, 2, 1, 2, 0, 1, 2],
+                    [4, 4, 3, 2, 3, 1, 0, 2],
+                    [4, 4, 3, 2, 3, 2, 2, 0],
+                ],
+                -736
+            ],
+            [
+                [
+                    [0, 4, 3, 2, 3, 3, 4, 4],
+                    [1, 3, 2, 1, 2, 2, 3, 3],
+                    [4, 0, 1, 2, 3, 3, 4, 4],
+                    [3, 1, 0, 1, 2, 2, 3, 3],
+                    [2, 2, 1, 0, 1, 1, 2, 2],
+                    [3, 3, 2, 1, 2, 0, 1, 2],
+                    [4, 4, 3, 2, 3, 1, 0, 2],
+                    [4, 4, 3, 2, 3, 2, 2, 0],
+                ],
+                0
+            ],
+            [
+                [
+                    [0, 4, 3, 2, 3, 3, 4, 4],
+                    [1, 3, 2, 1, 2, 2, 3, 3],
+                    [4, 0, 1, 2, 3, 3, 4, 4],
+                    [3, 1, 0, 1, 2, 2, 3, 3],
+                    [2, 2, 1, 0, 1, 1, 2, 2],
+                    [3, 3, 2, 1, 0, 2, 3, 3],
+                    [4, 4, 3, 2, 3, 1, 0, 2],
+                    [4, 4, 3, 2, 3, 2, 2, 0],
+                ],
+                0
+            ],
+            [
+                [
+                    [0, 4, 3, 2, 3, 3, 4, 4],
+                    [1, 3, 2, 1, 2, 2, 3, 3],
+                    [4, 0, 1, 2, 3, 3, 4, 4],
+                    [3, 1, 0, 1, 2, 2, 3, 3],
+                    [2, 2, 1, 0, 1, 1, 2, 2],
+                    [3, 3, 2, 1, 0, 2, 3, 3],
+                    [3, 3, 2, 1, 2, 0, 1, 2],
+                    [4, 4, 3, 2, 3, 2, 2, 0],
+                ],
+                0
+            ],
+            [
+                [
+                    [0, 4, 3, 2, 3, 3, 4, 4],
+                    [1, 3, 2, 1, 2, 2, 3, 3],
+                    [4, 0, 1, 2, 3, 3, 4, 4],
+                    [3, 1, 0, 1, 2, 2, 3, 3],
+                    [2, 2, 1, 0, 1, 1, 2, 2],
+                    [3, 3, 2, 1, 0, 2, 3, 3],
+                    [3, 3, 2, 1, 2, 0, 1, 2],
+                    [4, 4, 3, 2, 3, 1, 0, 2],
+                ],
+                0
+            ],
+            [
+                [
+                    [1, 0, 2, 1, 2, 2, 3, 3],
+                    [4, 3, 1, 2, 3, 3, 4, 4],
+                    [3, 2, 0, 1, 2, 2, 3, 3],
+                    [2, 1, 1, 0, 1, 1, 2, 2],
+                    [3, 2, 2, 1, 0, 2, 3, 3],
+                    [3, 2, 2, 1, 2, 0, 1, 2],
+                    [4, 3, 3, 2, 3, 1, 0, 2],
+                    [4, 3, 3, 2, 3, 2, 2, 0],
+                ],
+                96
+            ],
+            [
+                [
+                    [0, 1, 3, 2, 3, 3, 4, 4],
+                    [4, 3, 1, 2, 3, 3, 4, 4],
+                    [3, 2, 0, 1, 2, 2, 3, 3],
+                    [2, 1, 1, 0, 1, 1, 2, 2],
+                    [3, 2, 2, 1, 0, 2, 3, 3],
+                    [3, 2, 2, 1, 2, 0, 1, 2],
+                    [4, 3, 3, 2, 3, 1, 0, 2],
+                    [4, 3, 3, 2, 3, 2, 2, 0],
+                ],
+                0
+            ],
+            [
+                [
+                    [0, 1, 3, 2, 3, 3, 4, 4],
+                    [1, 0, 2, 1, 2, 2, 3, 3],
+                    [3, 2, 0, 1, 2, 2, 3, 3],
+                    [2, 1, 1, 0, 1, 1, 2, 2],
+                    [3, 2, 2, 1, 0, 2, 3, 3],
+                    [3, 2, 2, 1, 2, 0, 1, 2],
+                    [4, 3, 3, 2, 3, 1, 0, 2],
+                    [4, 3, 3, 2, 3, 2, 2, 0],
+                ],
+                -640
+            ],
+            [
+                [
+                    [0, 1, 3, 2, 3, 3, 4, 4],
+                    [1, 0, 2, 1, 2, 2, 3, 3],
+                    [4, 3, 1, 2, 3, 3, 4, 4],
+                    [2, 1, 1, 0, 1, 1, 2, 2],
+                    [3, 2, 2, 1, 0, 2, 3, 3],
+                    [3, 2, 2, 1, 2, 0, 1, 2],
+                    [4, 3, 3, 2, 3, 1, 0, 2],
+                    [4, 3, 3, 2, 3, 2, 2, 0],
+                ],
+                -736
+            ],
+            [
+                [
+                    [0, 1, 3, 2, 3, 3, 4, 4],
+                    [1, 0, 2, 1, 2, 2, 3, 3],
+                    [4, 3, 1, 2, 3, 3, 4, 4],
+                    [3, 2, 0, 1, 2, 2, 3, 3],
+                    [3, 2, 2, 1, 0, 2, 3, 3],
+                    [3, 2, 2, 1, 2, 0, 1, 2],
+                    [4, 3, 3, 2, 3, 1, 0, 2],
+                    [4, 3, 3, 2, 3, 2, 2, 0],
+                ],
+                -224
+            ],
+            [
+                [
+                    [0, 1, 3, 2, 3, 3, 4, 4],
+                    [1, 0, 2, 1, 2, 2, 3, 3],
+                    [4, 3, 1, 2, 3, 3, 4, 4],
+                    [3, 2, 0, 1, 2, 2, 3, 3],
+                    [2, 1, 1, 0, 1, 1, 2, 2],
+                    [3, 2, 2, 1, 2, 0, 1, 2],
+                    [4, 3, 3, 2, 3, 1, 0, 2],
+                    [4, 3, 3, 2, 3, 2, 2, 0],
+                ],
+                -96
+            ],
+            [
+                [
+                    [0, 1, 3, 2, 3, 3, 4, 4],
+                    [1, 0, 2, 1, 2, 2, 3, 3],
+                    [4, 3, 1, 2, 3, 3, 4, 4],
+                    [3, 2, 0, 1, 2, 2, 3, 3],
+                    [2, 1, 1, 0, 1, 1, 2, 2],
+                    [3, 2, 2, 1, 0, 2, 3, 3],
+                    [4, 3, 3, 2, 3, 1, 0, 2],
+                    [4, 3, 3, 2, 3, 2, 2, 0],
+                ],
+                0
+            ],
+            [
+                [
+                    [0, 1, 3, 2, 3, 3, 4, 4],
+                    [1, 0, 2, 1, 2, 2, 3, 3],
+                    [4, 3, 1, 2, 3, 3, 4, 4],
+                    [3, 2, 0, 1, 2, 2, 3, 3],
+                    [2, 1, 1, 0, 1, 1, 2, 2],
+                    [3, 2, 2, 1, 0, 2, 3, 3],
+                    [3, 2, 2, 1, 2, 0, 1, 2],
+                    [4, 3, 3, 2, 3, 2, 2, 0],
+                ],
+                -64
+            ],
+            [
+                [
+                    [0, 1, 3, 2, 3, 3, 4, 4],
+                    [1, 0, 2, 1, 2, 2, 3, 3],
+                    [4, 3, 1, 2, 3, 3, 4, 4],
+                    [3, 2, 0, 1, 2, 2, 3, 3],
+                    [2, 1, 1, 0, 1, 1, 2, 2],
+                    [3, 2, 2, 1, 0, 2, 3, 3],
+                    [3, 2, 2, 1, 2, 0, 1, 2],
+                    [4, 3, 3, 2, 3, 1, 0, 2],
+                ],
+                64
+            ],
+            [
+                [
+                    [1, 0, 3, 1, 2, 2, 3, 3],
+                    [4, 3, 0, 2, 3, 3, 4, 4],
+                    [3, 2, 1, 1, 2, 2, 3, 3],
+                    [2, 1, 2, 0, 1, 1, 2, 2],
+                    [3, 2, 3, 1, 0, 2, 3, 3],
+                    [3, 2, 3, 1, 2, 0, 1, 2],
+                    [4, 3, 4, 2, 3, 1, 0, 2],
+                    [4, 3, 4, 2, 3, 2, 2, 0],
+                ],
+                0
+            ],
+            [
+                [
+                    [0, 1, 4, 2, 3, 3, 4, 4],
+                    [4, 3, 0, 2, 3, 3, 4, 4],
+                    [3, 2, 1, 1, 2, 2, 3, 3],
+                    [2, 1, 2, 0, 1, 1, 2, 2],
+                    [3, 2, 3, 1, 0, 2, 3, 3],
+                    [3, 2, 3, 1, 2, 0, 1, 2],
+                    [4, 3, 4, 2, 3, 1, 0, 2],
+                    [4, 3, 4, 2, 3, 2, 2, 0],
+                ],
+                0
+            ],
+            [
+                [
+                    [0, 1, 4, 2, 3, 3, 4, 4],
+                    [1, 0, 3, 1, 2, 2, 3, 3],
+                    [3, 2, 1, 1, 2, 2, 3, 3],
+                    [2, 1, 2, 0, 1, 1, 2, 2],
+                    [3, 2, 3, 1, 0, 2, 3, 3],
+                    [3, 2, 3, 1, 2, 0, 1, 2],
+                    [4, 3, 4, 2, 3, 1, 0, 2],
+                    [4, 3, 4, 2, 3, 2, 2, 0],
+                ],
+                -736
+            ],
+            [
+                [
+                    [0, 1, 4, 2, 3, 3, 4, 4],
+                    [1, 0, 3, 1, 2, 2, 3, 3],
+                    [4, 3, 0, 2, 3, 3, 4, 4],
+                    [2, 1, 2, 0, 1, 1, 2, 2],
+                    [3, 2, 3, 1, 0, 2, 3, 3],
+                    [3, 2, 3, 1, 2, 0, 1, 2],
+                    [4, 3, 4, 2, 3, 1, 0, 2],
+                    [4, 3, 4, 2, 3, 2, 2, 0],
+                ],
+                -1472
+            ],
+            [
+                [
+                    [0, 1, 4, 2, 3, 3, 4, 4],
+                    [1, 0, 3, 1, 2, 2, 3, 3],
+                    [4, 3, 0, 2, 3, 3, 4, 4],
+                    [3, 2, 1, 1, 2, 2, 3, 3],
+                    [3, 2, 3, 1, 0, 2, 3, 3],
+                    [3, 2, 3, 1, 2, 0, 1, 2],
+                    [4, 3, 4, 2, 3, 1, 0, 2],
+                    [4, 3, 4, 2, 3, 2, 2, 0],
+                ],
+                -736
+            ],
+            // If zero-values are not handled properly the pivots will be incorrect in this example
+            [
+                [
+                    [0, 1, 4, 2, 3, 3, 4, 4],
+                    [1, 0, 3, 1, 2, 2, 3, 3],
+                    [4, 3, 0, 2, 3, 3, 4, 4],
+                    [3, 2, 1, 1, 2, 2, 3, 3],
+                    [2, 1, 2, 0, 1, 1, 2, 2],
+                    [3, 2, 3, 1, 2, 0, 1, 2],
+                    [4, 3, 4, 2, 3, 1, 0, 2],
+                    [4, 3, 4, 2, 3, 2, 2, 0],
+                ],
+                0
+            ],
+            [
+                [
+                    [0, 1, 4, 2, 3, 3, 4, 4],
+                    [1, 0, 3, 1, 2, 2, 3, 3],
+                    [4, 3, 0, 2, 3, 3, 4, 4],
+                    [3, 2, 1, 1, 2, 2, 3, 3],
+                    [2, 1, 2, 0, 1, 1, 2, 2],
+                    [3, 2, 3, 1, 0, 2, 3, 3],
+                    [4, 3, 4, 2, 3, 1, 0, 2],
+                    [4, 3, 4, 2, 3, 2, 2, 0],
+                ],
+                0
+            ],
+            [
+                [
+                    [0, 1, 4, 2, 3, 3, 4, 4],
+                    [1, 0, 3, 1, 2, 2, 3, 3],
+                    [4, 3, 0, 2, 3, 3, 4, 4],
+                    [3, 2, 1, 1, 2, 2, 3, 3],
+                    [2, 1, 2, 0, 1, 1, 2, 2],
+                    [3, 2, 3, 1, 0, 2, 3, 3],
+                    [3, 2, 3, 1, 2, 0, 1, 2],
+                    [4, 3, 4, 2, 3, 2, 2, 0],
+                ],
+                0
+            ],
+            [
+                [
+                    [0, 1, 4, 2, 3, 3, 4, 4],
+                    [1, 0, 3, 1, 2, 2, 3, 3],
+                    [4, 3, 0, 2, 3, 3, 4, 4],
+                    [3, 2, 1, 1, 2, 2, 3, 3],
+                    [2, 1, 2, 0, 1, 1, 2, 2],
+                    [3, 2, 3, 1, 0, 2, 3, 3],
+                    [3, 2, 3, 1, 2, 0, 1, 2],
+                    [4, 3, 4, 2, 3, 1, 0, 2],
+                ],
+                0
+            ],
+            [
+                [
+                    [1, 0, 3, 2, 2, 2, 3, 3],
+                    [4, 3, 0, 1, 3, 3, 4, 4],
+                    [3, 2, 1, 0, 2, 2, 3, 3],
+                    [2, 1, 2, 1, 1, 1, 2, 2],
+                    [3, 2, 3, 2, 0, 2, 3, 3],
+                    [3, 2, 3, 2, 2, 0, 1, 2],
+                    [4, 3, 4, 3, 3, 1, 0, 2],
+                    [4, 3, 4, 3, 3, 2, 2, 0],
+                ],
+                -224
+            ],
+            [
+                [
+                    [0, 1, 4, 3, 3, 3, 4, 4],
+                    [4, 3, 0, 1, 3, 3, 4, 4],
+                    [3, 2, 1, 0, 2, 2, 3, 3],
+                    [2, 1, 2, 1, 1, 1, 2, 2],
+                    [3, 2, 3, 2, 0, 2, 3, 3],
+                    [3, 2, 3, 2, 2, 0, 1, 2],
+                    [4, 3, 4, 3, 3, 1, 0, 2],
+                    [4, 3, 4, 3, 3, 2, 2, 0],
+                ],
+                -736
+            ],
+            [
+                [
+                    [0, 1, 4, 3, 3, 3, 4, 4],
+                    [1, 0, 3, 2, 2, 2, 3, 3],
+                    [3, 2, 1, 0, 2, 2, 3, 3],
+                    [2, 1, 2, 1, 1, 1, 2, 2],
+                    [3, 2, 3, 2, 0, 2, 3, 3],
+                    [3, 2, 3, 2, 2, 0, 1, 2],
+                    [4, 3, 4, 3, 3, 1, 0, 2],
+                    [4, 3, 4, 3, 3, 2, 2, 0],
+                ],
+                -224
+            ],
+            [
+                [
+                    [0, 1, 4, 3, 3, 3, 4, 4],
+                    [1, 0, 3, 2, 2, 2, 3, 3],
+                    [4, 3, 0, 1, 3, 3, 4, 4],
+                    [2, 1, 2, 1, 1, 1, 2, 2],
+                    [3, 2, 3, 2, 0, 2, 3, 3],
+                    [3, 2, 3, 2, 2, 0, 1, 2],
+                    [4, 3, 4, 3, 3, 1, 0, 2],
+                    [4, 3, 4, 3, 3, 2, 2, 0],
+                ],
+                -736
+            ],
+            [
+                [
+                    [0, 1, 4, 3, 3, 3, 4, 4],
+                    [1, 0, 3, 2, 2, 2, 3, 3],
+                    [4, 3, 0, 1, 3, 3, 4, 4],
+                    [3, 2, 1, 0, 2, 2, 3, 3],
+                    [3, 2, 3, 2, 0, 2, 3, 3],
+                    [3, 2, 3, 2, 2, 0, 1, 2],
+                    [4, 3, 4, 3, 3, 1, 0, 2],
+                    [4, 3, 4, 3, 3, 2, 2, 0],
+                ],
+                -2544
+            ],
+            [
+                [
+                    [0, 1, 4, 3, 3, 3, 4, 4],
+                    [1, 0, 3, 2, 2, 2, 3, 3],
+                    [4, 3, 0, 1, 3, 3, 4, 4],
+                    [3, 2, 1, 0, 2, 2, 3, 3],
+                    [2, 1, 2, 1, 1, 1, 2, 2],
+                    [3, 2, 3, 2, 2, 0, 1, 2],
+                    [4, 3, 4, 3, 3, 1, 0, 2],
+                    [4, 3, 4, 3, 3, 2, 2, 0],
+                ],
+                -512
+            ],
+            [
+                [
+                    [0, 1, 4, 3, 3, 3, 4, 4],
+                    [1, 0, 3, 2, 2, 2, 3, 3],
+                    [4, 3, 0, 1, 3, 3, 4, 4],
+                    [3, 2, 1, 0, 2, 2, 3, 3],
+                    [2, 1, 2, 1, 1, 1, 2, 2],
+                    [3, 2, 3, 2, 0, 2, 3, 3],
+                    [4, 3, 4, 3, 3, 1, 0, 2],
+                    [4, 3, 4, 3, 3, 2, 2, 0],
+                ],
+                736
+            ],
+            [
+                [
+                    [0, 1, 4, 3, 3, 3, 4, 4],
+                    [1, 0, 3, 2, 2, 2, 3, 3],
+                    [4, 3, 0, 1, 3, 3, 4, 4],
+                    [3, 2, 1, 0, 2, 2, 3, 3],
+                    [2, 1, 2, 1, 1, 1, 2, 2],
+                    [3, 2, 3, 2, 0, 2, 3, 3],
+                    [3, 2, 3, 2, 2, 0, 1, 2],
+                    [4, 3, 4, 3, 3, 2, 2, 0],
+                ],
+                272
+            ],
+            [
+                [
+                    [0, 1, 4, 3, 3, 3, 4, 4],
+                    [1, 0, 3, 2, 2, 2, 3, 3],
+                    [4, 3, 0, 1, 3, 3, 4, 4],
+                    [3, 2, 1, 0, 2, 2, 3, 3],
+                    [2, 1, 2, 1, 1, 1, 2, 2],
+                    [3, 2, 3, 2, 0, 2, 3, 3],
+                    [3, 2, 3, 2, 2, 0, 1, 2],
+                    [4, 3, 4, 3, 3, 1, 0, 2],
+                ],
+                96
+            ],
         ];
     }
 
@@ -2157,7 +2830,7 @@ class MatrixOperationsTest extends \PHPUnit_Framework_TestCase
     {
         $A = MatrixFactory::create([[1, 2, 3]]);
 
-        $this->setExpectedException('MathPHP\Exception\MatrixException');
+        $this->expectException(Exception\MatrixException::class);
         $A->det();
     }
 
@@ -2280,7 +2953,7 @@ class MatrixOperationsTest extends \PHPUnit_Framework_TestCase
     {
         $A = MatrixFactory::create($A);
 
-        $this->setExpectedException('MathPHP\Exception\MatrixException');
+        $this->expectException(Exception\MatrixException::class);
         $A->inverse();
     }
 
@@ -2303,7 +2976,7 @@ class MatrixOperationsTest extends \PHPUnit_Framework_TestCase
     {
         $A = MatrixFactory::create($A);
 
-        $this->setExpectedException('MathPHP\Exception\MatrixException');
+        $this->expectException(Exception\MatrixException::class);
         $A->inverse();
     }
 
@@ -2453,7 +3126,7 @@ class MatrixOperationsTest extends \PHPUnit_Framework_TestCase
             [3, 4, 5],
         ]);
 
-        $this->setExpectedException('MathPHP\Exception\MatrixException');
+        $this->expectException(Exception\MatrixException::class);
         $A->minorMatrix(4, 1);
     }
 
@@ -2465,7 +3138,7 @@ class MatrixOperationsTest extends \PHPUnit_Framework_TestCase
             [3, 4, 5],
         ]);
 
-        $this->setExpectedException('MathPHP\Exception\MatrixException');
+        $this->expectException(Exception\MatrixException::class);
         $A->minorMatrix(1, 4);
     }
 
@@ -2477,7 +3150,7 @@ class MatrixOperationsTest extends \PHPUnit_Framework_TestCase
             [3, 4, 5, 4],
         ]);
 
-        $this->setExpectedException('MathPHP\Exception\MatrixException');
+        $this->expectException(Exception\MatrixException::class);
         $A->minorMatrix(1, 1);
     }
 
@@ -2633,7 +3306,7 @@ class MatrixOperationsTest extends \PHPUnit_Framework_TestCase
             [3, 4, 5],
         ]);
 
-        $this->setExpectedException(Exception\OutOfBoundsException::class);
+        $this->expectException(Exception\OutOfBoundsException::class);
         $R = $A->leadingPrincipalMinor(-1);
     }
 
@@ -2648,7 +3321,7 @@ class MatrixOperationsTest extends \PHPUnit_Framework_TestCase
             [3, 4, 5],
         ]);
 
-        $this->setExpectedException(Exception\OutOfBoundsException::class);
+        $this->expectException(Exception\OutOfBoundsException::class);
         $R = $A->leadingPrincipalMinor($A->getN() + 1);
     }
 
@@ -2664,7 +3337,7 @@ class MatrixOperationsTest extends \PHPUnit_Framework_TestCase
             [4, 5, 6],
         ]);
 
-        $this->setExpectedException(Exception\MatrixException::class);
+        $this->expectException(Exception\MatrixException::class);
         $R = $A->leadingPrincipalMinor(2);
     }
 
@@ -2705,6 +3378,69 @@ class MatrixOperationsTest extends \PHPUnit_Framework_TestCase
                 ],
                 1, 2, 13
             ],
+            [
+                [
+                    [1, 2, 1],
+                    [6, -1, 0],
+                    [-1, -2, -1],
+                ], 0, 0, 1
+            ],
+            [
+                [
+                    [1, 2, 1],
+                    [6, -1, 0],
+                    [-1, -2, -1],
+                ], 0, 1, -6
+            ],
+            [
+                [
+                    [1, 2, 1],
+                    [6, -1, 0],
+                    [-1, -2, -1],
+                ], 0, 2, -13
+            ],
+            [
+                [
+                    [1, 2, 1],
+                    [6, -1, 0],
+                    [-1, -2, -1],
+                ], 1, 0, 0
+            ],
+            [
+                [
+                    [1, 2, 1],
+                    [6, -1, 0],
+                    [-1, -2, -1],
+                ], 1, 1, 0
+            ],
+            [
+                [
+                    [1, 2, 1],
+                    [6, -1, 0],
+                    [-1, -2, -1],
+                ], 1, 2, 0
+            ],
+            [
+                [
+                    [1, 2, 1],
+                    [6, -1, 0],
+                    [-1, -2, -1],
+                ], 2, 0, 1
+            ],
+            [
+                [
+                    [1, 2, 1],
+                    [6, -1, 0],
+                    [-1, -2, -1],
+                ], 2, 1, -6
+            ],
+            [
+                [
+                    [1, 2, 1],
+                    [6, -1, 0],
+                    [-1, -2, -1],
+                ], 2, 2, -13
+            ],
         ];
     }
 
@@ -2716,7 +3452,7 @@ class MatrixOperationsTest extends \PHPUnit_Framework_TestCase
             [3, 4, 5],
         ]);
 
-        $this->setExpectedException('MathPHP\Exception\MatrixException');
+        $this->expectException(Exception\MatrixException::class);
         $A->minor(4, 1);
     }
 
@@ -2728,7 +3464,7 @@ class MatrixOperationsTest extends \PHPUnit_Framework_TestCase
             [3, 4, 5],
         ]);
 
-        $this->setExpectedException('MathPHP\Exception\MatrixException');
+        $this->expectException(Exception\MatrixException::class);
         $A->minor(1, 4);
     }
 
@@ -2740,7 +3476,7 @@ class MatrixOperationsTest extends \PHPUnit_Framework_TestCase
             [3, 4, 5, 4],
         ]);
 
-        $this->setExpectedException('MathPHP\Exception\MatrixException');
+        $this->expectException(Exception\MatrixException::class);
         $A->minor(1, 1);
     }
 
@@ -2781,6 +3517,69 @@ class MatrixOperationsTest extends \PHPUnit_Framework_TestCase
                 ],
                 1, 2, -13
             ],
+            [
+                [
+                    [1, 2, 1],
+                    [6, -1, 0],
+                    [-1, -2, -1],
+                ], 0, 0, 1
+            ],
+            [
+                [
+                    [1, 2, 1],
+                    [6, -1, 0],
+                    [-1, -2, -1],
+                ], 0, 1, 6
+            ],
+            [
+                [
+                    [1, 2, 1],
+                    [6, -1, 0],
+                    [-1, -2, -1],
+                ], 0, 2, -13
+            ],
+            [
+                [
+                    [1, 2, 1],
+                    [6, -1, 0],
+                    [-1, -2, -1],
+                ], 1, 0, 0
+            ],
+            [
+                [
+                    [1, 2, 1],
+                    [6, -1, 0],
+                    [-1, -2, -1],
+                ], 1, 1, 0
+            ],
+            [
+                [
+                    [1, 2, 1],
+                    [6, -1, 0],
+                    [-1, -2, -1],
+                ], 1, 2, 0
+            ],
+            [
+                [
+                    [1, 2, 1],
+                    [6, -1, 0],
+                    [-1, -2, -1],
+                ], 2, 0, 1
+            ],
+            [
+                [
+                    [1, 2, 1],
+                    [6, -1, 0],
+                    [-1, -2, -1],
+                ], 0, 0, 1
+            ],
+            [
+                [
+                    [1, 2, 1],
+                    [6, -1, 0],
+                    [-1, -2, -1],
+                ], 2, 2, -13
+            ],
         ];
     }
 
@@ -2792,7 +3591,7 @@ class MatrixOperationsTest extends \PHPUnit_Framework_TestCase
             [3, 4, 5],
         ]);
 
-        $this->setExpectedException('MathPHP\Exception\MatrixException');
+        $this->expectException(Exception\MatrixException::class);
         $A->cofactor(4, 1);
     }
 
@@ -2804,7 +3603,7 @@ class MatrixOperationsTest extends \PHPUnit_Framework_TestCase
             [3, 4, 5],
         ]);
 
-        $this->setExpectedException('MathPHP\Exception\MatrixException');
+        $this->expectException(Exception\MatrixException::class);
         $A->cofactor(1, 4);
     }
 
@@ -2816,7 +3615,7 @@ class MatrixOperationsTest extends \PHPUnit_Framework_TestCase
             [3, 4, 5, 4],
         ]);
 
-        $this->setExpectedException('MathPHP\Exception\MatrixException');
+        $this->expectException(Exception\MatrixException::class);
         $A->cofactor(1, 1);
     }
 
@@ -2828,12 +3627,22 @@ class MatrixOperationsTest extends \PHPUnit_Framework_TestCase
         $A = MatrixFactory::create($A);
         $R = new SquareMatrix($R);
 
-        $this->assertEquals($R, $A->cofactorMatrix());
+        $this->assertEquals($R, $A->cofactorMatrix(), '', 0.00000001);
     }
 
     public function dataProviderForCofactorMatrix()
     {
         return [
+            [
+                [
+                    [6, 4],
+                    [3, 2],
+                ],
+                [
+                    [2, -3],
+                    [-4, 6],
+                ],
+            ],
             [
                 [
                     [1, 2, 3],
@@ -2870,6 +3679,78 @@ class MatrixOperationsTest extends \PHPUnit_Framework_TestCase
                     [4785, 1996, -6265],
                 ],
             ],
+            [
+                [
+                    [2, -1, 4, 3, 2, 3, 3, 4, 4],
+                    [-1, 2, 3, 2, 1, 2, 2, 3, 3],
+                    [4, 3, 2, 1, 2, 3, 3, 4, 4],
+                    [2, 1, 2, 1, 2, 1, 1, 2, 2],
+                    [3, 2, 1, 2, 1, 2, 2, 3, 3],
+                    [3, 2, 3, 2, 1, 2, 2, 3, 3],
+                    [3, 2, 3, 2, 1, 2, 2, 1, 2],
+                    [4, 3, 4, 3, 2, 3, 1, 2, 2],
+                    [4, 3, 4, 3, 2, 3, 2, 2, 2],
+                ],
+                [
+                    [0,   128,     0,     0,     0,  -128,     0,     0,     0,],
+                    [128,   -80,     0,   -32,   -32,   -16,     0,    32,   -64,],
+                    [0,     0,     0,   256,     0,  -256,     0,     0,     0,],
+                    [0,   -32,     0,   -64,  -320,   352,     0,    64,  -128,],
+                    [0,   -32,   256,  -320,   -64,    96,     0,    64,  -128,],
+                    [-128,   -16,  -256,    96,   352,   304,     0,  -352,   192,],
+                    [0,     0,     0,     0,    -0,     0,     0,   512,  -512,],
+                    [-0,    32,     0,    64,    64,  -352,   512,   192,  -384,],
+                    [0,   -64,     0,  -128,  -128,   192,  -512,  -384,   768,],
+                ],
+            ],
+            [
+                [
+                    [0, 1, 4, 3, 2, 3, 3, 4, 4],
+                    [1, 0, 3, 2, 1, 2, 2, 3, 3],
+                    [4, 3, 0, 1, 2, 3, 3, 4, 4],
+                    [3, 2, 1, 0, 1, 2, 2, 3, 3],
+                    [2, 1, 2, 1, 0, 1, 1, 2, 2],
+                    [3, 2, 3, 2, 1, 0, 2, 3, 3],
+                    [3, 2, 3, 2, 1, 2, 0, 1, 2],
+                    [4, 3, 4, 3, 2, 3, 1, 0, 2],
+                    [4, 3, 4, 3, 2, 3, 2, 2, 0],
+                ],
+                [
+                    [-640.0000,   736.0000,   96.0000,     0.0000,  -224.0000,   96.0000,     0.0000,   64.0000,   64.0000],
+                    [ 736.0000, -1472.0000,    0.0000,     0.0000,   736.0000,    0.0000,     0.0000,    0.0000,    0.0000],
+                    [  96.0000,     0.0000, -640.0000,   736.0000,  -224.0000,   96.0000,     0.0000,   64.0000,   64.0000],
+                    [  -0.0000,     0.0000,  736.0000, -1472.0000,   736.0000,    0.0000,     0.0000,    0.0000,    0.0000],
+                    [-224.0000,   736.0000, -224.0000,   736.0000, -2544.0000,  512.0000,   736.0000, -272.0000,   96.0000],
+                    [  96.0000,     0.0000,   96.0000,     0.0000,   512.0000, -640.0000,     0.0000,   64.0000,   64.0000],
+                    [  -0.0000,     0.0000,    0.0000,     0.0000,   736.0000,    0.0000, -1472.0000,  736.0000,    0.0000],
+                    [  64.0000,     0.0000,   64.0000,     0.0000,  -272.0000,   64.0000,   736.0000, -816.0000,  288.0000],
+                    [  64.0000,     0.0000,   64.0000,     0.0000,    96.0000,   64.0000,     0.0000,  288.0000, -448.0000],
+                ],
+            ],
+            [
+                [
+                    [-1, 2, 3],
+                    [1, 5, 6],
+                    [0, 4, 3],
+                ],
+                [
+                    [-9, -3, 4],
+                    [6, -3, 4],
+                    [-3, 9, -7],
+                ],
+            ],
+            [
+                [
+                    [0, 1, 4],
+                    [1, 0, 3],
+                    [4, 3, 0],
+                ],
+                [
+                    [-9, 12, 3],
+                    [12, -16, 4],
+                    [3, 4, -1],
+                ],
+            ],
         ];
     }
 
@@ -2881,7 +3762,17 @@ class MatrixOperationsTest extends \PHPUnit_Framework_TestCase
             [3, 4, 5, 4],
         ]);
 
-        $this->setExpectedException('MathPHP\Exception\MatrixException');
+        $this->expectException(Exception\MatrixException::class);
+        $A->cofactorMatrix();
+    }
+
+    public function testCofactorMatrixExceptionTooSmall()
+    {
+        $A = MatrixFactory::create([
+            [1],
+        ]);
+
+        $this->expectException(Exception\MatrixException::class);
         $A->cofactorMatrix();
     }
 
@@ -3085,6 +3976,427 @@ class MatrixOperationsTest extends \PHPUnit_Framework_TestCase
                     [32.5, 25.333333, 38.0, 304.166667, 1.333333],
                     [ 0.4,  2.466667,  0.4,   1.333333, 4.666667],
                 ],
+            ],
+        ];
+    }
+
+    /**
+     * @testCase     adjugate returns the expected SquareMatrix
+     * @dataProvider dataProviderForAdjugate
+     * @param        array $A
+     * @param        array $expected
+     */
+    public function testAdjugate(array $A, array $expected)
+    {
+        $A        = MatrixFactory::create($A);
+        $expected = MatrixFactory::create($expected);
+
+        $adj⟮A⟯ = $A->adjugate();
+
+        $this->assertEquals($expected, $adj⟮A⟯);
+        $this->assertEquals($expected->getMatrix(), $adj⟮A⟯->getMatrix());
+    }
+
+    public function dataProviderForAdjugate(): array
+    {
+        return [
+            [
+                [
+                    [0],
+                ],
+                [
+                    [1],
+                ],
+            ],
+            [
+                [
+                    [1],
+                ],
+                [
+                    [1],
+                ],
+            ],
+            [
+                [
+                    [5],
+                ],
+                [
+                    [1],
+                ],
+            ],
+            // Data calculated using online calculator: http://www.dcode.fr/adjoint-matrix
+            [
+                [
+                    [1, 2],
+                    [3, 4],
+                ],
+                [
+                    [4, -2],
+                    [-3, 1],
+                ],
+            ],
+            [
+                [
+                    [4, -2],
+                    [-3, 1],
+                ],
+                [
+                    [1, 2],
+                    [3, 4],
+                ],
+            ],
+            [
+                [
+                    [1, 1, 1],
+                    [1, 1, 1],
+                    [1, 1, 1],
+                ],
+                [
+                    [0, 0, 0],
+                    [0, 0, 0],
+                    [0, 0, 0],
+                ],
+            ],
+            [
+                [
+                    [0, 0, 0],
+                    [0, 0, 0],
+                    [0, 0, 0],
+                ],
+                [
+                    [0, 0, 0],
+                    [0, 0, 0],
+                    [0, 0, 0],
+                ],
+            ],
+            [
+                [
+                    [1, 2, 3],
+                    [4, 5, 6],
+                    [7, 8, 9],
+                ],
+                [
+                    [-3, 6, -3],
+                    [6, -12, 6],
+                    [-3, 6, -3],
+                ],
+            ],
+            [
+                [
+                    [1, 2, 3],
+                    [4, 5, 6],
+                    [7, 8, 9],
+                ],
+                [
+                    [-3, 6, -3],
+                    [6, -12, 6],
+                    [-3, 6, -3],
+                ],
+            ],
+            [
+                [
+                    [1, 3, 4],
+                    [3, 4, 4],
+                    [4, 3, 2],
+                ],
+                [
+                    [-4, 6, -4],
+                    [10, -14, 8],
+                    [-7, 9, -5],
+                ],
+            ],
+            [
+                [
+                    [4, 8, 5, 4],
+                    [3, 5, 7, 9],
+                    [0, 8, 12, 5],
+                    [7, 9, 0, 3],
+                ],
+                [
+                    [-645, 39, 246, 333],
+                    [403, -17, -158, -223],
+                    [-392, 28, 136, 212],
+                    [296, -40, -100, -152],
+                ],
+            ],
+            [
+                [
+                    [2, -1, 4, 3, 2, 3, 3, 4, 4],
+                    [-1, 2, 3, 2, 1, 2, 2, 3, 3],
+                    [4, 3, 2, 1, 2, 3, 3, 4, 4],
+                    [2, 1, 2, 1, 2, 1, 1, 2, 2],
+                    [3, 2, 1, 2, 1, 2, 2, 3, 3],
+                    [3, 2, 3, 2, 1, 2, 2, 3, 3],
+                    [3, 2, 3, 2, 1, 2, 2, 1, 2],
+                    [4, 3, 4, 3, 2, 3, 1, 2, 2],
+                    [4, 3, 4, 3, 2, 3, 2, 2, 2],
+                ],
+                [
+                    [0, 128, 0, 0, 0, -128, 0, 0, -0],
+                    [128, -80, 0, -32, -32, -16, 0, 32, -64],
+                    [0, 0, 0, 0, 256, -256, 0, 0, -0],
+                    [0, -32, 256, -64, -320, 96, 0, 64, -128],
+                    [0, -32, 0, -320, -64, 352, 0, 64, -128],
+                    [-128, -16, -256, 352, 96, 304, -0, -352, 192],
+                    [-0, 0, -0, 2.8421709430404E-14, 0, -0, 0, 512, -512],
+                    [-0, 32, -0, 64, 64, -352, 512, 192, -384],
+                    [0, -64, 0, -128, -128, 192, -512, -384, 768],
+                ]
+            ],
+            [
+                [
+                    [0, 1, 4, 3, 2, 3, 3, 4, 4],
+                    [1, 0, 3, 2, 1, 2, 2, 3, 3],
+                    [4, 3, 0, 1, 2, 3, 3, 4, 4],
+                    [3, 2, 1, 0, 1, 2, 2, 3, 3],
+                    [2, 1, 2, 1, 0, 1, 1, 2, 2],
+                    [3, 2, 3, 2, 1, 0, 2, 3, 3],
+                    [3, 2, 3, 2, 1, 2, 0, 1, 2],
+                    [4, 3, 4, 3, 2, 3, 1, 0, 2],
+                    [4, 3, 4, 3, 2, 3, 2, 2, 0],
+                ],
+                [
+                    [-640, 736, 96, 0, -224, 96, 0, 64, 64],
+                    [736, -1472, 0, 0, 736, 0, 0, 0, 0],
+                    [96, 0, -640, 736, -224, 96, 0, 64, 64],
+                    [0, 0, 736, -1472, 736, 0, 0, 0, 0, ],
+                    [-224, 736, -224, 736, -2544, 512, 736, -272, 96],
+                    [96, 0, 96, 0, 512, -640, 0, 64, 64],
+                    [0, 0, 0, 0, 736, 0, -1472, 736, 0],
+                    [64, 0, 64, 0, -272, 64, 736, -816, 288],
+                    [64, 0, 64, 0, 96, 64, 0, 288, -448],
+                ]
+            ],
+        ];
+    }
+
+    /**
+     * @testCase adjugate throws an Exception\MatrixException if the matrix is not square
+     */
+    public function testAdjugateSquareMatrixException()
+    {
+        $A = [
+            [1, 2, 3],
+            [2, 3, 4],
+        ];
+        $A = MatrixFactory::create($A);
+
+        $this->expectException(Exception\MatrixException::class);
+        $adj⟮A⟯ = $A->adjugate();
+    }
+
+    /**
+     * @testCase     rank returns the expected value
+     * @dataProvider dataProviderForRank
+     */
+    public function testRank(array $A, $expected)
+    {
+        $A = MatrixFactory::create($A);
+
+        $this->assertEquals($expected, $A->rank());
+    }
+
+    public function dataProviderForRank(): array
+    {
+        return [
+            [
+                [
+                    [0]
+                ], 0
+            ],
+            [
+                [
+                    [1]
+                ], 1
+            ],
+            [
+                [
+                    [2]
+                ], 1
+            ],
+            [
+                [
+                    [-2]
+                ], 1
+            ],
+            [
+                [
+                    [1, 2, 3],
+                    [2, 3, 4],
+                    [3, 4, 5],
+                ], 2
+            ],
+            [
+                [
+                    [1, 3, -1],
+                    [0, 1, 7],
+                ], 2
+            ],
+            [
+                [
+                    [1, 2, 1],
+                    [-2, -3, 1],
+                    [3, 5, 0],
+                ], 2
+            ],
+            [
+                [
+                    [0, 3, -6, 6, 4, -5],
+                    [3, -7, 8, -5, 8, 9],
+                    [3, -9, 12, -9, 6, 15],
+                ], 3
+            ],
+            [
+                [
+                    [0, 2, 8, -7],
+                    [2, -2, 4, 0],
+                    [-3, 4, -2, -5],
+                ], 3
+            ],
+            [
+                [
+                    [1, -2, 3, 9],
+                    [-1, 3, 0, -4],
+                    [2, -5, 5, 17],
+                ], 3
+            ],
+            [
+                [
+                    [1, 0, -2, 1, 0],
+                    [0, -1, -3, 1, 3],
+                    [-2, -1, 1, -1, 3],
+                    [0, 3, 9, 0, -12],
+                ], 3
+            ],
+            [
+                [
+                    [1, 1, 4, 1, 2],
+                    [0, 1, 2, 1, 1],
+                    [0, 0, 0, 1, 2],
+                    [1, -1, 0, 0, 2],
+                    [2, 1, 6, 0, 1],
+                ], 3
+            ],
+            [
+                [
+                    [1, 2, 0, -1, 1, -10],
+                    [1, 3, 1, 1, -1, -9],
+                    [2, 5, 1, 0, 0, -19],
+                    [3, 6, 0, 0, -6, -27],
+                    [1, 5, 3, 5, -5, -7],
+                ], 3
+            ],
+            [
+                [
+                  [-4, 3, 1, 5, -8],
+                  [6, 0, 9, 2, 6],
+                  [-1, 4, 4, 0, 2],
+                  [8, -1, 3, 4, 0],
+                  [5, 9, -7, -7, 1],
+                ], 5
+            ],
+            [
+                [
+                    [4, 7],
+                    [2, 6],
+                ], 2
+            ],
+            [
+                [
+                    [4, 3],
+                    [3, 2],
+                ], 2
+            ],
+            [
+                [
+                    [1, 2],
+                    [3, 4],
+                ], 2
+            ],
+            [
+                [
+                    [1, 2, 3],
+                    [0, 4, 5],
+                    [1, 0, 6],
+                ], 3
+            ],
+            [
+                [
+                    [7, 2, 1],
+                    [0, 3, -1],
+                    [-3, 4, -2],
+                ], 3
+            ],
+            [
+                [
+                    [3, 6, 6, 8],
+                    [4, 5, 3, 2],
+                    [2, 2, 2, 3],
+                    [6, 8, 4, 2],
+                ], 4
+            ],
+            [
+                [
+                    [0, 0],
+                    [0, 1],
+                ], 1
+            ],
+            [
+                [
+                    [1, 1, 1, 1, 1],
+                    [0, 1, 1, 1, 1],
+                    [0, 0, 0, 0, 1],
+                ], 3
+            ],
+            [
+                [
+                    [0, 0],
+                    [1, 1],
+                    [-1, 0],
+                    [0, -1],
+                    [0, 0],
+                    [0, 0],
+                    [0, 0],
+                    [0, 0],
+                    [1, 1],
+                ], 2
+            ],
+            [
+                [
+                    [1,  2,  3,  4,  3,  1],
+                    [2,  4,  6,  2,  6,  2],
+                    [3,  6, 18,  9,  9, -6],
+                    [4,  8, 12, 10, 12,  4],
+                    [5, 10, 24, 11, 15, -4],
+                ], 3
+            ],
+            [
+                [
+                    [1, 2, 3, 4, 3, 1],
+                    [2, 4, 6, 2, 6, 2],
+                    [3, 6, 18, 9, 9, -6],
+                    [4, 8, 12, 10, 12, 4],
+                    [5, 10, 24, 11, 15, -4]
+                ], 3
+            ],
+            [
+                [
+                    [0, 1],
+                    [1, 2],
+                    [0, 5],
+                ], 2
+            ],
+            [
+                [
+                    [1, 0, 1, 0, 1, 0],
+                    [1, 0, 1, 0, 0, 1],
+                    [1, 0, 0, 1, 1, 0],
+                    [1, 0, 0, 1, 0, 1],
+                    [0, 1, 0, 1, 1, 0],
+                    [0, 1, 0, 1, 0, 1],
+                    [0, 1, 1, 0, 1, 0],
+                    [0, 1, 1, 0, 0, 1],
+                ], 4
             ],
         ];
     }

@@ -1,7 +1,9 @@
 <?php
-namespace MathPHP\Functions\Map;
+namespace MathPHP\Tests\Functions\Map;
 
-class SingleTest extends \PHPUnit_Framework_TestCase
+use MathPHP\Functions\Map\Single;
+
+class SingleTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @dataProvider dataProviderForSquare

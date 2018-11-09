@@ -1,17 +1,28 @@
 <?php
-namespace MathPHP\Probability\Distribution\Discrete;
+namespace MathPHP\Tests\Probability\Distribution\Discrete;
 
-class BernoulliTest extends \PHPUnit_Framework_TestCase
+use MathPHP\Probability\Distribution\Discrete\Bernoulli;
+use MathPHP\Probability\Distribution\Discrete\Binomial;
+
+class BernoulliTest extends \PHPUnit\Framework\TestCase
 {
     /**
+     * @testCase     pmf
      * @dataProvider dataProviderForPMF
+     * @param        int $k
+     * @param        float $p
+     * @param        float $pmf
      */
-    public function testPMF(int $k, float $p, $pmf)
+    public function testPmf(int $k, float $p, float $pmf)
     {
-        $this->assertEquals($pmf, Bernoulli::PMF($k, $p), '', 0.001);
+        $bernoulli = new Bernoulli($p);
+        $this->assertEquals($pmf, $bernoulli->pmf($k), '', 0.001);
     }
 
-    public function dataProviderForPMF()
+    /**
+     * @return array
+     */
+    public function dataProviderForPMF(): array
     {
         return [
             [ 0, 0.6, 0.4 ],
@@ -21,21 +32,35 @@ class BernoulliTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
-    public function testPFMIsBinomialWithNEqualsOne()
+    /**
+     * @testCase pmf is same as Binomial with n = 1
+     */
+    public function testPmfIsBinomialWithNEqualsOne()
     {
-        $this->assertEquals(Binomial::PMF(1, 0, 0.6), Bernoulli::PMF(0, 0.6));
-        $this->assertEquals(Binomial::PMF(1, 1, 0.6), Bernoulli::PMF(1, 0.6));
+        $p         = 0.6;
+        $bernoulli = new Bernoulli($p);
+        $binomial  = new Binomial(1, $p);
+        $this->assertEquals($binomial->pmf(0), $bernoulli->pmf(0));
+        $this->assertEquals($binomial->pmf(1), $bernoulli->pmf(1));
     }
 
     /**
+     * @testCase     cdf
      * @dataProvider dataProviderForCDF
+     * @param        int $k
+     * @param        float $p
+     * @param        float $cdf
      */
-    public function testCDF(int $k, float $p, $cdf)
+    public function testCdf(int $k, float $p, $cdf)
     {
-        $this->assertEquals($cdf, Bernoulli::CDF($k, $p), '', 0.001);
+        $bernoulli = new Bernoulli($p);
+        $this->assertEquals($cdf, $bernoulli->cdf($k), '', 0.001);
     }
 
-    public function dataProviderForCDF()
+    /**
+     * @return array
+     */
+    public function dataProviderForCDF(): array
     {
         return [
             [ 0, 0.6, 0.4 ],

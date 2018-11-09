@@ -1,7 +1,10 @@
 <?php
-namespace MathPHP\LinearAlgebra;
+namespace MathPHP\Tests\LinearAlgebra;
 
-class FunctionMatrixTest extends \PHPUnit_Framework_TestCase
+use MathPHP\LinearAlgebra\FunctionMatrix;
+use MathPHP\Exception;
+
+class FunctionMatrixTest extends \PHPUnit\Framework\TestCase
 {
     public function testEvaluate()
     {

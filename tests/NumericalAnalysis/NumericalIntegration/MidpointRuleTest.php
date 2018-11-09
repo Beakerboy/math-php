@@ -1,8 +1,9 @@
 <?php
+namespace MathPHP\Tests\NumericalAnalysis\NumericalIntegration;
 
-namespace MathPHP\NumericalAnalysis\NumericalIntegration;
+use MathPHP\NumericalAnalysis\NumericalIntegration\MidpointRule;
 
-class MidpointRuleTest extends \PHPUnit_Framework_TestCase
+class MidpointRuleTest extends \PHPUnit\Framework\TestCase
 {
     public function testSolvePolynomial()
     {

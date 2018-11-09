@@ -1,14 +1,17 @@
 <?php
-namespace MathPHP\Probability\Distribution\Discrete;
+namespace MathPHP\Tests\Probability\Distribution\Discrete;
 
-class BinomialTest extends \PHPUnit_Framework_TestCase
+use MathPHP\Probability\Distribution\Discrete\Binomial;
+
+class BinomialTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @dataProvider dataProviderForPMF
      */
     public function testPMF(int $n, int $r, float $p, float $pmf)
     {
-        $this->assertEquals($pmf, Binomial::PMF($n, $r, $p), '', 0.001);
+        $binomial = new Binomial($n, $p);
+        $this->assertEquals($pmf, $binomial->pmf($r), '', 0.001);
     }
 
     /**
@@ -34,7 +37,8 @@ class BinomialTest extends \PHPUnit_Framework_TestCase
      */
     public function testCDF(int $n, int $r, float $p, float $cdf)
     {
-        $this->assertEquals($cdf, Binomial::CDF($n, $r, $p), '', 0.001);
+        $binomial = new Binomial($n, $p);
+        $this->assertEquals($cdf, $binomial->cdf($r), '', 0.001);
     }
 
     /**

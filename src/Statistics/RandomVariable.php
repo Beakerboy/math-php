@@ -1,8 +1,6 @@
 <?php
 namespace MathPHP\Statistics;
 
-use MathPHP\Statistics\Average;
-use MathPHP\Statistics\Descriptive;
 use MathPHP\Probability\Distribution\Table;
 use MathPHP\Functions\Map;
 use MathPHP\Exception;
@@ -46,11 +44,11 @@ class RandomVariable
      *          N
      *
      * @param array $X list of numbers (random variable X)
-     * @param array $n n-th central moment to calculate
+     * @param int   $n n-th central moment to calculate
      *
-     * @return number n-th central moment
+     * @return number|null n-th central moment
      */
-    public static function centralMoment(array $X, $n)
+    public static function centralMoment(array $X, int $n)
     {
         if (empty($X)) {
             return null;
@@ -64,7 +62,7 @@ class RandomVariable
             $X
         ));
         $N = count($X);
-    
+
         return $∑⟮xᵢ − μ⟯ⁿ / $N;
     }
 
@@ -85,7 +83,7 @@ class RandomVariable
      *
      * @param array $X list of numbers (random variable X)
      *
-     * @return number
+     * @return number|null
      */
     public static function populationSkewness(array $X)
     {
@@ -119,15 +117,15 @@ class RandomVariable
      *
      * @param array $X list of numbers (random variable X)
      *
-     * @return number
+     * @return number|null
      */
     public static function sampleSkewness(array $X)
     {
-        if (empty($X)) {
+        $n = count($X);
+        if ($n < 3) {
             return null;
         }
 
-        $n     = count($X);
         $μ₃    = self::centralMoment($X, 3);
         $μ₂    = self::centralMoment($X, 2);
 
@@ -153,11 +151,14 @@ class RandomVariable
      *
      * @param array $X list of numbers (random variable X)
      *
-     * @return number
+     * @return number|null
+     *
+     * @throws Exception\OutOfBoundsException
      */
     public static function skewness(array $X)
     {
-        if (empty($X)) {
+        $N  = count($X);
+        if ($N < 2) {
             return null;
         }
 
@@ -169,9 +170,13 @@ class RandomVariable
             $X
         ));
         $σ³ = pow(Descriptive::standardDeviation($X, Descriptive::SAMPLE), 3);
-        $N  = count($X);
-    
-        return $∑⟮xᵢ − μ⟯³ / ($σ³ * ($N - 1));
+
+        $⟮σ³ × ⟮N − 1⟯⟯ = ($σ³ * ($N - 1));
+        if ($⟮σ³ × ⟮N − 1⟯⟯ == 0) {
+            return \NAN;
+        }
+
+        return $∑⟮xᵢ − μ⟯³ / $⟮σ³ × ⟮N − 1⟯⟯;
     }
 
     /**
@@ -184,10 +189,16 @@ class RandomVariable
      *
      * @param int $n Sample size
      *
-     * @return number
+     * @return float
+     *
+     * @throws Exception\BadDataException if n < 3
      */
-    public static function SES(int $n)
+    public static function ses(int $n): float
     {
+        if ($n < 3) {
+            throw new Exception\BadDataException("SES requires a dataset of n > 2. N of $n given.");
+        }
+
         $６n⟮n − 1⟯           = 6 * $n * ($n - 1);
         $⟮n − 2⟯⟮n ＋ 1⟯⟮n ＋ 2⟯ = ($n - 2) * ($n + 1) * ($n + 3);
 
@@ -208,7 +219,7 @@ class RandomVariable
      *
      * @param array $X list of numbers (random variable X)
      *
-     * @return number
+     * @return number|null
      */
     public static function kurtosis(array $X)
     {
@@ -218,6 +229,10 @@ class RandomVariable
 
         $μ₄  = self::centralMoment($X, 4);
         $μ₂² = pow(self::centralMoment($X, 2), 2);
+
+        if ($μ₂² == 0) {
+            return \NAN;
+        }
 
         return ( $μ₄ / $μ₂² ) - 3;
     }
@@ -271,15 +286,21 @@ class RandomVariable
      *
      * @param int $n Sample size
      *
-     * @return number
+     * @return float
+     *
+     * @throws Exception\BadDataException if n < 4
      */
-    public static function SEK(int $n)
+    public static function sek(int $n): float
     {
-        $２⟮SES⟯        = 2 * self::SES($n);
+        if ($n < 4) {
+            throw new Exception\BadDataException("SEK requires a dataset of n > 3. N of $n given.");
+        }
+
+        $２⟮SES⟯        = 2 * self::ses($n);
         $⟮n² − 1⟯       = $n**2 - 1;
         $⟮n − 3⟯⟮n ＋ 5⟯ = ($n - 3) * ($n + 5);
 
-        return $２⟮SES⟯ * sqrt($⟮n² − 1⟯ / (($n - 3) * ($n + 5)));
+        return $２⟮SES⟯ * sqrt($⟮n² − 1⟯ / $⟮n − 3⟯⟮n ＋ 5⟯);
     }
 
     /**
@@ -296,10 +317,16 @@ class RandomVariable
      *
      * @param array $X list of numbers (random variable X)
      *
-     * @return float
+     * @return float|null
+     *
+     * @throws Exception\OutOfBoundsException
      */
-    public static function standardErrorOfTheMean(array $X): float
+    public static function standardErrorOfTheMean(array $X)
     {
+        if (empty($X)) {
+            return null;
+        }
+
         $s  = Descriptive::standardDeviation($X, Descriptive::SAMPLE);
         $√n = sqrt(count($X));
         return $s / $√n;
@@ -311,6 +338,8 @@ class RandomVariable
      * @param array $X list of numbers (random variable X)
      *
      * @return float
+     *
+     * @throws Exception\OutOfBoundsException
      */
     public static function sem(array $X): float
     {
@@ -330,15 +359,21 @@ class RandomVariable
      *
      * Available confidence levels: See Probability\StandardNormalTable::Z_SCORES_FOR_CONFIDENCE_INTERVALS
      *
-     * @param number $μ  sample mean
-     * @param number $n  sample size
-     * @param number $σ  standard deviation
+     * @param number $μ sample mean
+     * @param int $n sample size
+     * @param number $σ standard deviation
      * @param string $cl confidence level (Ex: 95, 99, 99.5, 99.9, etc.)
      *
      * @return array [ ci, lower_bound, upper_bound ]
+     *
+     * @throws Exception\BadDataException
      */
-    public static function confidenceInterval($μ, $n, $σ, string $cl): array
+    public static function confidenceInterval($μ, int $n, $σ, string $cl): array
     {
+        if ($n === 0) {
+            return ['ci' => null, 'lower_bound' => null, 'upper_bound' => null];
+        }
+
         $z = Table\StandardNormal::getZScoreForConfidenceInterval($cl);
 
         $ci = $z * ($σ / sqrt($n));
@@ -360,7 +395,7 @@ class RandomVariable
      *
      * @param array $numbers
      *
-     * @return number
+     * @return number|null
      */
     public static function sumOfSquares(array $numbers)
     {
@@ -380,7 +415,7 @@ class RandomVariable
      *
      * @param  array  $numbers
      *
-     * @return number
+     * @return number|null
      */
     public static function sumOfSquaresDeviations(array $numbers)
     {

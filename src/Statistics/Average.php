@@ -6,9 +6,6 @@ use MathPHP\Exception;
 
 /**
  * Statistical averages
- *  - Averages of a list of numbers
- *  - Averages
-
  */
 class Average
 {
@@ -25,7 +22,7 @@ class Average
      *
      * @param array $numbers
      *
-     * @return number
+     * @return number|null
      */
     public static function mean(array $numbers)
     {
@@ -36,11 +33,50 @@ class Average
     }
 
     /**
+     * Calculate the weighted mean average of a list of numbers
+     * https://en.wikipedia.org/wiki/Weighted_arithmetic_mean
+     *
+     *     ∑⟮xᵢwᵢ⟯
+     * x̄ = -----
+     *      ∑⟮wᵢ⟯
+     *
+     * @param array $numbers
+     * @param array $weights
+     *
+     * @return number|null
+     *
+     * @throws Exception\BadDataException if the number of numbers and weights are not equal
+     */
+    public static function weightedMean(array $numbers, array $weights)
+    {
+        if (empty($numbers)) {
+            return null;
+        }
+        if (empty($weights)) {
+            return Average::mean($numbers);
+        }
+        if (count($numbers) !== count($weights)) {
+            throw new Exception\BadDataException('Numbers and weights must have the same number of elements.');
+        }
+
+        $∑⟮xᵢwᵢ⟯ = array_sum(array_map(
+            function ($xᵢ, $wᵢ) {
+                return $xᵢ * $wᵢ;
+            },
+            $numbers,
+            $weights
+        ));
+        $∑⟮wᵢ⟯ = array_sum($weights);
+
+        return $∑⟮xᵢwᵢ⟯ / $∑⟮wᵢ⟯;
+    }
+
+    /**
      * Calculate the median average of a list of numbers
      *
      * @param array $numbers
      *
-     * @return number
+     * @return number|null
      */
     public static function median(array $numbers)
     {
@@ -87,7 +123,7 @@ class Average
      * @param array $numbers
      * @param int $k zero indexed
      *
-     * @return number
+     * @return number|null
      */
     public static function kthSmallest(array $numbers, int $k)
     {
@@ -110,6 +146,7 @@ class Average
         // Otherwise, we are going to slice $numbers into 5-element slices
         // and find the median of each.
         $num_slices = ceil($n / 5);
+        $median_array = [];
         for ($i = 0; $i < $num_slices; $i++) {
             $median_array[] = self::median(array_slice($numbers, 5 * $i, 5));
         }
@@ -117,11 +154,10 @@ class Average
         // Then we find the median of the medians.
         $median_of_medians = self::median($median_array);
         
-        // Next we walk the array and seperate it into values that are greater than or less than
+        // Next we walk the array and separate it into values that are greater than or less than
         // this "median of medians".
         $lower_upper   = self::splitAtValue($numbers, $median_of_medians);
         $lower_number = count($lower_upper['lower']);
-        $upper_number = count($lower_upper['upper']);
         $equal_number = $lower_upper['equal'];
         
         // Lastly, we find which group of values our value of interest is in, and find it in the
@@ -184,15 +220,18 @@ class Average
         // Count how many times each number occurs
         // Determine the max any number occurs
         // Find all numbers that occur max times
-        $number_counts = array_count_values($numbers);
-        $max           = max($number_counts);
-        $modes         = array();
+        $number_strings = array_map('strval', $numbers);
+        $number_counts  = array_count_values($number_strings);
+        $max            = max($number_counts);
+        $modes          = array();
         foreach ($number_counts as $number => $count) {
             if ($count === $max) {
                 $modes[] = $number;
             }
         }
-        return $modes;
+
+        // Cast back to numbers
+        return array_map('floatval', $modes);
     }
 
     /**
@@ -204,7 +243,8 @@ class Average
      * Geometric mean = ⁿ√a₀a₁a₂ ⋯
      *
      * @param  array  $numbers
-     * @return number
+     *
+     * @return number|null
      */
     public static function geometricMean(array $numbers)
     {
@@ -225,9 +265,10 @@ class Average
      * https://en.wikipedia.org/wiki/Harmonic_mean
      *
      * @param  array  $numbers
-     * @return number
      *
-     * @throws BadDataException if there are negative numbers
+     * @return number|null
+     *
+     * @throws Exception\BadDataException if there are negative numbers
      */
     public static function harmonicMean(array $numbers)
     {
@@ -331,6 +372,8 @@ class Average
      *
      * @param  array  $numbers
      * @return number
+     *
+     * @throws Exception\OutOfBoundsException
      */
     public static function interquartileMean(array $numbers)
     {
@@ -343,6 +386,8 @@ class Average
      *
      * @param  array  $numbers
      * @return number
+     *
+     * @throws Exception\OutOfBoundsException
      */
     public static function iqm(array $numbers)
     {
@@ -393,7 +438,7 @@ class Average
      * @param  int    $trim_percent Percent between 0-99
      * @return number
      *
-     * @throws OutOfBoundsException if trim percent is not between 0 and 99
+     * @throws Exception\OutOfBoundsException if trim percent is not between 0 and 99
      */
     public static function truncatedMean(array $numbers, int $trim_percent)
     {
@@ -612,7 +657,7 @@ class Average
      *
      * @return array of averages
      *
-     * @throws BadDataException if number of weights is not equal to number of n-points
+     * @throws Exception\BadDataException if number of weights is not equal to number of n-points
      */
     public static function weightedMovingAverage(array $numbers, int $n, array $weights): array
     {
@@ -698,7 +743,7 @@ class Average
 
         // Standard case x and y > 0
         list($a, $g) = [$x, $y];
-        foreach (range(1, 10) as $_) {
+        for ($i = 0; $i <= 10; $i++) {
             list($a, $g) = [self::mean([$a, $g]), self::geometricMean([$a, $g])];
         }
         return $a;
@@ -773,7 +818,7 @@ class Average
      * @param  number $y
      * @return number
      *
-     * @throws OutOfBoundsException if x or y is ≤ 0
+     * @throws Exception\OutOfBoundsException if x or y is ≤ 0
      */
     public static function identricMean($x, $y)
     {
@@ -803,6 +848,9 @@ class Average
      *
      * @return array [ mean, median, mode, geometric_mean, harmonic_mean,
      *                 contraharmonic_mean, quadratic_mean, trimean, iqm, cubic_mean ]
+     *
+     * @throws Exception\BadDataException
+     * @throws Exception\OutOfBoundsException
      */
     public static function describe(array $numbers): array
     {

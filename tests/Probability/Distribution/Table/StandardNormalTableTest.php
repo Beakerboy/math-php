@@ -1,7 +1,10 @@
 <?php
-namespace MathPHP\Probability\Distribution\Table;
+namespace MathPHP\Tests\Probability\Distribution\Table;
 
-class StandardNormalTest extends \PHPUnit_Framework_TestCase
+use MathPHP\Probability\Distribution\Table\StandardNormal;
+use MathPHP\Exception;
+
+class StandardNormalTest extends \PHPUnit\Framework\TestCase
 {
 
     /**
@@ -26,7 +29,7 @@ class StandardNormalTest extends \PHPUnit_Framework_TestCase
 
     public function testGetZScoreProbabilityExceptionZBadFormat()
     {
-        $this->setExpectedException('MathPHP\Exception\BadParameterException');
+        $this->expectException(Exception\BadParameterException::class);
         StandardNormal::getZScoreProbability('12.34');
     }
 
@@ -51,7 +54,7 @@ class StandardNormalTest extends \PHPUnit_Framework_TestCase
 
     public function testGetZScoreForConfidenceIntervalInvalidConfidenceLevel()
     {
-        $this->setExpectedException('MathPHP\Exception\BadDataException');
+        $this->expectException(Exception\BadDataException::class);
         StandardNormal::getZScoreForConfidenceInterval(12);
     }
 }

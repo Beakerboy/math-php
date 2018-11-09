@@ -1,8 +1,10 @@
 <?php
+namespace MathPHP\Tests\Functions;
 
-namespace MathPHP\Functions;
+use MathPHP\Functions\Polynomial;
+use MathPHP\Exception;
 
-class PolynomialTest extends \PHPUnit_Framework_TestCase
+class PolynomialTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @dataProvider dataProviderForString
@@ -653,9 +655,47 @@ class PolynomialTest extends \PHPUnit_Framework_TestCase
                 [1, 2, 5, 7, 5], // f(x)+g(x) = x⁴ + 2x³ + 5x² + 7x + 5
             ],
             [
+                [2, 3, 1],       // f(x)      = 2x² + 3x + 1
+                [1, 2, 3, 4, 4], // g(x)      = x⁴ + 2x³ + 3x² + 4x + 4
+                [1, 2, 5, 7, 5], // f(x)+g(x) = x⁴ + 2x³ + 5x² + 7x + 5
+            ],
+            [
                 [1, -8, 12, 3],  // f(x)      = x³ - 8x² + 12x + 3
                 [1, -8, 12, 3],  // g(x)      = f(x)
                 [2, -16, 24, 6], // f(x)+g(x) = 2x³ - 16x² + 24x + 6
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider dataProviderForSubtraction
+     */
+    public function testSubtraction(array $polynomialA, array $polynomialB, array $expected_sum)
+    {
+        $polynomialA    = new Polynomial($polynomialA);
+        $polynomialB    = new Polynomial($polynomialB);
+        $expected       = new Polynomial($expected_sum);
+        $sum            = $polynomialA->subtract($polynomialB);
+        $this->assertEquals($expected, $sum);
+    }
+
+    public function dataProviderForSubtraction()
+    {
+        return [
+            [
+                [1, 2, 3],      // f(x)      = x² + 2x + 3
+                [2, 3, 1],      // g(x)      = 2x² + 3x + 1
+                [-1, -1, 2],    // f(x)-g(x) = -x² - x + 2
+            ],
+            [
+                [1, 2, 3, 4, 4], // f(x)      = x⁴ + 2x³ + 3x² + 4x + 4
+                [2, 3, 1],       // g(x)      = 2x² + 3x + 1
+                [1, 2, 1, 1, 3], // f(x)-g(x) = x⁴ + 2x³ + x² + x + 3
+            ],
+            [
+                [1, -8, 12, 3],  // f(x)      = x³ - 8x² + 12x + 3
+                [1, -8, 12, 3],  // g(x)      = f(x)
+                [0, 0, 0, 0],    // f(x)-g(x) = 0
             ],
         ];
     }
@@ -689,6 +729,258 @@ class PolynomialTest extends \PHPUnit_Framework_TestCase
                 [1, -8, 12, 3],                // f(x)      = x³ - 8x² + 12x + 3
                 [1, -8, 12, 3],                // g(x)      = f(x)
                 [1, -16, 88, -186, 96, 72, 9], // f(x)+g(x) = x⁶ - 16x⁵ + 88x⁴ - 186x³ + 96x² + 72x + 9
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider dataProviderForScalerAddition
+     */
+    public function testScalerAddition(array $polynomialA, $scaler, array $expected_product)
+    {
+        $polynomialA    = new Polynomial($polynomialA);
+        $expected       = new Polynomial($expected_product);
+        $product        = $polynomialA->add($scaler);
+        $this->assertEquals($expected, $product);
+    }
+
+    public function dataProviderForScalerAddition()
+    {
+        return [
+            [
+                [1, 2, 3],         // f(x)      = x² + 2x + 3
+                2,
+                [1, 2, 5],         // f(x)*c    = x² + 2x + 5
+            ],
+            [
+                [1, 2, 3, 4, 4],      // f(x)      = x⁴ + 2x³ + 3x² + 4x + 4
+                -2,
+                [1, 2, 3, 4, 2],      // f(x)*c    = 1x⁴ + 2x³ + 3x² + 4x + 2
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider dataProviderForScalerSubtraction
+     */
+    public function testScalerSubtraction(array $polynomialA, $scaler, array $expected_product)
+    {
+        $polynomialA    = new Polynomial($polynomialA);
+        $expected       = new Polynomial($expected_product);
+        $product        = $polynomialA->subtract($scaler);
+        $this->assertEquals($expected, $product);
+    }
+
+    public function dataProviderForScalerSubtraction()
+    {
+        return [
+            [
+                [1, 2, 3],         // f(x)      = x² + 2x + 3
+                2,
+                [1, 2, 1],         // f(x)*c    = x² + 2x + 1
+            ],
+            [
+                [1, 2, 3, 4, 4],      // f(x)      = x⁴ + 2x³ + 3x² + 4x + 4
+                -2,
+                [1, 2, 3, 4, 6],      // f(x)*c    = 1x⁴ + 2x³ + 3x² + 4x + 6
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider dataProviderForScalerMultiplication
+     */
+    public function testScalerMultiplication(array $polynomialA, $scaler, array $expected_product)
+    {
+        $polynomialA    = new Polynomial($polynomialA);
+        $expected       = new Polynomial($expected_product);
+        $product        = $polynomialA->multiply($scaler);
+        $this->assertEquals($expected, $product);
+    }
+
+    public function dataProviderForScalerMultiplication()
+    {
+        return [
+            [
+                [1, 2, 3],         // f(x)      = x² + 2x + 3
+                2,
+                [2, 4, 6],         // f(x)*c    = 2x² + 4x + 6
+            ],
+            [
+                [1, 2, 3, 4, 4],           // f(x)      = x⁴ + 2x³ + 3x² + 4x + 4
+                -2,
+                [-2, -4, -6, -8, -8],      // f(x)*c    = -2x⁴ - 4x³ - 6x² - 8x - 8
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider dataProviderForRoots
+     */
+    public function testRoots(array $polynomialA, array $expected_roots)
+    {
+        $polynomialA = new Polynomial($polynomialA);
+        $roots       = $polynomialA->roots();
+        $this->assertEquals($expected_roots, $roots);
+    }
+
+    public function dataProviderForRoots()
+    {
+        return [
+            [
+                [1, -3],
+                [3],
+            ],
+            [
+                [1, -3, -4],
+                [-1, 4],
+            ],
+            [
+                [1, -6, 11, -6],
+                [3, 1, 2],
+            ],
+            [
+                [1, -10, 35, -50, 24],
+                [4, 1, 3, 2],
+            ]
+        ];
+    }
+
+    /**
+     * @dataProvider dataProviderForRootsNAN
+     */
+    public function testRootsNAN(array $polynomialA)
+    {
+        $polynomialA = new Polynomial($polynomialA);
+        $roots       = $polynomialA->roots();
+        $this->assertNan($roots[0]);
+    }
+
+    public function dataProviderForRootsNAN(): array
+    {
+        return [
+            [
+                [1, -3, -4, 5, 5, 5],
+            ],
+        ];
+    }
+
+    /**
+     * @testCase Polynomial constructor throws an IncorrectTypeException if the argument is not numeric or a Polynomial
+     */
+    public function testException()
+    {
+        $this->expectException(Exception\IncorrectTypeException::class);
+        $string = 'This is a string!';
+        $poly   = new Polynomial([1, 2]);
+        $sum    = $poly->add($string);
+    }
+
+    /**
+     * @testCase     checkNumericOrPolynomial returns a Polynomial for numeric and Polynomial inputs
+     * @dataProvider dataProviderForCheckNumericOrPolynomial
+     */
+    public function testCheckNumericOrPolynomialNumericInput($input)
+    {
+        $method = new \ReflectionMethod(Polynomial::class, 'checkNumericOrPolynomial');
+        $method->setAccessible(true);
+
+        $polynomial = $method->invokeArgs(new Polynomial([1]), [$input]);
+        $this->assertInstanceOf(Polynomial::class, $polynomial);
+    }
+
+    public function dataProviderForCheckNumericOrPolynomial(): array
+    {
+        return [
+            [-1],
+            [0],
+            [1],
+            [10],
+            [2.45],
+            ['3'],
+            ['5.4'],
+            [new Polynomial([4])],
+            [new Polynomial([2, 3, 4])],
+
+        ];
+    }
+
+    /**
+     * @testCase checkNumericOrPolynomial throws an IncorrectTypeException if the input is not numeric or a Polynomial
+     */
+    public function testCheckNumericOrPolynomialException()
+    {
+        $method = new \ReflectionMethod(Polynomial::class, 'checkNumericOrPolynomial');
+        $method->setAccessible(true);
+
+        $this->expectException(Exception\IncorrectTypeException::class);
+        $polynomial = $method->invokeArgs(new Polynomial([1]), ['not a number']);
+    }
+
+    /**
+     * @testCase     negate returns a Polynomial with every coefficient negated
+     * @dataProvider dataProviderForNegate
+     * @param        array $polynomial
+     * @param        array $expected_negated_polynomial
+     */
+    public function testNegate(array $polynomial, array $expected_negated_polynomial)
+    {
+        $polynomial = new Polynomial($polynomial);
+        $expected   = new Polynomial($expected_negated_polynomial);
+        $negated    = $polynomial->negate();
+        $this->assertEquals($expected, $negated);
+    }
+
+    public function dataProviderForNegate(): array
+    {
+        return [
+            [
+                [],
+                [],
+            ],
+            [
+                [0],
+                [0],
+            ],
+            [
+                [1],
+                [-1],
+            ],
+            [
+                [-1],
+                [1],
+            ],
+            [
+                [1, 1],
+                [-1, -1],
+            ],
+            [
+                [-1, -1],
+                [1, 1],
+            ],
+            [
+                [1, -2, 3],
+                [-1, 2, -3],
+            ],
+            [
+                [5, 5, 5, -5, -5],
+                [-5, -5, -5, 5, 5],
+            ],
+            [
+                [23, 5, 65, 0, -4],
+                [-23, -5, -65, 0, 4],
+            ],
+            [
+                [-4, -3, 0, 0, 0],
+                [4, 3, 0, 0, 0],
+            ],
+            [
+                [-3, -4, 2, 1, 5, 5, 4, -3, 2],
+                [3, 4, -2, -1, -5, -5, -4, 3, -2],
+            ],
+            [
+                [1, 2, 3],
+                [-1, -2, -3],
             ],
         ];
     }

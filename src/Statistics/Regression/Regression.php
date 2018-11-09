@@ -1,9 +1,6 @@
 <?php
 namespace MathPHP\Statistics\Regression;
 
-use MathPHP\Statistics\Average;
-use MathPHP\Statistics\RandomVariable;
-
 /**
  * Base class for regressions.
  */
@@ -23,7 +20,7 @@ abstract class Regression
 
     /**
      * Y values of the original points
-     * @var [type]
+     * @var array
      */
     protected $ys;
 
@@ -58,13 +55,13 @@ abstract class Regression
      * Evaluate the regression equation at x
      * Uses the instance model's evaluateModel method.
      *
-     * @param  number $x
+     * @param  float $x
      *
-     * @return number
+     * @return float
      */
-    public function evaluate($x)
+    public function evaluate(float $x): float
     {
-        return call_user_func([get_class($this), 'evaluateModel'], $x, $this->parameters);
+        return $this->evaluateModel($x, $this->parameters);
     }
 
     /**
@@ -113,7 +110,7 @@ abstract class Regression
      *
      * @return array
      */
-    public function yHat()
+    public function yHat(): array
     {
         return array_map([$this, 'evaluate'], $this->xs);
     }

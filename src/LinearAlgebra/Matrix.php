@@ -2,6 +2,7 @@
 namespace MathPHP\LinearAlgebra;
 
 use MathPHP\Functions\Map;
+use MathPHP\Functions\Support;
 use MathPHP\Exception;
 
 /**
@@ -9,46 +10,44 @@ use MathPHP\Exception;
  */
 class Matrix implements \ArrayAccess, \JsonSerializable
 {
-    /**
-     * Number of rows
-     * @var int
-     */
+    /** @var int Number of rows */
     protected $m;
 
-    /**
-     * Number of columns
-     * @var int
-     */
+    /** @var int Number of columns */
     protected $n;
 
-    /**
-     * Matrix
-     * @var array of arrays
-     */
+    /** @var array Matrix array of arrays */
     protected $A;
 
-    /**
-     * Reduced row echelon form
-     * @var Matrix
-     */
+    /** @var Matrix Row echelon form */
+    protected $ref;
+
+    /** @var Matrix Reduced row echelon form */
     protected $rref;
 
-    /**
-     * Determinant
-     * @var number
-     */
+    /** @var int Number of row swaps when computing REF */
+    protected $ref_swaps;
+
+    /** @var number Determinant */
     protected $det;
 
-    /**
-     * Inverse
-     */
+    /** @var Matrix Inverse */
     protected $A⁻¹;
+
+    /** @var Matrix Lower matrix in LUP decomposition */
+    protected $L;
+
+    /** @var Matrix Upper matrix in LUP decomposition */
+    protected $U;
+
+    /** @var Matrix Permutation matrix in LUP decomposition */
+    protected $P;
 
     /**
      * Constructor
-     * @param array of arrays $A m x n matrix
+     * @param array $A of arrays $A m x n matrix
      *
-     * @throws BadDataExpcetion if any rows have a different column count
+     * @throws Exception\BadDataException if any rows have a different column count
      */
     public function __construct(array $A)
     {
@@ -72,6 +71,8 @@ class Matrix implements \ArrayAccess, \JsonSerializable
      *  - getColumn
      *  - get
      *  - getDiagonalElements
+     *  - getSuperdiagonalElements
+     *  - getSubdiagonalElements
      *  - asVectors
      **************************************************************************/
 
@@ -108,7 +109,7 @@ class Matrix implements \ArrayAccess, \JsonSerializable
      * @param  int    $i row index (from 0 to m - 1)
      * @return array
      *
-     * @throws MatrixException if row i does not exist
+     * @throws Exception\MatrixException if row i does not exist
      */
     public function getRow(int $i): array
     {
@@ -125,7 +126,7 @@ class Matrix implements \ArrayAccess, \JsonSerializable
      * @param  int   $j column index (from 0 to n - 1)
      * @return array
      *
-     * @throws MatrixException if column j does not exist
+     * @throws Exception\MatrixException if column j does not exist
      */
     public function getColumn(int $j): array
     {
@@ -143,7 +144,7 @@ class Matrix implements \ArrayAccess, \JsonSerializable
      * @param  int    $j column index
      * @return number
      *
-     * @throws MatrixException if row i or column j does not exist
+     * @throws Exception\MatrixException if row i or column j does not exist
      */
     public function get(int $i, int $j)
     {
@@ -176,6 +177,52 @@ class Matrix implements \ArrayAccess, \JsonSerializable
             }
         }
         return $diagonal;
+    }
+
+    /**
+     * Returns the elements on the superdiagonal of a square matrix as an array
+     *     [1 2 3]
+     * A = [4 5 6]
+     *     [7 8 9]
+     *
+     * getSuperdiagonalElements($A) = [2, 6]
+     *
+     * http://mathworld.wolfram.com/Superdiagonal.html
+     *
+     * @return array
+     */
+    public function getSuperdiagonalElements(): array
+    {
+        $superdiagonal = [];
+        if ($this->isSquare()) {
+            for ($i = 0; $i < $this->m - 1; $i++) {
+                $superdiagonal[] = $this->A[$i][$i+1];
+            }
+        }
+        return $superdiagonal;
+    }
+
+    /**
+     * Returns the elements on the subdiagonal of a square matrix as an array
+     *     [1 2 3]
+     * A = [4 5 6]
+     *     [7 8 9]
+     *
+     * getSubdiagonalElements($A) = [4, 8]
+     *
+     * http://mathworld.wolfram.com/Subdiagonal.html
+     *
+     * @return array
+     */
+    public function getSubdiagonalElements(): array
+    {
+        $subdiagonal = [];
+        if ($this->isSquare()) {
+            for ($i = 1; $i < $this->m; $i++) {
+                $subdiagonal[] = $this->A[$i][$i-1];
+            }
+        }
+        return $subdiagonal;
     }
 
     /**
@@ -215,6 +262,17 @@ class Matrix implements \ArrayAccess, \JsonSerializable
      *  - isPositiveSemidefinite
      *  - isNegativeDefinite
      *  - isNegativeSemidefinite
+     *  - isLowerTriangular
+     *  - isUpperTriangular
+     *  - isTriangular
+     *  - isRef
+     *  - isRref
+     *  - isInvolutory
+     *  - isSignature
+     *  - isUpperBidiagonal
+     *  - isLowerBidiagonal
+     *  - isBidiagonal
+     *  - isTridiagonal
      **************************************************************************/
 
     /**
@@ -232,7 +290,10 @@ class Matrix implements \ArrayAccess, \JsonSerializable
      * Is the matrix symmetric?
      * Does A = Aᵀ
      *
-     * @return bool true if summetric; false otherwise.
+     * @return bool true if symmetric; false otherwise.
+     *
+     * @throws Exception\IncorrectTypeException
+     * @throws Exception\MatrixException
      */
     public function isSymmetric(): bool
     {
@@ -243,12 +304,34 @@ class Matrix implements \ArrayAccess, \JsonSerializable
     }
 
     /**
+     * Is the matrix skew-symmetric?
+     * Does Aᵀ = −A
+     *
+     * @return bool true if skew-symmetric; false otherwise.
+     *
+     * @throws Exception\BadParameterException
+     * @throws Exception\IncorrectTypeException
+     * @throws Exception\MatrixException
+     */
+    public function isSkewSymmetric(): bool
+    {
+        $Aᵀ = $this->transpose()->getMatrix();
+        $−A = $this->negate()->getMatrix();
+
+        return $Aᵀ === $−A;
+    }
+
+    /**
      * Is the matrix singular?
      * A square matrix that does not have an inverse.
      * If the determinant is zero, then the matrix is singular.
      * http://mathworld.wolfram.com/SingularMatrix.html
      *
      * @return bool true if singular; false otherwise.
+     *
+     * @throws Exception\MatrixException
+     * @throws Exception\IncorrectTypeException
+     * @throws Exception\BadParameterException
      */
     public function isSingular(): bool
     {
@@ -268,12 +351,16 @@ class Matrix implements \ArrayAccess, \JsonSerializable
      * http://mathworld.wolfram.com/NonsingularMatrix.html
      *
      * @return bool true if nonsingular; false otherwise.
+     *
+     * @throws Exception\MatrixException
+     * @throws Exception\IncorrectTypeException
+     * @throws Exception\BadParameterException
      */
     public function isNonsingular(): bool
     {
         $│A│ = $this->det ?? $this->det();
 
-        if ($│A│ != 0) {
+        if (Support::isNotZero($│A│)) {
             return true;
         }
 
@@ -287,6 +374,10 @@ class Matrix implements \ArrayAccess, \JsonSerializable
      * http://mathworld.wolfram.com/NonsingularMatrix.html
      *
      * @return bool true if invertible; false otherwise.
+     *
+     * @throws Exception\MatrixException
+     * @throws Exception\IncorrectTypeException
+     * @throws Exception\BadParameterException
      */
     public function isInvertible(): bool
     {
@@ -308,6 +399,11 @@ class Matrix implements \ArrayAccess, \JsonSerializable
      * https://en.wikipedia.org/wiki/Sylvester%27s_criterion
      *
      * @return boolean true if positive definite; false otherwise
+     *
+     * @throws Exception\MatrixException
+     * @throws Exception\OutOfBoundsException
+     * @throws Exception\IncorrectTypeException
+     * @throws Exception\BadParameterException
      */
     public function isPositiveDefinite(): bool
     {
@@ -332,6 +428,11 @@ class Matrix implements \ArrayAccess, \JsonSerializable
      * http://mathworld.wolfram.com/PositiveSemidefiniteMatrix.html
      *
      * @return boolean true if positive semidefinite; false otherwise
+     *
+     * @throws Exception\MatrixException
+     * @throws Exception\OutOfBoundsException
+     * @throws Exception\IncorrectTypeException
+     * @throws Exception\BadParameterException
      */
     public function isPositiveSemidefinite(): bool
     {
@@ -356,6 +457,11 @@ class Matrix implements \ArrayAccess, \JsonSerializable
      * http://mathworld.wolfram.com/NegativeDefiniteMatrix.html
      *
      * @return boolean true if negative definite; false otherwise
+     *
+     * @throws Exception\MatrixException
+     * @throws Exception\OutOfBoundsException
+     * @throws Exception\IncorrectTypeException
+     * @throws Exception\BadParameterException
      */
     public function isNegativeDefinite(): bool
     {
@@ -389,6 +495,11 @@ class Matrix implements \ArrayAccess, \JsonSerializable
      * http://mathworld.wolfram.com/NegativeSemidefiniteMatrix.html
      *
      * @return boolean true if negative semidefinite; false otherwise
+     *
+     * @throws Exception\MatrixException
+     * @throws Exception\OutOfBoundsException
+     * @throws Exception\IncorrectTypeException
+     * @throws Exception\BadParameterException
      */
     public function isNegativeSemidefinite(): bool
     {
@@ -415,9 +526,407 @@ class Matrix implements \ArrayAccess, \JsonSerializable
     }
 
     /**
+     * Is the matrix lower triangular?
+     *  - It is a square matrix
+     *  - All the entries above the main diagonal are zero
+     *
+     * https://en.wikipedia.org/wiki/Triangular_matrix
+     *
+     * @return boolean true if lower triangular; false otherwise
+     */
+    public function isLowerTriangular(): bool
+    {
+        if (!$this->isSquare()) {
+            return false;
+        }
+
+        $m = $this->m;
+        $n = $this->n;
+
+        for ($i = 0; $i < $m; $i++) {
+            for ($j = $i+1; $j < $n; $j++) {
+                if ($this->A[$i][$j] != 0) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Is the matrix upper triangular?
+     *  - It is a square matrix
+     *  - All the entries below the main diagonal are zero
+     *
+     * https://en.wikipedia.org/wiki/Triangular_matrix
+     *
+     * @return boolean true if upper triangular; false otherwise
+     */
+    public function isUpperTriangular(): bool
+    {
+        if (!$this->isSquare()) {
+            return false;
+        }
+
+        $m = $this->m;
+
+        for ($i = 1; $i < $m; $i++) {
+            for ($j = 0; $j < $i; $j++) {
+                if ($this->A[$i][$j] != 0) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Is the matrix triangular?
+     * The matrix is either lower or upper triangular
+     *
+     * https://en.wikipedia.org/wiki/Triangular_matrix
+     *
+     * @return boolean true if triangular; false otherwise
+     */
+    public function isTriangular(): bool
+    {
+        return ($this->isLowerTriangular() || $this->isUpperTriangular());
+    }
+
+    /**
+     * Is the matrix diagonal?
+     *  - It is a square matrix
+     *  - All the entries above the main diagonal are zero
+     *  - All the entries below the main diagonal are zero
+     *
+     * http://mathworld.wolfram.com/DiagonalMatrix.html
+     *
+     * @return boolean true if diagonal; false otherwise
+     */
+    public function isDiagonal(): bool
+    {
+        return ($this->isLowerTriangular() && $this->isUpperTriangular());
+    }
+
+    /**
+     * Is the matrix in row echelon form?
+     *  - All nonzero rows are above any rows of all zeroes
+     *  - The leading coefficient of a nonzero row is always strictly to the right of the leading coefficient of the row above it.
+     *
+     * https://en.wikipedia.org/wiki/Row_echelon_form
+     *
+     * @return boolean true if matrix is in row echelon form; false otherwise
+     */
+    public function isRef(): bool
+    {
+        $m           = $this->m;
+        $n           = $this->n;
+        $zero_row_ok = true;
+
+        // All nonzero rows are above any rows of all zeroes
+        for ($i = $m - 1; $i >= 0; $i--) {
+            $zero_row = count(array_filter(
+                $this->A[$i],
+                function ($x) {
+                    return $x != 0;
+                }
+            )) === 0;
+
+            if (!$zero_row) {
+                $zero_row_ok = false;
+                continue;
+            }
+
+            if ($zero_row && !$zero_row_ok) {
+                return false;
+            }
+        }
+
+        // Leading coefficients to the right of rows above it
+        $lc = -1;
+        for ($i = 0; $i < $m; $i++) {
+            for ($j = 0; $j < $n; $j++) {
+                if ($this->A[$i][$j] != 0) {
+                    if ($j <= $lc) {
+                        return false;
+                    }
+                    $lc = $j;
+                    continue 2;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Is the matrix in reduced row echelon form?
+     *  - It is in row echelon form
+     *  - Leading coefficients are 1
+     *  - Leading coefficients are the only nonzero entry in its column
+     *
+     * https://en.wikipedia.org/wiki/Row_echelon_form
+     *
+     * @return boolean true if matrix is in reduced row echelon form; false otherwise
+     *
+     * @throws Exception\MatrixException
+     */
+    public function isRref(): bool
+    {
+        // Row echelon form
+        if (!$this->isRef()) {
+            return false;
+        }
+
+        $m   = $this->m;
+        $n   = $this->n;
+        $lcs = [];
+
+        // Leading coefficients are 1
+        for ($i = 0; $i < $m; $i++) {
+            for ($j = 0; $j < $n; $j++) {
+                if ($this->A[$i][$j] == 0) {
+                    continue;
+                }
+                if ($this->A[$i][$j] != 1) {
+                    return false;
+                }
+                $lcs[] = $j;
+                continue 2;
+            }
+        }
+
+        // Leading coefficients are the only nonzero entry in its column
+        foreach ($lcs as $j) {
+            $column  = $this->getColumn($j);
+            $entries = array_filter($column);
+            if (count($entries) !== 1) {
+                return false;
+            }
+            $entry = array_shift($entries);
+            if ($entry != 1) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Is the matrix involutory?
+     * A matrix that is its own inverse. That is, multiplication by matrix A is an involution if and only if A² = I
+     * https://en.wikipedia.org/wiki/Involutory_matrix
+     *
+     * @return boolean true if matrix is involutory; false otherwise
+     *
+     * @throws Exception\OutOfBoundsException
+     * @throws Exception\MathException
+     */
+    public function isInvolutory(): bool
+    {
+        $I  = MatrixFactory::identity($this->m);
+        $A² = $this->multiply($this);
+
+        return $A²->getMatrix() == $I->getMatrix();
+    }
+
+    /**
+     * Is the matrix a signature matrix?
+     * A diagonal matrix whose diagonal elements are plus or minus 1.
+     * https://en.wikipedia.org/wiki/Signature_matrix
+     *
+     *     | ±1  0  0 |
+     * A = |  0 ±1  0 |
+     *     |  0  0 ±1 |
+     *
+     * @return boolean true if matrix is a signature matrix; false otherwise
+     */
+    public function isSignature(): bool
+    {
+        for ($i = 0; $i < $this->m; $i++) {
+            for ($j = 0; $j < $this->n; $j++) {
+                if ($i == $j) {
+                    if (!in_array($this->A[$i][$j], [-1, 1])) {
+                        return false;
+                    }
+                } else {
+                    if ($this->A[$i][$j] != 0) {
+                        return false;
+                    }
+                }
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Is the matrix upper bidiagonal?
+     *  - It is a square matrix
+     *  - Non-zero entries allowed along the main diagonal
+     *  - Non-zero entries allowed along the diagonal above the main diagonal
+     *  - All the other entries are zero
+     *
+     * https://en.wikipedia.org/wiki/Bidiagonal_matrix
+     *
+     * @return boolean true if upper bidiagonal; false otherwise
+     */
+    public function isUpperBidiagonal(): bool
+    {
+        if (!$this->isSquare() || !$this->isUpperTriangular()) {
+            return false;
+        }
+
+        $m = $this->m;
+        $n = $this->n;
+
+        // Elements above upper diagonal are zero
+        for ($i = 0; $i < $m; $i++) {
+            for ($j = $i+2; $j < $n; $j++) {
+                if ($this->A[$i][$j] != 0) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Is the matrix lower bidiagonal?
+     *  - It is a square matrix
+     *  - Non-zero entries allowed along the main diagonal
+     *  - Non-zero entries allowed along the diagonal below the main diagonal
+     *  - All the other entries are zero
+     *
+     * https://en.wikipedia.org/wiki/Bidiagonal_matrix
+     *
+     * @return boolean true if lower bidiagonal; false otherwise
+     */
+    public function isLowerBidiagonal(): bool
+    {
+        if (!$this->isSquare() || !$this->isLowerTriangular()) {
+            return false;
+        }
+
+        // Elements below lower diagonal are non-zero
+        for ($i = 2; $i < $this->m; $i++) {
+            for ($j = 0; $j < $i-1; $j++) {
+                if ($this->A[$i][$j] != 0) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Is the matrix bidiagonal?
+     *  - It is a square matrix
+     *  - Non-zero entries along the main diagonal
+     *  - Non-zero entries along either the diagonal above or the diagonal below the main diagonal
+     *  - All the other entries are zero
+     *
+     * https://en.wikipedia.org/wiki/Bidiagonal_matrix
+     *
+     * @return boolean true if bidiagonal; false otherwise
+     */
+    public function isBidiagonal(): bool
+    {
+        return ($this->isUpperBidiagonal() || $this->isLowerBidiagonal());
+    }
+
+    /**
+     * Is the matrix tridiagonal?
+     *  - It is a square matrix
+     *  - Non-zero entries allowed along the main diagonal
+     *  - Non-zero entries allowed along the diagonal above the main diagonal
+     *  - Non-zero entries allowed along the diagonal below the main diagonal
+     *  - All the other entries are zero
+     *
+     *  - Is both upper and lower Hessenberg
+     *
+     * https://en.wikipedia.org/wiki/Tridiagonal_matrix
+     *
+     * @return boolean true if tridiagonal; false otherwise
+     */
+    public function isTridiagonal(): bool
+    {
+        if (!$this->isSquare()) {
+            return false;
+        }
+
+        if (!$this->isUpperHessenberg() || !$this->isLowerHessenberg()) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Is the matrix upper Hessenberg?
+     *  - It is a square matrix
+     *  - Has zero entries below the first subdiagonal
+     *
+     * https://en.wikipedia.org/wiki/Hessenberg_matrix
+     *
+     * @return boolean true if upper Hessenberg; false otherwise
+     */
+    public function isUpperHessenberg(): bool
+    {
+        if (!$this->isSquare()) {
+            return false;
+        }
+
+        // Elements below lower diagonal are zero
+        for ($i = 2; $i < $this->m; $i++) {
+            for ($j = 0; $j < $i-1; $j++) {
+                if ($this->A[$i][$j] != 0) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Is the matrix lower Hessenberg?
+     *  - It is a square matrix
+     *  - Has zero entries above the first subdiagonal
+     *
+     * https://en.wikipedia.org/wiki/Hessenberg_matrix
+     *
+     * @return boolean true if lower Hessenberg; false otherwise
+     */
+    public function isLowerHessenberg(): bool
+    {
+        if (!$this->isSquare()) {
+            return false;
+        }
+
+        // Elements above upper diagonal are zero
+        for ($i = 0; $i < $this->m; $i++) {
+            for ($j = $i+2; $j < $this->n; $j++) {
+                if ($this->A[$i][$j] != 0) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    /**
      * Is the matrix square and symmetric
      *
      * @return boolean true if square and symmmetric; false otherwise
+     *
+     * @throws Exception\IncorrectTypeException
+     * @throws Exception\MatrixException
      */
     protected function isSquareAndSymmetric(): bool
     {
@@ -446,6 +955,7 @@ class Matrix implements \ArrayAccess, \JsonSerializable
      *  - cofactorMatrix
      *  - meanDeviation
      *  - covarianceMatrix
+     *  - adjugate
      **************************************************************************/
 
     /**
@@ -458,15 +968,17 @@ class Matrix implements \ArrayAccess, \JsonSerializable
      *
      * @return Matrix
      *
-     * @throws MatrixException if matrices have a different number of rows or columns
+     * @throws Exception\MatrixException if matrices have a different number of rows or columns
+     * @throws Exception\IncorrectTypeException
+     * @throws Exception\MathException
      */
     public function add(Matrix $B): Matrix
     {
         if ($B->getM() !== $this->m) {
-            throw new Exception\MatrixException('Matices have different number of rows');
+            throw new Exception\MatrixException('Matrices have different number of rows');
         }
         if ($B->getN() !== $this->n) {
-            throw new Exception\MatrixException('Matices have different number of columns');
+            throw new Exception\MatrixException('Matrices have different number of columns');
         }
 
         $R = [];
@@ -489,6 +1001,8 @@ class Matrix implements \ArrayAccess, \JsonSerializable
      * @param  Matrix $B Matrix to add to this matrix
      *
      * @return Matrix
+     *
+     * @throws Exception\IncorrectTypeException
      */
     public function directSum(Matrix $B): Matrix
     {
@@ -522,7 +1036,7 @@ class Matrix implements \ArrayAccess, \JsonSerializable
     /**
      * Kronecker Sum (A⊕B)
      * A⊕B = A⊗Ib + I⊗aB
-     * Where A and B are square matrices, Ia and Ib are identiry matrixes,
+     * Where A and B are square matrices, Ia and Ib are identity matrixes,
      * and ⊗ is the Kronecker product.
      *
      * https://en.wikipedia.org/wiki/Matrix_addition#Kronecker_sum
@@ -530,11 +1044,14 @@ class Matrix implements \ArrayAccess, \JsonSerializable
      *
      * @param Matrix $B Square matrix
      *
-     * @return SquareMatrix
+     * @return Matrix
      *
      * @throws Exception\MatrixException if either matrix is not a square matrix
+     * @throws Exception\OutOfBoundsException
+     * @throws Exception\IncorrectTypeException
+     * @throws Exception\BadDataException
      */
-    public function kroneckerSum(Matrix $B) : SquareMatrix
+    public function kroneckerSum(Matrix $B): Matrix
     {
         if (!$this->isSquare() || !$B->isSquare()) {
             throw new Exception\MatrixException('Matrices A and B must both be square for kroneckerSum');
@@ -564,15 +1081,16 @@ class Matrix implements \ArrayAccess, \JsonSerializable
      *
      * @return Matrix
      *
-     * @throws MatrixException if matrices have a different number of rows or columns
+     * @throws Exception\MatrixException if matrices have a different number of rows or columns
+     * @throws Exception\IncorrectTypeException
      */
     public function subtract(Matrix $B): Matrix
     {
         if ($B->getM() !== $this->m) {
-            throw new Exception\MatrixException('Matices have different number of rows');
+            throw new Exception\MatrixException('Matrices have different number of rows');
         }
         if ($B->getN() !== $this->n) {
-            throw new Exception\MatrixException('Matices have different number of columns');
+            throw new Exception\MatrixException('Matrices have different number of columns');
         }
 
         $R = [];
@@ -589,12 +1107,13 @@ class Matrix implements \ArrayAccess, \JsonSerializable
      * Matrix multiplication
      * https://en.wikipedia.org/wiki/Matrix_multiplication#Matrix_product_.28two_matrices.29
      *
-     * @param  Matrix/Vector $B Matrix or Vector to multiply
+     * @param  Matrix|Vector $B Matrix or Vector to multiply
      *
      * @return Matrix
      *
-     * @throws IncorrectTypeException if parameter B is not a Matrix or Vector
-     * @throws MatrixException if matrix dimensions do not match
+     * @throws Exception\IncorrectTypeException if parameter B is not a Matrix or Vector
+     * @throws Exception\MatrixException if matrix dimensions do not match
+     * @throws Exception\VectorException
      */
     public function multiply($B): Matrix
     {
@@ -632,7 +1151,8 @@ class Matrix implements \ArrayAccess, \JsonSerializable
      *
      * @return Matrix
      *
-     * @throws BadParameterException if λ is not a number
+     * @throws Exception\BadParameterException if λ is not a number
+     * @throws Exception\IncorrectTypeException
      */
     public function scalarMultiply($λ): Matrix
     {
@@ -652,14 +1172,29 @@ class Matrix implements \ArrayAccess, \JsonSerializable
     }
 
     /**
+     * Negate a matrix
+     * −A = −1A
+     *
+     * @return Matrix
+     *
+     * @throws Exception\BadParameterException
+     * @throws Exception\IncorrectTypeException
+     */
+    public function negate(): Matrix
+    {
+        return $this->scalarMultiply(-1);
+    }
+
+    /**
      * Scalar matrix division
      *
      * @param  number $λ
      *
      * @return Matrix
      *
-     * @throws BadParameterException if λ is not a number
-     * @throws BadParameterException if λ is 0
+     * @throws Exception\BadParameterException if λ is not a number
+     * @throws Exception\BadParameterException if λ is 0
+     * @throws Exception\IncorrectTypeException
      */
     public function scalarDivide($λ): Matrix
     {
@@ -696,7 +1231,8 @@ class Matrix implements \ArrayAccess, \JsonSerializable
      *
      * @return Matrix
      *
-     * @throws MatrixException if matrices are not the same dimensions
+     * @throws Exception\MatrixException if matrices are not the same dimensions
+     * @throws Exception\IncorrectTypeException
      */
     public function hadamardProduct(Matrix $B): Matrix
     {
@@ -741,6 +1277,8 @@ class Matrix implements \ArrayAccess, \JsonSerializable
      * @param Matrix $B
      *
      * @return Matrix
+     *
+     * @throws Exception\BadDataException
      */
     public function kroneckerProduct(Matrix $B): Matrix
     {
@@ -766,7 +1304,7 @@ class Matrix implements \ArrayAccess, \JsonSerializable
             $initial_matrix = array_shift($row);
             $matrices[] = array_reduce(
                 $row,
-                function ($augmented_matrix, $matrix) {
+                function (Matrix $augmented_matrix, Matrix $matrix) {
                     return $augmented_matrix->augment($matrix);
                 },
                 $initial_matrix
@@ -777,7 +1315,7 @@ class Matrix implements \ArrayAccess, \JsonSerializable
         $initial_matrix = array_shift($matrices);
         $A⊗B            = array_reduce(
             $matrices,
-            function ($augmented_matrix, $matrix) {
+            function (Matrix $augmented_matrix, Matrix $matrix) {
                 return $augmented_matrix->augmentBelow($matrix);
             },
             $initial_matrix
@@ -798,6 +1336,9 @@ class Matrix implements \ArrayAccess, \JsonSerializable
      * https://en.wikipedia.org/wiki/Transpose
      *
      * @return Matrix
+     *
+     * @throws Exception\MatrixException
+     * @throws Exception\IncorrectTypeException
      */
     public function transpose()
     {
@@ -820,7 +1361,7 @@ class Matrix implements \ArrayAccess, \JsonSerializable
      *
      * @return number
      *
-     * @throws MatrixException if the matrix is not a square matrix
+     * @throws Exception\MatrixException if the matrix is not a square matrix
      */
     public function trace()
     {
@@ -841,9 +1382,11 @@ class Matrix implements \ArrayAccess, \JsonSerializable
     /**
      * Map a function over all elements of the Matrix
      *
-     * @param  \Callable $func takes a matrix item as input
+     * @param  callable $func takes a matrix item as input
      *
      * @return Matrix
+     *
+     * @throws Exception\IncorrectTypeException
      */
     public function map(callable $func): Matrix
     {
@@ -866,6 +1409,8 @@ class Matrix implements \ArrayAccess, \JsonSerializable
      * All other off-diagonal elements are zeros.
      *
      * @return Matrix
+     *
+     * @throws Exception\IncorrectTypeException
      */
     public function diagonal(): Matrix
     {
@@ -902,7 +1447,8 @@ class Matrix implements \ArrayAccess, \JsonSerializable
      *
      * @return Matrix
      *
-     * @throws MatrixException if matrices do not have the same number of rows
+     * @throws Exception\MatrixException if matrices do not have the same number of rows
+     * @throws Exception\IncorrectTypeException
      */
     public function augment(Matrix $B): Matrix
     {
@@ -935,11 +1481,11 @@ class Matrix implements \ArrayAccess, \JsonSerializable
      *
      * C must be a square matrix
      *
-     * @param  Matrix $B Matrix columns to add to matrix A
-     *
      * @return Matrix
      *
-     * @throws MatrixException if matrix is not square
+     * @throws Exception\MatrixException if matrix is not square
+     * @throws Exception\IncorrectTypeException
+     * @throws Exception\OutOfBoundsException
      */
     public function augmentIdentity(): Matrix
     {
@@ -969,7 +1515,8 @@ class Matrix implements \ArrayAccess, \JsonSerializable
      *
      * @return Matrix
      *
-     * @throws MatrixException if matrices do not have the same number of columns
+     * @throws Exception\MatrixException if matrices do not have the same number of columns
+     * @throws Exception\IncorrectTypeException
      */
     public function augmentBelow(Matrix $B): Matrix
     {
@@ -998,8 +1545,11 @@ class Matrix implements \ArrayAccess, \JsonSerializable
      *
      * @return Matrix
      *
-     * @throws MatrixException if not a square matrix
-     * @throws MatrixException if singular matrix
+     * @throws Exception\MatrixException if not a square matrix
+     * @throws Exception\MatrixException if singular matrix
+     * @throws Exception\IncorrectTypeException
+     * @throws Exception\BadParameterException
+     * @throws Exception\OutOfBoundsException
      */
     public function inverse(): Matrix
     {
@@ -1010,15 +1560,14 @@ class Matrix implements \ArrayAccess, \JsonSerializable
         if (!$this->isSquare()) {
             throw new Exception\MatrixException('Not a sqaure matrix (required for determinant)');
         }
-
-        $│A│ = $this->det ?? $this->det();
-        if ($│A│ == 0) {
+        if ($this->isSingular()) {
             throw new Exception\MatrixException('Singular matrix (determinant = 0); not invertible');
         }
 
-        $m = $this->m;
-        $n = $this->n;
-        $A = $this->A;
+        $m   = $this->m;
+        $n   = $this->n;
+        $A   = $this->A;
+        $│A│ = $this->det ?? $this->det();
 
         /*
          * 2x2 matrix:
@@ -1071,11 +1620,12 @@ class Matrix implements \ArrayAccess, \JsonSerializable
      *
      * @return Matrix with row mᵢ and column nⱼ removed
      *
-     * @throws MatrixException if matrix is not square
-     * @throws MatrixException if row to exclude for minor matrix does not exist
-     * @throws MatrixException if column to exclude for minor matrix does not exist
+     * @throws Exception\MatrixException if matrix is not square
+     * @throws Exception\MatrixException if row to exclude for minor matrix does not exist
+     * @throws Exception\MatrixException if column to exclude for minor matrix does not exist
+     * @throws Exception\IncorrectTypeException
      */
-    public function minorMatrix(int $mᵢ, int $nⱼ): SquareMatrix
+    public function minorMatrix(int $mᵢ, int $nⱼ): Matrix
     {
         if (!$this->isSquare()) {
             throw new Exception\MatrixException('Matrix is not square; cannot get minor Matrix of a non-square matrix');
@@ -1112,13 +1662,14 @@ class Matrix implements \ArrayAccess, \JsonSerializable
      *
      * @param  int $k Order of the leading principal minor
      *
-     * @return SquareMatrix
+     * @return Matrix
      *
-     * @throws OutOfBoundsException if k ≤ 0
-     * @throws OutOfBoundsException if k > n
-     * @throws MatrixException if matrix is not square
+     * @throws Exception\OutOfBoundsException if k ≤ 0
+     * @throws Exception\OutOfBoundsException if k > n
+     * @throws Exception\MatrixException if matrix is not square
+     * @throws Exception\IncorrectTypeException
      */
-    public function leadingPrincipalMinor(int $k): SquareMatrix
+    public function leadingPrincipalMinor(int $k): Matrix
     {
         if ($k <= 0) {
             throw new Exception\OutOfBoundsException("k is ≤ 0: $k");
@@ -1154,12 +1705,17 @@ class Matrix implements \ArrayAccess, \JsonSerializable
      *
      * @return Matrix
      *
-     * @throws MatrixException if matrix is not square
+     * @throws Exception\MatrixException if matrix is not square
+     * @throws Exception\IncorrectTypeException
+     * @throws Exception\BadParameterException
      */
-    public function cofactorMatrix(): SquareMatrix
+    public function cofactorMatrix(): Matrix
     {
         if (!$this->isSquare()) {
             throw new Exception\MatrixException('Matrix is not square; cannot get cofactor Matrix of a non-square matrix');
+        }
+        if ($this->n === 1) {
+            throw new Exception\MatrixException('Matrix must be 2x2 or greater to compute cofactorMatrix');
         }
 
         $m = $this->m;
@@ -1193,6 +1749,8 @@ class Matrix implements \ArrayAccess, \JsonSerializable
      *      [-2  8 -4 0]
      *
      * @return Matrix
+     *
+     * @throws Exception\IncorrectTypeException
      */
     public function meanDeviation(): Matrix
     {
@@ -1200,7 +1758,7 @@ class Matrix implements \ArrayAccess, \JsonSerializable
         $M = $this->sampleMean();
 
         $B = array_map(
-            function ($Xᵢ) use ($M) {
+            function (Vector $Xᵢ) use ($M) {
                 return $Xᵢ->subtract($M);
             },
             $X
@@ -1229,6 +1787,11 @@ class Matrix implements \ArrayAccess, \JsonSerializable
      * Follows formula and method found in Linear Algebra and Its Applications (Lay).
      *
      * @return Matrix
+     *
+     * @throws Exception\IncorrectTypeException
+     * @throws Exception\MatrixException
+     * @throws Exception\BadParameterException
+     * @throws Exception\VectorException
      */
     public function covarianceMatrix(): Matrix
     {
@@ -1239,6 +1802,32 @@ class Matrix implements \ArrayAccess, \JsonSerializable
         $S = $B->multiply($Bᵀ)->scalarMultiply((1 / ($n - 1)));
 
         return $S;
+    }
+
+    /**
+     * Adjugate matrix (adjoint, adjunct)
+     * The transpose of its cofactor matrix.
+     * https://en.wikipedia.org/wiki/Adjugate_matrix
+     *
+     * @return Matrix
+     *
+     * @throws Exception\MatrixException is matrix is not square
+     * @throws Exception\IncorrectTypeException
+     * @throws Exception\BadParameterException
+     */
+    public function adjugate(): Matrix
+    {
+        if (!$this->isSquare()) {
+            throw new Exception\MatrixException('Matrix is not square; cannot get adjugate Matrix of a non-square matrix');
+        }
+
+        if ($this->n === 1) {
+            return MatrixFactory::create([[1]]);
+        }
+
+        $adj⟮A⟯ = $this->cofactorMatrix()->transpose();
+
+        return $adj⟮A⟯;
     }
 
     /**************************************************************************
@@ -1256,7 +1845,7 @@ class Matrix implements \ArrayAccess, \JsonSerializable
      *
      * @return Vector
      *
-     * @throws MatrixException if dimensions do not match
+     * @throws Exception\MatrixException if dimensions do not match
      */
     public function vectorMultiply(Vector $B): Vector
     {
@@ -1325,6 +1914,7 @@ class Matrix implements \ArrayAccess, \JsonSerializable
      *  - det
      *  - minor
      *  - cofactor
+     *  - rank
      **************************************************************************/
 
     /**
@@ -1435,16 +2025,17 @@ class Matrix implements \ArrayAccess, \JsonSerializable
      *
      * For 4x4 and larger matrices:
      *
-     * │A│ = (-1)ⁿ │rref(A)│ ∏1/k
+     * │A│ = (-1)ⁿ │ref(A)│
      *
      *  where:
-     *   │rref(A)│ = determinant of the reduced row echelon form of A
-     *   ⁿ         = number of row swaps when computing RREF
-     *   ∏1/k      = product of 1/k where k is the scaling factor divisor
+     *   │ref(A)│ = determinant of the row echelon form of A
+     *   ⁿ        = number of row swaps when computing REF
      *
      * @return number
      *
-     * @throws MatrixException if matrix is not square
+     * @throws Exception\MatrixException if matrix is not square
+     * @throws Exception\IncorrectTypeException
+     * @throws Exception\BadParameterException
      */
     public function det()
     {
@@ -1457,7 +2048,6 @@ class Matrix implements \ArrayAccess, \JsonSerializable
         }
 
         $m = $this->m;
-        $n = $this->n;
         $R = MatrixFactory::create($this->A);
 
         /*
@@ -1523,22 +2113,21 @@ class Matrix implements \ArrayAccess, \JsonSerializable
 
         /*
          * nxn matrix 4x4 or larger
-         * Get row reduced echelon form, then compute determinant of rref.
-         * Then plug into formula with swaps and product of scaling factor.
-         * │A│ = (-1)ⁿ │rref(A)│ ∏1/k
+         * Get row echelon form, then compute determinant of ref.
+         * Then plug into formula with swaps.
+         * │A│ = (-1)ⁿ │ref(A)│
          */
-        $rref⟮A⟯ = $this->rref ?? $this->rref();
-        $ⁿ      = $this->rref_swaps;
-        $∏1／k  = $this->rref_∏scaling_factor;
+        $ref⟮A⟯ = $this->ref ?? $this->ref();
+        $ⁿ     = $this->ref_swaps;
 
-        // Det(rref(A))
-        $│rref⟮A⟯│ = 1;
+        // Det(ref(A))
+        $│ref⟮A⟯│ = 1;
         for ($i = 0; $i < $m; $i++) {
-            $│rref⟮A⟯│ *= $rref⟮A⟯[$i][$i];
+            $│ref⟮A⟯│ *= $ref⟮A⟯[$i][$i];
         }
 
-        // │A│ = (-1)ⁿ │rref(A)│ ∏1/k
-        $this->det = (-1)**$ⁿ * ($│rref⟮A⟯│ / $∏1／k);
+        // │A│ = (-1)ⁿ │ref(A)│
+        $this->det = (-1)**$ⁿ * $│ref⟮A⟯│;
         return $this->det;
     }
 
@@ -1561,9 +2150,11 @@ class Matrix implements \ArrayAccess, \JsonSerializable
      *
      * @return number
      *
-     * @throws MatrixException if matrix is not square
-     * @throws MatrixException if row to exclude for minor does not exist
-     * @throws MatrixException if column to exclude for minor does not exist
+     * @throws Exception\MatrixException if matrix is not square
+     * @throws Exception\MatrixException if row to exclude for minor does not exist
+     * @throws Exception\MatrixException if column to exclude for minor does not exist
+     * @throws Exception\IncorrectTypeException
+     * @throws Exception\BadParameterException
      */
     public function minor(int $mᵢ, int $nⱼ)
     {
@@ -1604,9 +2195,11 @@ class Matrix implements \ArrayAccess, \JsonSerializable
      *
      * @return number
      *
-     * @throws MatrixException if matrix is not square
-     * @throws MatrixException if row to exclude for cofactor does not exist
-     * @throws MatrixException if column to exclude for cofactor does not exist
+     * @throws Exception\MatrixException if matrix is not square
+     * @throws Exception\MatrixException if row to exclude for cofactor does not exist
+     * @throws Exception\MatrixException if column to exclude for cofactor does not exist
+     * @throws Exception\IncorrectTypeException
+     * @throws Exception\BadParameterException
      */
     public function cofactor(int $mᵢ, int $nⱼ)
     {
@@ -1624,6 +2217,34 @@ class Matrix implements \ArrayAccess, \JsonSerializable
         $⟮−1⟯ⁱ⁺ʲ = (-1)**($mᵢ + $nⱼ);
 
         return $⟮−1⟯ⁱ⁺ʲ * $Mᵢⱼ;
+    }
+
+    /**
+     * Rank of a matrix
+     * Computed by counting number of pivots once in reduced row echelon form
+     * https://en.wikipedia.org/wiki/Rank_(linear_algebra)
+     *
+     * @return int
+     *
+     * @throws Exception\BadParameterException
+     * @throws Exception\IncorrectTypeException
+     * @throws Exception\MatrixException
+     */
+    public function rank(): int
+    {
+        $rref   = $this->rref();
+        $pivots = 0;
+
+        for ($i = 0; $i < $this->m; $i++) {
+            for ($j = 0; $j < $this->n; $j++) {
+                if (Support::isNotZero($rref[$i][$j])) {
+                    $pivots++;
+                    continue 2;
+                }
+            }
+        }
+
+        return $pivots;
     }
 
     /**************************************************************************
@@ -1649,7 +2270,8 @@ class Matrix implements \ArrayAccess, \JsonSerializable
      *
      * @return Matrix with rows mᵢ and mⱼ interchanged
      *
-     * @throws MatrixException if row to interchange does not exist
+     * @throws Exception\MatrixException if row to interchange does not exist
+     * @throws Exception\IncorrectTypeException
      */
     public function rowInterchange(int $mᵢ, int $mⱼ): Matrix
     {
@@ -1681,13 +2303,14 @@ class Matrix implements \ArrayAccess, \JsonSerializable
      *
      * Each element of Row mᵢ will be multiplied by k
      *
-     * @param int  $mᵢ Row to multiply
-     * @param int  $k  Multiplier
+     * @param int $mᵢ Row to multiply
+     * @param int $k Multiplier
      *
      * @return Matrix
      *
-     * @throws MatrixException if row to multiply does not exist
-     * @throws BadParameterException if k is 0
+     * @throws Exception\MatrixException if row to multiply does not exist
+     * @throws Exception\BadParameterException if k is 0
+     * @throws Exception\IncorrectTypeException
      */
     public function rowMultiply(int $mᵢ, int $k): Matrix
     {
@@ -1713,13 +2336,14 @@ class Matrix implements \ArrayAccess, \JsonSerializable
      *
      * Each element of Row mᵢ will be divided by k
      *
-     * @param int  $mᵢ Row to multiply
-     * @param int  $k  divisor
+     * @param int $mᵢ Row to multiply
+     * @param int $k divisor
      *
      * @return Matrix
      *
-     * @throws MatrixException if row to multiply does not exist
-     * @throws BadParameterException if k is 0
+     * @throws Exception\MatrixException if row to multiply does not exist
+     * @throws Exception\BadParameterException if k is 0
+     * @throws Exception\IncorrectTypeException
      */
     public function rowDivide(int $mᵢ, $k): Matrix
     {
@@ -1745,14 +2369,15 @@ class Matrix implements \ArrayAccess, \JsonSerializable
      *
      * @param int $mᵢ Row to multiply * k to be added to row mⱼ
      * @param int $mⱼ Row that will have row mⱼ * k added to it
-     * @param int $k  Multiplier
+     * @param number $k Multiplier
      *
      * @return Matrix
      *
-     * @throws MatrixException if row to add does not exist
-     * @throws BadParameterException if k is 0
+     * @throws Exception\MatrixException if row to add does not exist
+     * @throws Exception\BadParameterException if k is 0
+     * @throws Exception\IncorrectTypeException
      */
-    public function rowAdd(int $mᵢ, int $mⱼ, int $k): Matrix
+    public function rowAdd(int $mᵢ, int $mⱼ, $k): Matrix
     {
         if ($mᵢ >= $this->m || $mⱼ >= $this->m) {
             throw new Exception\MatrixException('Row to add does not exist');
@@ -1776,12 +2401,13 @@ class Matrix implements \ArrayAccess, \JsonSerializable
      *
      * Each element of Row mᵢ will have k added to it
      *
-     * @param int  $mᵢ Row to add k to
-     * @param int  $k  scalar
+     * @param int $mᵢ Row to add k to
+     * @param int $k scalar
      *
      * @return Matrix
      *
-     * @throws MatrixException if row to add does not exist
+     * @throws Exception\MatrixException if row to add does not exist
+     * @throws Exception\IncorrectTypeException
      */
     public function rowAddScalar(int $mᵢ, $k): Matrix
     {
@@ -1804,11 +2430,12 @@ class Matrix implements \ArrayAccess, \JsonSerializable
      *
      * @param int $mᵢ Row to multiply * k to be subtracted to row mⱼ
      * @param int $mⱼ Row that will have row mⱼ * k subtracted to it
-     * @param number $k  Multiplier
+     * @param number $k Multiplier
      *
      * @return Matrix
      *
-     * @throws MatrixException if row to subtract does not exist
+     * @throws Exception\MatrixException if row to subtract does not exist
+     * @throws Exception\IncorrectTypeException
      */
     public function rowSubtract(int $mᵢ, int $mⱼ, $k): Matrix
     {
@@ -1832,12 +2459,13 @@ class Matrix implements \ArrayAccess, \JsonSerializable
      *
      * Each element of Row mᵢ will have k subtracted from it
      *
-     * @param int  $mᵢ Row to add k to
-     * @param int  $k  scalar
+     * @param int $mᵢ Row to add k to
+     * @param int $k scalar
      *
      * @return Matrix
      *
-     * @throws MatrixException if row to subtract does not exist
+     * @throws Exception\MatrixException if row to subtract does not exist
+     * @throws Exception\IncorrectTypeException
      */
     public function rowSubtractScalar(int $mᵢ, int $k): Matrix
     {
@@ -1862,7 +2490,8 @@ class Matrix implements \ArrayAccess, \JsonSerializable
      *
      * @return Matrix with row mᵢ excluded
      *
-     * @throws MatrixException if row to exclude does not exist
+     * @throws Exception\MatrixException if row to exclude does not exist
+     * @throws Exception\IncorrectTypeException
      */
     public function rowExclude(int $mᵢ): Matrix
     {
@@ -1902,7 +2531,8 @@ class Matrix implements \ArrayAccess, \JsonSerializable
      *
      * @return Matrix with columns nᵢ and nⱼ interchanged
      *
-     * @throws MatrixException if column to interchange does not exist
+     * @throws Exception\MatrixException if column to interchange does not exist
+     * @throws Exception\IncorrectTypeException
      */
     public function columnInterchange(int $nᵢ, int $nⱼ): Matrix
     {
@@ -1937,13 +2567,14 @@ class Matrix implements \ArrayAccess, \JsonSerializable
      *
      * Each element of column nᵢ will be multiplied by k
      *
-     * @param int  $nᵢ Column to multiply
-     * @param int  $k  Multiplier
+     * @param int $nᵢ Column to multiply
+     * @param int $k Multiplier
      *
      * @return Matrix
      *
-     * @throws MatrixException if column to multiply does not exist
-     * @throws BadParameterException if k is 0
+     * @throws Exception\MatrixException if column to multiply does not exist
+     * @throws Exception\BadParameterException if k is 0
+     * @throws Exception\IncorrectTypeException
      */
     public function columnMultiply(int $nᵢ, int $k): Matrix
     {
@@ -1969,12 +2600,13 @@ class Matrix implements \ArrayAccess, \JsonSerializable
      *
      * @param int $nᵢ Column to multiply * k to be added to column nⱼ
      * @param int $nⱼ Column that will have column nⱼ * k added to it
-     * @param int $k  Multiplier
+     * @param int $k Multiplier
      *
      * @return Matrix
      *
-     * @throws MatrixException if column to add does not exist
-     * @throws BadParameterException if k is 0
+     * @throws Exception\MatrixException if column to add does not exist
+     * @throws Exception\BadParameterException if k is 0
+     * @throws Exception\IncorrectTypeException
      */
     public function columnAdd(int $nᵢ, int $nⱼ, int $k): Matrix
     {
@@ -2002,7 +2634,8 @@ class Matrix implements \ArrayAccess, \JsonSerializable
      *
      * @return Matrix with column nᵢ excluded
      *
-     * @throws MatrixException if column to exclude does not exist
+     * @throws Exception\MatrixException if column to exclude does not exist
+     * @throws Exception\IncorrectTypeException
      */
     public function columnExclude(int $nᵢ): Matrix
     {
@@ -2033,19 +2666,214 @@ class Matrix implements \ArrayAccess, \JsonSerializable
 
     /**************************************************************************
      * MATRIX DECOMPOSITIONS - Return a Matrix (or array of Matrices)
-     *  - rref
-     *  - LU Decomposition
+     *  - ref (row echelon form)
+     *  - rref (reduced row echelon form)
+     *  - LU decomposition
+     *  - Cholesky decomposition
      **************************************************************************/
+
+    /**
+     * Row echelon form
+     *
+     * First tries Guassian elimination.
+     * If that fails (singular matrix), uses custom row reduction algorithm
+     *
+     * @return Matrix in row echelon form
+     *
+     * @throws Exception\BadParameterException
+     * @throws Exception\IncorrectTypeException
+     * @throws Exception\MatrixException
+     */
+    public function ref(): Matrix
+    {
+        if (isset($this->ref)) {
+            return $this->ref;
+        }
+
+        try {
+            $R = $this->gaussianElimination();
+        } catch (Exception\SingularMatrixException $e) {
+            $R = $this->rowReductionToEchelonForm();
+        }
+
+        $this->ref = MatrixFactory::create($R);
+        return $this->ref;
+    }
+
+    /**
+     * Gaussian elimination - row echelon form
+     *
+     * Algorithm
+     *  for k = 1 ... min(m,n):
+     *    Find the k-th pivot:
+     *    i_max  := argmax (i = k ... m, abs(A[i, k]))
+     *    if A[i_max, k] = 0
+     *      error "Matrix is singular!"
+     *    swap rows(k, i_max)
+     *    Do for all rows below pivot:
+     *    for i = k + 1 ... m:
+     *      f := A[i, k] / A[k, k]
+     *      Do for all remaining elements in current row:
+     *      for j = k + 1 ... n:
+     *        A[i, j]  := A[i, j] - A[k, j] * f
+     *      Fill lower triangular matrix with zeros:
+     *      A[i, k]  := 0
+     *
+     * https://en.wikipedia.org/wiki/Gaussian_elimination
+     *
+     * @return array - matrix in row echelon form
+     *
+     * @throws Exception\SingularMatrixException if the matrix is singular
+     */
+    protected function gaussianElimination(): array
+    {
+        $m     = $this->m;
+        $n     = $this->n;
+        $size  = min($m, $n);
+        $R     = $this->A;
+        $swaps = 0;
+
+        for ($k = 0; $k < $size; $k++) {
+            // Find column max
+            $i_max = $k;
+            for ($i = $k; $i < $m; $i++) {
+                if (abs($R[$i][$k]) > abs($R[$i_max][$k])) {
+                    $i_max = $i;
+                }
+            }
+
+            if ($R[$i_max][$k] == 0) {
+                throw new Exception\SingularMatrixException('Guassian elimination fails for singular matrices');
+            }
+
+            // Swap rows k and i_max (column max)
+            if ($k != $i_max) {
+                list($R[$k], $R[$i_max]) = [$R[$i_max], $R[$k]];
+                $swaps++;
+            }
+
+            // Row operations
+            for ($i = $k + 1; $i < $m; $i++) {
+                $f = ($R[$k][$k] != 0) ? $R[$i][$k] / $R[$k][$k] : 1;
+                for ($j = $k + 1; $j < $n; $j++) {
+                    $R[$i][$j] = $R[$i][$j] - ($R[$k][$j] * $f);
+                }
+                $R[$i][$k] = 0;
+            }
+        }
+
+        $this->ref_swaps = $swaps;
+        return $R;
+    }
+
+    /**
+     * Reduce a matrix to row echelon form using basic row operations
+     * Custom MathPHP classic row reduction using basic matrix operations.
+     *
+     * Algorithm:
+     *   (1) Find pivot
+     *     (a) If pivot column is 0, look down the column to find a non-zero pivot and swap rows
+     *     (b) If no non-zero pivot in the column, go to the next column of the same row and repeat (1)
+     *   (2) Scale pivot row so pivot is 1 by using row division
+     *   (3) Eliminate elements below pivot (make 0 using row addition of the pivot row * a scaling factor)
+     *       so there are no non-zero elements in the pivot column in rows below the pivot
+     *   (4) Repeat from 1 from the next row and column
+     *
+     *   (Extra) Keep track of number of row swaps (used for computing determinant)
+     *
+     * @return array - matrix in row echelon form
+     *
+     * @throws Exception\IncorrectTypeException
+     * @throws Exception\MatrixException
+     * @throws Exception\BadParameterException
+     */
+    protected function rowReductionToEchelonForm(): array
+    {
+        $m    = $this->m;
+        $n    = $this->n;
+        $R    = MatrixFactory::create($this->A);
+
+        // Starting conditions
+        $row   = 0;
+        $col   = 0;
+        $swaps = 0;
+        $ref   = false;
+
+        while (!$ref) {
+            // If pivot is 0, try to find a non-zero pivot in the column and swap rows
+            if (Support::isZero($R[$row][$col])) {
+                for ($j = $row + 1; $j < $m; $j++) {
+                    if (Support::isNotZero($R[$j][$col])) {
+                        $R = $R->rowInterchange($row, $j);
+                        $swaps++;
+                        break;
+                    }
+                }
+            }
+
+            // No non-zero pivot, go to next column of the same row
+            if (Support::isZero($R[$row][$col])) {
+                $col++;
+                if ($row >= $m || $col >= $n) {
+                    $ref = true;
+                }
+                continue;
+            }
+
+            // Scale pivot to 1
+            $divisor = $R[$row][$col];
+            $R = $R->rowDivide($row, $divisor);
+
+            // Eliminate elements below pivot
+            for ($j = $row + 1; $j < $m; $j++) {
+                $factor = $R[$j][$col];
+                if (Support::isNotZero($factor)) {
+                    $R = $R->rowAdd($row, $j, -$factor);
+                }
+            }
+
+            // Move on to next row and column
+            $row++;
+            $col++;
+
+            // If no more rows or columns, ref achieved
+            if ($row >= $m || $col >= $n) {
+                $ref = true;
+            }
+        }
+
+        $R = $R->getMatrix();
+
+        // Floating point adjustment for zero values
+        for ($i = 0; $i < $m; $i++) {
+            for ($j = 0; $j < $n; $j++) {
+                if (Support::isZero($R[$i][$j])) {
+                    $R[$i][$j] = 0;
+                }
+            }
+        }
+
+        $this->ref_swaps = $swaps;
+        return $R;
+    }
 
     /**
      * Ruduced row echelon form (row canonical form)
      *
-     * Adapted from reference algorithm: https://rosettacode.org/wiki/Reduced_row_echelon_form
-     *
-     * Also computes number of swaps and product of scaling factor.
-     * These are used for computing the determinant.
+     * Algorithm:
+     *   (1) Reduce to REF
+     *   (2) Find pivot
+     *     (b) If no non-zero pivot in the column, go to the next column of the same row and repeat (2)
+     *   (2) Scale pivot row so pivot is 1 by using row division
+     *   (3) Eliminate elements above pivot (make 0 using row addition of the pivot row * a scaling factor)
+     *       so there are no non-zero elements in the pivot column in rows above the pivot
+     *   (4) Repeat from 2 from the next row and column
      *
      * @return Matrix in reduced row echelon form
+     *
+     * @throws Exception\BadParameterException
+     * @throws Exception\IncorrectTypeException
+     * @throws Exception\MatrixException
      */
     public function rref(): Matrix
     {
@@ -2055,57 +2883,60 @@ class Matrix implements \ArrayAccess, \JsonSerializable
 
         $m = $this->m;
         $n = $this->n;
-        $R = MatrixFactory::create($this->A);
+        $R = $this->ref();
 
-        $swaps           = 0;
-        $∏scaling_factor = 1;
+        // Starting conditions
+        $row   = 0;
+        $col   = 0;
+        $rref = false;
 
-        $lead = 0;
-
-        for ($r = 0; $r < $m; $r++) {
-            if ($lead >= $n) {
-                break;
+        while (!$rref) {
+            // No non-zero pivot, go to next column of the same row
+            if (Support::isZero($R[$row][$col])) {
+                $col++;
+                if ($row >= $m || $col >= $n) {
+                    $rref = true;
+                }
+                continue;
             }
 
-            $i = $r;
-            while ($R[$i][$lead] == 0) {
-                $i++;
-                if ($i == $m) {
-                    $i = $r;
-                    $lead++;
-                    if ($lead == $n) {
-                        break 2; // done; break out of outer loop and return.
-                    }
+            // Scale pivot to 1
+            if ($R[$row][$col] != 1) {
+                $divisor = $R[$row][$col];
+                $R = $R->rowDivide($row, $divisor);
+            }
+
+            // Eliminate elements above pivot
+            for ($j = $row - 1; $j >= 0; $j--) {
+                $factor = $R[$j][$col];
+                if (Support::isNotZero($factor)) {
+                    $R = $R->rowAdd($row, $j, -$factor);
                 }
             }
 
-            // Swap rows i and r
-            if ($i !== $r) {
-                $R = $R->rowInterchange($i, $r);
-                $swaps++;
-            }
+            // Move on to next row and column
+            $row++;
+            $col++;
 
-            // Divide row $r by R[r][lead]
-            $lv = $R[$r][$lead];
-            $R  = $R->rowDivide($r, $lv);
-            if ($lv != 0) {
-                $∏scaling_factor *= 1 / $lv;
+            // If no more rows or columns, rref achieved
+            if ($row >= $m || $col >= $n) {
+                $rref = true;
             }
-
-            // Subtract row r * R[r][lead] from row i
-            for ($i = 0; $i < $m; $i++) {
-                if ($i != $r) {
-                    $R  = $R->rowSubtract($r, $i, $R[$i][$lead]);
-                }
-            }
-            $lead++;
         }
 
-        $this->rref                 = $R;
-        $this->rref_swaps           = $swaps;
-        $this->rref_∏scaling_factor = $∏scaling_factor;
+        $R = $R->getMatrix();
 
-        return $R;
+        // Floating point adjustment for zero values
+        for ($i = 0; $i < $m; $i++) {
+            for ($j = 0; $j < $n; $j++) {
+                if (Support::isZero($R[$i][$j])) {
+                    $R[$i][$j] = 0;
+                }
+            }
+        }
+
+        $this->rref = MatrixFactory::create($R);
+        return $this->rref;
     }
 
     /**
@@ -2149,12 +2980,14 @@ class Matrix implements \ArrayAccess, \JsonSerializable
      *   L: Lower triangular matrix
      *   U: Upper triangular matrix
      *   P: Permutation matrix
-     *   A: Original square matrix
      * ]
      *
-     * @throws MatrixException if matrix is not square
+     * @throws Exception\MatrixException if matrix is not square
+     * @throws Exception\IncorrectTypeException
+     * @throws Exception\OutOfBoundsException
+     * @throws Exception\VectorException
      */
-    public function LUDecomposition(): array
+    public function luDecomposition(): array
     {
         if (!$this->isSquare()) {
             throw new Exception\MatrixException('LU decomposition only works on square matrices');
@@ -2200,7 +3033,6 @@ class Matrix implements \ArrayAccess, \JsonSerializable
             'L' => $this->L,
             'U' => $this->U,
             'P' => $this->P,
-            'A' => MatrixFactory::create($this->A),
         ];
     }
 
@@ -2226,6 +3058,10 @@ class Matrix implements \ArrayAccess, \JsonSerializable
      *      [α₃₁ α₃₂ α₃₃]
      *
      * @return Matrix
+     *
+     * @throws Exception\IncorrectTypeException
+     * @throws Exception\MatrixException
+     * @throws Exception\OutOfBoundsException
      */
     protected function pivotize(): Matrix
     {
@@ -2253,6 +3089,121 @@ class Matrix implements \ArrayAccess, \JsonSerializable
         }
 
         return $P;
+    }
+
+    /**
+     * Cholesky decomposition
+     * A decomposition of a square, positive definitive matrix
+     * into the product of a lower triangular matrix and its transpose.
+     *
+     * https://en.wikipedia.org/wiki/Cholesky_decomposition
+     *
+     * A = LLᵀ
+     *
+     *     [a₁₁ a₁₂ a₁₃]
+     * A = [a₂₁ a₂₂ a₂₃]
+     *     [a₃₁ a₃₂ a₃₃]
+     *
+     *     [l₁₁  0   0 ] [l₁₁ l₁₂ l₁₃]
+     * A = [l₂₁ l₂₂  0 ] [ 0  l₂₂ l₂₃] ≡ LLᵀ
+     *     [l₃₁ l₃₂ l₃₃] [ 0   0  l₃₃]
+     *
+     * Diagonal elements
+     *          ____________
+     *         /     ᵢ₋₁
+     * lᵢᵢ =  / aᵢᵢ - ∑l²ᵢₓ
+     *       √       ˣ⁼¹
+     *
+     * Elements below diagonal
+     *
+     *        1   /      ᵢ₋₁     \
+     * lⱼᵢ = --- |  aⱼᵢ - ∑lⱼₓlᵢₓ |
+     *       lᵢᵢ  \      ˣ⁼¹     /
+     *
+     * @return Matrix Lower triangular matrix L of A = LLᵀ
+     *
+     * @throws Exception\MatrixException if the matrix is not positive definite
+     * @throws Exception\OutOfBoundsException
+     * @throws Exception\IncorrectTypeException
+     * @throws Exception\BadParameterException
+     */
+    public function choleskyDecomposition(): Matrix
+    {
+        if (!$this->isPositiveDefinite()) {
+            throw new Exception\MatrixException('Matrix must be positive definite for Cholesky decomposition');
+        }
+
+        $m = $this->m;
+        $L = MatrixFactory::zero($m, $m)->getMatrix();
+
+        for ($j = 0; $j < $m; $j++) {
+            for ($i = 0; $i < ($j+1); $i++) {
+                $∑lⱼₓlᵢₓ = 0;
+                for ($x = 0; $x < $i; $x++) {
+                    $∑lⱼₓlᵢₓ += $L[$j][$x] * $L[$i][$x];
+                }
+                $L[$j][$i] = ($j === $i)
+                    ? sqrt($this->A[$j][$j] - $∑lⱼₓlᵢₓ)
+                    : (1 / $L[$i][$i] * ($this->A[$j][$i] - $∑lⱼₓlᵢₓ));
+            }
+        }
+
+        return MatrixFactory::create($L);
+    }
+
+    /**
+     * Crout decomposition
+     * An LU decomposition which decomposes a matrix into a lower triangular matrix (L), an upper triangular matrix (U).
+     * https://en.wikipedia.org/wiki/Crout_matrix_decomposition
+     *
+     * A = LU where L = LD
+     * A = (LD)U
+     *  - L = lower triangular matrix
+     *  - D = diagonal matrix
+     *  - U = normalised upper triangular matrix
+     *
+     * @return array [
+     *   L: Lower triangular/diagonal matrix
+     *   U: Normalised upper triangular matrix
+     * ]
+     *
+     * @throws Exception\MatrixException if there is division by 0 because of a 0-value determinant
+     * @throws Exception\OutOfBoundsException
+     * @throws Exception\IncorrectTypeException
+     */
+    public function croutDecomposition(): array
+    {
+        $m   = $this->m;
+        $n   = $this->n;
+        $A   = $this->A;
+        $U   = MatrixFactory::identity($n)->getMatrix();
+        $L   = MatrixFactory::zero($m, $n)->getMatrix();
+
+        for ($j = 0; $j < $n; $j++) {
+            for ($i = $j; $i < $n; $i++) {
+                $sum = 0;
+                for ($k = 0; $k < $j; $k++) {
+                    $sum = $sum + $L[$i][$k] * $U[$k][$j];
+                }
+                $L[$i][$j] = $A[$i][$j] - $sum;
+            }
+
+            for ($i = $j; $i < $n; $i++) {
+                $sum = 0;
+                for ($k = 0; $k < $j; $k++) {
+                    $sum = $sum + $L[$j][$k] * $U[$k][$i];
+                }
+                if ($L[$j][$j] == 0) {
+                    throw new Exception\MatrixException('Cannot do Crout decomposition. det(L) close to 0 - Cannot divide by 0');
+                }
+                $U[$j][$i] = ($A[$j][$i] - $sum) / $L[$j][$j];
+            }
+        }
+
+        return [
+            'L' => MatrixFactory::create($L),
+            'U' => MatrixFactory::create($U),
+        ];
     }
 
     /**************************************************************************
@@ -2305,11 +3256,15 @@ class Matrix implements \ArrayAccess, \JsonSerializable
      *   xᵢ = --- | yᵢ - ∑ Uᵢⱼxⱼ |
      *        Uᵢᵢ  \   ʲ⁼ⁱ⁺¹     /
      *
-     * @param Vector/array $b solution to Ax = b
+     * @param Vector|array $b solution to Ax = b
      *
      * @return Vector x
      *
-     * @throws IncorrectTypeException if b is not a Vector or array
+     * @throws Exception\IncorrectTypeException if b is not a Vector or array
+     * @throws Exception\MatrixException
+     * @throws Exception\VectorException
+     * @throws Exception\OutOfBoundsException
+     * @throws Exception\BadParameterException
      */
     public function solve($b)
     {
@@ -2341,7 +3296,7 @@ class Matrix implements \ArrayAccess, \JsonSerializable
 
         // No inverse or RREF pre-computed.
         // Use LU Decomposition.
-        $this->LUDecomposition();
+        $this->luDecomposition();
         $L = $this->L;
         $U = $this->U;
         $P = $this->P;
@@ -2385,6 +3340,54 @@ class Matrix implements \ArrayAccess, \JsonSerializable
     }
 
     /**************************************************************************
+     * EIGEN METHODS
+     * - eigenvalues
+     * - eigenvectors
+     **************************************************************************/
+
+    /**
+     * Eigenvalues of the matrix.
+     * Various eigenvalue algorithms (methods) are available.
+     * Use the $method parameter to control the algorithm used.
+     *
+     * @param string $method Algorithm used to compute the eigenvalues
+     *
+     * @return array of eigenvalues
+     *
+     * @throws Exception\MatrixException if method is not a valid eigenvalue method
+     */
+    public function eigenvalues(string $method = Eigenvalue::CLOSED_FORM_POLYNOMIAL_ROOT_METHOD): array
+    {
+        if (!Eigenvalue::isAvailableMethod($method)) {
+            throw new Exception\MatrixException("$method is not a valid eigenvalue method");
+        }
+
+        return Eigenvalue::$method($this);
+    }
+
+    /**
+     * Eigenvectors of the matrix.
+     * Eigenvector computation function takes in an array of eigenvalues as input.
+     * Various eigenvalue algorithms (methods) are availbale.
+     * Use the $method parameter to control the algorithm used.
+     *
+     * @param string $method Algorithm used to compute the eigenvalues
+     *
+     * @return Matrix of eigenvectors
+     *
+     * @throws Exception\MatrixException if method is not a valid eigenvalue method
+     * @throws Exception\BadDataException
+     */
+    public function eigenvectors(string $method = Eigenvalue::CLOSED_FORM_POLYNOMIAL_ROOT_METHOD): Matrix
+    {
+        if (!Eigenvalue::isAvailableMethod($method)) {
+            throw new Exception\MatrixException("$method is not a valid eigenvalue method");
+        }
+
+        return Eigenvector::eigenvectors($this, Eigenvalue::$method($this));
+    }
+
+    /**************************************************************************
      * PHP MAGIC METHODS
      *  - __toString
      **************************************************************************/
@@ -2415,18 +3418,28 @@ class Matrix implements \ArrayAccess, \JsonSerializable
      * ArrayAccess INTERFACE
      **************************************************************************/
 
+    /**
+     * @param mixed $i
+     * @return bool
+     */
     public function offsetExists($i): bool
     {
         return isset($this->A[$i]);
     }
 
+    /**
+     * @param mixed $i
+     * @return mixed
+     */
     public function offsetGet($i)
     {
         return $this->A[$i];
     }
 
     /**
-     * @throws MatrixException
+     * @param  mixed $i
+     * @param  mixed $value
+     * @throws Exception\MatrixException
      */
     public function offsetSet($i, $value)
     {
@@ -2434,7 +3447,8 @@ class Matrix implements \ArrayAccess, \JsonSerializable
     }
 
     /**
-     * @throws MatrixException
+     * @param  mixed $i
+     * @throws Exception\MatrixException
      */
     public function offsetUnset($i)
     {
@@ -2445,8 +3459,15 @@ class Matrix implements \ArrayAccess, \JsonSerializable
      * JsonSerializable INTERFACE
      **************************************************************************/
 
+    /**
+     * @return array
+     */
     public function jsonSerialize()
     {
         return $this->A;
+    }
+
+    public function getObjectType()
+    {
     }
 }

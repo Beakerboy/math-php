@@ -1,7 +1,10 @@
 <?php
-namespace MathPHP\LinearAlgebra;
+namespace MathPHP\Tests\LinearAlgebra;
 
-class RowVectorTest extends \PHPUnit_Framework_TestCase
+use MathPHP\LinearAlgebra\RowVector;
+use MathPHP\LinearAlgebra\Matrix;
+
+class RowVectorTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @dataProvider dataProviderForConstructor
@@ -11,8 +14,8 @@ class RowVectorTest extends \PHPUnit_Framework_TestCase
         $R = new RowVector($M);
         $V = new Matrix($V);
 
-        $this->assertInstanceOf('MathPHP\LinearAlgebra\RowVector', $R);
-        $this->assertInstanceOf('MathPHP\LinearAlgebra\Matrix', $R);
+        $this->assertInstanceOf(\MathPHP\LinearAlgebra\RowVector::class, $R);
+        $this->assertInstanceOf(\MathPHP\LinearAlgebra\Matrix::class, $R);
 
         $this->assertEquals($V[0], $R[0]);
 
@@ -42,8 +45,8 @@ class RowVectorTest extends \PHPUnit_Framework_TestCase
         $R  = new RowVector($M);
         $Rᵀ = $R->transpose();
 
-        $this->assertInstanceOf('MathPHP\LinearAlgebra\ColumnVector', $Rᵀ);
-        $this->assertInstanceOf('MathPHP\LinearAlgebra\Matrix', $Rᵀ);
+        $this->assertInstanceOf(\MathPHP\LinearAlgebra\ColumnVector::class, $Rᵀ);
+        $this->assertInstanceOf(\MathPHP\LinearAlgebra\Matrix::class, $Rᵀ);
 
         $this->assertEquals(count($M), $Rᵀ->getM());
         $this->assertEquals(1, $Rᵀ->getN());
