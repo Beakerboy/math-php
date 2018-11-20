@@ -29,7 +29,7 @@ class Outlier
      */
     public static function GrubbsStatistic(array $data, string $tails = "two"): float
     {
-        $tails = $tails != "upper" && $tails != "lower" && $tails != "two" ? $tails = "two" : $tails;
+        $tails = $tails != "upper" && $tails != "lower" && $tails != "two" ? "two" : $tails;
         $μ = Average::mean($data);
         $σ = Descriptive::standardDeviation($data);
         
