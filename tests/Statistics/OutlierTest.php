@@ -24,6 +24,6 @@ class OutlierTest extends \PHPUnit\Framework\TestCase
     public function testGrubbsException()
     {
         $this->expectException(Exception\BadParameterException::class);
-        $Gcrit = Outlier::CriticalGrubbs(.05, 10, 3)
+        $Gcrit = Outlier::CriticalGrubbs(.05, 10, 3);
     }
 }
