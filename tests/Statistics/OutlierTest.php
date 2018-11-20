@@ -1,6 +1,7 @@
 <?php
 namespace MathPHP\Tests\Statistics;
 
+use MathPHP\Exception;
 use MathPHP\Statistics\Outlier;
 
 class OutlierTest extends \PHPUnit\Framework\TestCase
