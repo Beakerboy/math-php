@@ -659,7 +659,7 @@ class Correlation
      */
     public static function Mahalanobis(array $x, array $data, array $y = []): float
     {
-        $point_matrix = new Matrix($point);
+        $x_matrix = new Matrix($x);
         $data_matrix  = new Matrix($data);
         
         $S⁻¹ = $data_matrix->covarianceMatrix()->inverse();
@@ -669,8 +669,8 @@ class Correlation
             }
         }
         $y_matrix = new Matrix($y);
-        $x = $point_matrix->subtract($y_matrix);
-        $M = $x->transpose()->multiply($S⁻¹)->multiply($x);
-        return sqrt($M[0][0]);
+        $diff = $x_matrix->subtract($y_matrix)
+        $D = $diff->transpose()->multiply($S⁻¹)->multiply($diff);
+        return sqrt($D[0][0]);
     }
 }
