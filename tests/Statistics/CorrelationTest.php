@@ -526,9 +526,10 @@ class CorrelationTest extends \PHPUnit\Framework\TestCase
      * @dataProvider dataProviderForMahalanobis
      * @param        array $data
      * @param        array $distances
+     * @param        array $y
      * @throws       \Exception
      */
-    public function testMahalanobis(array $data, array $y, array $distances)
+    public function testMahalanobis(array $data, array $distances, array $y)
     {
         for ($i=0; $i<10; $i++) {
             $calc = Correlation::Mahalanobis([[$data[0][$i]],[$data[1][$i]]], $data, $y[$i]);
