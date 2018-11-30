@@ -296,7 +296,7 @@ class DistanceTest extends \PHPUnit\Framework\TestCase
     public function testMahalanobis(array $data, array $distances, array $y)
     {
         for ($i=0; $i<10; $i++) {
-            $calc = Correlation::Mahalanobis([[$data[0][$i]],[$data[1][$i]]], $data, $y[$i]);
+            $calc = Distance::Mahalanobis([[$data[0][$i]],[$data[1][$i]]], $data, $y[$i]);
             $this->assertEquals($distances[$i], $calc, '', 0.0001);
         }
     }
