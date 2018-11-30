@@ -669,7 +669,7 @@ class Correlation
             }
         }
         $y_matrix = new Matrix($y);
-        $diff = $x_matrix->subtract($y_matrix)
+        $diff = $x_matrix->subtract($y_matrix);
         $D = $diff->transpose()->multiply($S⁻¹)->multiply($diff);
         return sqrt($D[0][0]);
     }
