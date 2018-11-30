@@ -642,30 +642,34 @@ class Correlation
      *
      * https://en.wikipedia.org/wiki/Mahalanobis_distance
      *
-     * The Mahalanobis distance measures the distance a point is from the centroid of a set of data in multidimensional
-     * space, scaled by the standard deviation in each dimension.
+     * The Mahalanobis distance measures the distance between two points in multidimensional
+     * space, scaled by the standard deviation of tje data in each dimension.
      *
-     * If x is a vector of a point in space, μ is a vector of the average value in each dimension,
-     * and S is the covariance matrix from a set of data, the Mahalanobis distance, D, of the point within the space is:
+     * If x and y are vectors of points in space, and S is the covariance matrix of that space,
+     * the Mahalanobis distance, D, of the point within the space is:
      *
-     *    D = √[(x-μ)ᵀ S⁻¹ (x-μ)]
+     *    D = √[(x-y)ᵀ S⁻¹ (x-y)]
      *
-     * @param array $point in multidimensional space. ie [[1],[2],[4]]
+     * If y is not provided, the distances will be caculated from the centroid of tje dataset.
+     *
+     * @param array $x a vector in the vector space. ie [[1],[2],[4]]
      * @param array $data an array of data. ie [[1,2,3,4],[6,2,8,1],[0,4,8,1]]
+     * @param array $y a vector in the vector space
      *
      */
-    public static function Mahalanobis(array $point, array $data): float
+    public static function Mahalanobis(array $x, array $data, array $y = []): float
     {
         $point_matrix = new Matrix($point);
         $data_matrix  = new Matrix($data);
         
         $S⁻¹ = $data_matrix->covarianceMatrix()->inverse();
-        $μ = [];
-        foreach ($data as $row) {
-            $μ[] = [Average::mean($row)];
+        if ($y == []) {
+            foreach ($data as $row) {
+                $y[] = [Average::mean($row)];
+            }
         }
-        $μ_matrix = new Matrix($μ);
-        $x = $point_matrix->subtract($μ_matrix);
+        $y_matrix = new Matrix($y);
+        $x = $point_matrix->subtract($y_matrix);
         $M = $x->transpose()->multiply($S⁻¹)->multiply($x);
         return sqrt($M[0][0]);
     }
