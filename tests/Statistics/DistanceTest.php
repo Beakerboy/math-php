@@ -311,7 +311,7 @@ class DistanceTest extends \PHPUnit\Framework\TestCase
                     [3, 7, 5, 7, 9, 5, 6, 2, 2, 7],
                 ];
         $center = [];
-        $twotwo = [[2],[2]]
+        $twotwo = [[2],[2]];
         return [
             [
                 $data,
