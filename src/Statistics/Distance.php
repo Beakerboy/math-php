@@ -270,8 +270,7 @@ class Distance
             // Weighted Average Matrix
             $S = $Sx->scalarMultiply($Nx)->add($data->scalarMultiply($Ndata))->scalarDivide($Nx + $Ndata);
             $diff = $x->sampleAverage()->asColumnMatrix()->subtract($Centroid);
-        }
-        else {
+        } else {
             $S = $Sx;
             if ($y === null) {
                 $y = $Centroid;
