@@ -1,6 +1,7 @@
 <?php
 namespace MathPHP\Tests\Statistics;
 
+use MathPHP\LinearAlgebra\Matrix;
 use MathPHP\Statistics\Distance;
 use MathPHP\Exception;
 
@@ -296,7 +297,9 @@ class DistanceTest extends \PHPUnit\Framework\TestCase
     public function testMahalanobis(array $data, array $distances, array $y)
     {
         for ($i=0; $i<10; $i++) {
-            $calc = Distance::Mahalanobis([[$data[0][$i]],[$data[1][$i]]], $data, $y[$i]);
+            $data_matrix = new Matrix($data);
+            $x = $data_matrix->getColumn($i);
+            $calc = Distance::Mahalanobis($x, $data, $y[$i]);
             $this->assertEquals($distances[$i], $calc, '', 0.0001);
         }
     }
@@ -310,8 +313,8 @@ class DistanceTest extends \PHPUnit\Framework\TestCase
                     [4, 4, 5, 2, 3, 6, 9, 7, 4, 5],
                     [3, 7, 5, 7, 9, 5, 6, 2, 2, 7],
                 ];
-        $center = [];
-        $twotwo = [[2],[2]];
+        $center = null;
+        $twotwo = new Matrix([[2],[2]]);
         return [
             [
                 $data,
