@@ -262,7 +262,7 @@ class Distance
     public static function Mahalanobis(Matrix $x, Matrix $data, Matrix $y = null): float
     {
         $Sdata = $data->covarianceMatrix();
-        $Centriod = $data->sampleMean()->asColumnMatrix();
+        $Centroid = $data->sampleMean()->asColumnMatrix();
         $Nx = $x->getN();
         if ($Nx > 1) {
             $Sx = $x->covarianceMatrix();
