@@ -299,7 +299,7 @@ class DistanceTest extends \PHPUnit\Framework\TestCase
         for ($i=0; $i<10; $i++) {
             $data_matrix = new Matrix($data);
             $x = new Matrix($data_matrix->getColumn($i));
-            $calc = Distance::Mahalanobis($x, $data, $y[$i]);
+            $calc = Distance::Mahalanobis($x, $data_matrix, $y[$i]);
             $this->assertEquals($distances[$i], $calc, '', 0.0001);
         }
     }
