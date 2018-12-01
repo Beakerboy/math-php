@@ -259,19 +259,27 @@ class Distance
      * @param array $y a vector in the vector space
      *
      */
-    public static function Mahalanobis(array $x, array $data, array $y = []): float
+    public static function Mahalanobis(Matrix $x, Matrix $data, Matrix $y = null): float
     {
-        $x_matrix = new Matrix($x);
-        $data_matrix  = new Matrix($data);
-        
-        $S⁻¹ = $data_matrix->covarianceMatrix()->inverse();
-        if ($y == []) {
-            foreach ($data as $row) {
-                $y[] = [Average::mean($row)];
+        $Sdata = $data->covarianceMatrix();
+        $Centriod = $data->sampleAverage()->asColumnMatrix();
+        $Nx = $x->getN();
+        if ($Nx > 1) {
+            $Sx = $x->covarianceMatrix();
+            $Ndata = $data->getN();
+            // Weighted Average Matrix
+            $S = $Sx->scalarMultiply($Nx)->add($data->scalarMultiply($Ndata))->scalarDivide($Nx + $Ndata);
+            $diff = $x->sampleAverage()->asColumnMatrix()->subtract($Centroid);
+        )
+        else {
+            $S = $Sx;
+            if ($y === null) {
+                $y = $Centroid;
             }
+            $diff = $x->subtract($y);
         }
-        $y_matrix = new Matrix($y);
-        $diff = $x_matrix->subtract($y_matrix);
+            
+        $S⁻¹ = $S->inverse();
         $D = $diff->transpose()->multiply($S⁻¹)->multiply($diff);
         return sqrt($D[0][0]);
     }
