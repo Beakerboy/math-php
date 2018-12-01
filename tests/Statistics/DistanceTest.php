@@ -289,14 +289,15 @@ class DistanceTest extends \PHPUnit\Framework\TestCase
     /**
      * @testCase     Mahalanobis
      * @dataProvider dataProviderForMahalanobis
-     * @param        Matrix $x
+     * @param        array $x
      * @param        Matrix $data
      * @param        float $distance
      * @throws       \Exception
      */
-    public function testMahalanobis(Matrix $x, Matrix $data, float $distance)
+    public function testMahalanobis(array $x, Matrix $data, float $distance)
     {
-        $calc = Distance::Mahalanobis($x, $data);
+        $x_m = new Matrix($x);
+        $calc = Distance::Mahalanobis($x_m, $data);
         $this->assertEquals($distance, $calc, '', 0.0001);
     }
 
@@ -314,7 +315,8 @@ class DistanceTest extends \PHPUnit\Framework\TestCase
         //  [1.24017, 0.76023, 0.12775, 1.46567, 1.64518, 2.76992, 4.47614, 2.58465, 1.03386, 4.6909],
         // [$center, $center, $center, $center, $center, $twotwo, $twotwo, $twotwo, $twotwo, [[2],[-2]]],
         return [
-            [new Matrix([[4],[3]]),$data_matrix, 1.24017],
+            [[[4],[3]],$data_matrix, 1.24017],
+            [$data_matrix->getColumn(1), $data_matrix, .76023],
         ];
     }
 }
