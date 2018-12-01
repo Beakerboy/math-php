@@ -271,7 +271,7 @@ class Distance
             $S = $Sx->scalarMultiply($Nx)->add($data->scalarMultiply($Ndata))->scalarDivide($Nx + $Ndata);
             $diff = $x->sampleMean()->asColumnMatrix()->subtract($Centroid);
         } else {
-            $S = $Sx;
+            $S = $Sdata;
             if ($y === null) {
                 $y = $Centroid;
             }
