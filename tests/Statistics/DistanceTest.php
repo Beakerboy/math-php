@@ -296,12 +296,10 @@ class DistanceTest extends \PHPUnit\Framework\TestCase
      */
     public function testMahalanobis(array $data, array $distances, array $y)
     {
-        for ($i=0; $i<10; $i++) {
-            $data_matrix = new Matrix($data);
-            $x = new Matrix($data_matrix->getColumn($i));
-            $calc = Distance::Mahalanobis($x, $data_matrix, $y[$i]);
-            $this->assertEquals($distances[$i], $calc, '', 0.0001);
-        }
+        $data_matrix = new Matrix($data);
+        $x = new Matrix($data_matrix->getColumn($i));
+        $calc = Distance::Mahalanobis($x, $data_matrix, $y[$i]);
+        $this->assertEquals($distances[$i], $calc, '', 0.0001);
     }
 
     /**
@@ -313,14 +311,12 @@ class DistanceTest extends \PHPUnit\Framework\TestCase
                     [4, 4, 5, 2, 3, 6, 9, 7, 4, 5],
                     [3, 7, 5, 7, 9, 5, 6, 2, 2, 7],
                 ];
-        $center = null;
         $twotwo = new Matrix([[2],[2]]);
+        $data_matrix = new Matrix($data);
+        //  [1.24017, 0.76023, 0.12775, 1.46567, 1.64518, 2.76992, 4.47614, 2.58465, 1.03386, 4.6909],
+        // [$center, $center, $center, $center, $center, $twotwo, $twotwo, $twotwo, $twotwo, [[2],[-2]]],
         return [
-            [
-                $data,
-                [1.24017, 0.76023, 0.12775, 1.46567, 1.64518, 2.76992, 4.47614, 2.58465, 1.03386, 4.6909],
-                [$center, $center, $center, $center, $center, $twotwo, $twotwo, $twotwo, $twotwo, [[2],[-2]]],
-            ],
+            [new Matrix($data_matrix->getColumn(0)),$data_matrix, 1.24017, null],
         ];
     }
 }
