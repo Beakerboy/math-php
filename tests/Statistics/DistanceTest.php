@@ -314,7 +314,7 @@ class DistanceTest extends \PHPUnit\Framework\TestCase
         //  [1.24017, 0.76023, 0.12775, 1.46567, 1.64518, 2.76992, 4.47614, 2.58465, 1.03386, 4.6909],
         // [$center, $center, $center, $center, $center, $twotwo, $twotwo, $twotwo, $twotwo, [[2],[-2]]],
         return [
-            [new Matrix([[4][3]]),$data_matrix, 1.24017],
+            [new Matrix([[4],[3]]),$data_matrix, 1.24017],
         ];
     }
 }
