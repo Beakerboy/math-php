@@ -1851,10 +1851,10 @@ class Matrix implements \ArrayAccess, \JsonSerializable
         if ($n₁ >= $this->n || $n₁ < 0 || $n₂ >= $this->n || $n₂ < 0) {
             throw new Exception\MatrixException('Specified Matrix column does not exist');
         }
-        if ($m₂ < $m₁ || $n₂ < $n₁ ) {
+        if ($m₂ < $m₁ || $n₂ < $n₁) {
             throw new Exception\MatrixException('Ending row must be greater than begining row');
         }
-        if ($n₂ < $n₁ ) {
+        if ($n₂ < $n₁) {
             throw new Exception\MatrixException('Ending column must be greater than the begining column');
         }
         $A = [];
