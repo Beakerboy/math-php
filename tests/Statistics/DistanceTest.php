@@ -287,14 +287,14 @@ class DistanceTest extends \PHPUnit\Framework\TestCase
     }
     
     /**
-     * @testCase     Mahalanobis
-     * @dataProvider dataProviderForMahalanobis
+     * @testCase     Mahalanobis from a point to the center of the data
+     * @dataProvider dataProviderForMahalanobisCenter
      * @param        array $x
      * @param        Matrix $data
      * @param        float $distance
      * @throws       \Exception
      */
-    public function testMahalanobis(array $x, Matrix $data, float $distance)
+    public function testMahalanobisCenter(array $x, Matrix $data, float $distance)
     {
         $x_m = new Matrix($x);
         $calc = Distance::Mahalanobis($x_m, $data);
@@ -302,9 +302,9 @@ class DistanceTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return array [data, distances, y]
+     * @return array [x, data, distance]
      */
-    public function dataProviderForMahalanobis(): array
+    public function dataProviderForMahalanobisCenter(): array
     {
         $data = [
                     [4, 4, 5, 2, 3, 6, 9, 7, 4, 5],
@@ -312,11 +312,82 @@ class DistanceTest extends \PHPUnit\Framework\TestCase
                 ];
         $twotwo = new Matrix([[2],[2]]);
         $data_matrix = new Matrix($data);
-        //  [1.24017, 0.76023, 0.12775, 1.46567, 1.64518, 2.76992, 4.47614, 2.58465, 1.03386, 4.6909],
-        // [$center, $center, $center, $center, $center, $twotwo, $twotwo, $twotwo, $twotwo, [[2],[-2]]],
         return [
             [[[4],[3]],$data_matrix, 1.24017],
-            [$data_matrix->getColumn(1), $data_matrix, .76023],
+            [[[4],[7]], $data_matrix, .76023],
+            [[[5],[5]], $data_matrix, .12775],
+            [[[2],[2]], $data_matrix, 2.76992],
+            [[[2],[-2]]], $data_matrix, 4.6909],
+        ];
+    }
+
+    /**
+     * @testCase     Mahalanobis between two points
+     * @dataProvider dataProviderForMahalanobisPoint
+     * @param        array $x
+     * @param        array $y
+     * @param        Matrix $data
+     * @param        float $distance
+     * @throws       \Exception
+     */
+    public function testMahalanobisPoint(array $x, array $y, Matrix $data, float $distance)
+    {
+        $x_m = new Matrix($x);
+        $y_m = new Matrix($y);
+        $calc = Distance::Mahalanobis($x_m, $data, $y_m);
+        $this->assertEquals($distance, $calc, '', 0.0001);
+    }
+
+    /**
+     * @return array [x, data, distance]
+     */
+    public function dataProviderForMahalanobisPoint(): array
+    {
+        $data = [
+                    [4, 4, 5, 2, 3, 6, 9, 7, 4, 5],
+                    [3, 7, 5, 7, 9, 5, 6, 2, 2, 7],
+                ];
+        $twotwo = new Matrix([[2],[2]]);
+        $data_matrix = new Matrix($data);
+        return [
+            [[[4],[3]],$data_matrix, 1.24017],
+            [[[4],[7]], $data_matrix, .76023],
+            [[[5],[5]], $data_matrix, .12775],
+            [[[2],[2]], $data_matrix, 2.76992],
+            [[[2],[-2]]], $data_matrix, 4.6909],
+        ];
+    }
+    /**
+     * @testCase     Mahalanobis between two datasets
+     * @dataProvider dataProviderForMahalanobisPoint
+     * @param        Matrix $data1
+     * @param        Matrix $data2
+     * @param        float $distance
+     * @throws       \Exception
+     */
+    public function testMahalanobisPoint(Matrix $data1, Matrix $data1, float $distance)
+    {
+        $calc = Distance::Mahalanobis($x_m, $data, $y_m);
+        $this->assertEquals($distance, $calc, '', 0.0001);
+    }
+
+    /**
+     * @return array [x, data, distance]
+     */
+    public function dataProviderForMahalanobisTwoData(): array
+    {
+        $data = [
+                    [4, 4, 5, 2, 3, 6, 9, 7, 4, 5],
+                    [3, 7, 5, 7, 9, 5, 6, 2, 2, 7],
+                ];
+        $twotwo = new Matrix([[2],[2]]);
+        $data_matrix = new Matrix($data);
+        return [
+            [[[4],[3]],$data_matrix, 1.24017],
+            [[[4],[7]], $data_matrix, .76023],
+            [[[5],[5]], $data_matrix, .12775],
+            [[[2],[2]], $data_matrix, 2.76992],
+            [[[2],[-2]]], $data_matrix, 4.6909],
         ];
     }
 }
