@@ -350,11 +350,11 @@ class DistanceTest extends \PHPUnit\Framework\TestCase
         $twotwo = new Matrix([[2],[2]]);
         $data_matrix = new Matrix($data);
         return [
-            [[[4],[3]],$data_matrix, 1.24017],
-            [[[4],[7]], $data_matrix, .76023],
-            [[[5],[5]], $data_matrix, .12775],
-            [[[2],[2]], $data_matrix, 2.76992],
-            [[[2],[-2]], $data_matrix, 4.6909],
+            [[[6],[5]], [[2],[2]], $data_matrix, 2.76992],
+            [[[9],[6]], [[2],[2]], $data_matrix, 4.47614],
+            [[[7],[2]], [[2],[2]], $data_matrix, 2.58465],
+            [[[4],[2]], [[2],[2]], $data_matrix, 1.03386],
+            [[[5],[7]], [[2],[-2]], $data_matrix, 4.6909],
         ];
     }
     /**
