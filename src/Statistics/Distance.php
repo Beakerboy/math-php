@@ -265,17 +265,15 @@ class Distance
      */
     public static function Mahalanobis(Matrix $x, Matrix $data, Matrix $y = null): float
     {
-        $Sdata = $data->covarianceMatrix();
         $Centroid = $data->sampleMean()->asColumnMatrix();
         $Nx = $x->getN();
         if ($Nx > 1) {
-            $Sx = $x->covarianceMatrix();
             $Ndata = $data->getN();
             // Weighted Average Matrix
-            $S = $Sx->scalarMultiply($Nx)->add($data->scalarMultiply($Ndata))->scalarDivide($Nx + $Ndata);
+            $S = $data->augmentBelow($x);->covarianceMatrix();
             $diff = $x->sampleMean()->asColumnMatrix()->subtract($Centroid);
         } else {
-            $S = $Sdata;
+            $S = $data->covarianceMatrix();
             if ($y === null) {
                 $y = $Centroid;
             }
