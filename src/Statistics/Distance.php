@@ -255,8 +255,8 @@ class Distance
      * If y is not provided, the distances will be caculated from x to the centroid of the dataset.
      *
      * The Mahalanobis distance can also be used to measure the distance between two sets of data.
-     * If x has more than one column, the weighted average of the two sample covariance matrices is
-     * used, and the distance will be calculated between the centroids of each data set.
+     * If x has more than one column, the combined data covariance matrix is used, and the distance 
+     * will be calculated between the centroids of each data set.
      *
      * @param array $x a vector in the vector space. ie [[1],[2],[4]] or a matrix of data
      * @param array $data an array of data. ie [[1,2,3,4],[6,2,8,1],[0,4,8,1]]
