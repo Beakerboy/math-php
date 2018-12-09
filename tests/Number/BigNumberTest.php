@@ -27,4 +27,3 @@ class BigNumberTest extends \PHPUnit\Framework\TestCase
         ];
     }
 }
-        
