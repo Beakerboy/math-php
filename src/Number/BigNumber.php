@@ -146,7 +146,7 @@ class BigNumber implements ObjectArithmetic
     public function divide($input): BigNumber
     {
         if (preg_match('/^0$|^[-]?[1-9.][0-9.]$/', $input)) {
-            $n = $input
+            $n = $input;
         } elseif ($input instanceof BigNumber) {
             $$n = $input->ToString();
         } else {
