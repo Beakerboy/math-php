@@ -36,7 +36,7 @@ class BigNumber implements ObjectArithmetic
      */
     public function __toString(): string
     {
-        return $number;
+        return $this->number;
     }
     
     /**************************************************************************
