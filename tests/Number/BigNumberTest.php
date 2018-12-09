@@ -26,4 +26,5 @@ class BigNumberTest extends \PHPUnit\Framework\TestCase
             ['1234567890123456789012345678.901','1234567890123456789012345678.901'],
         ];
     }
+}
         
