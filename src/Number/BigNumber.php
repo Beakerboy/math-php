@@ -81,7 +81,7 @@ class BigNumber implements ObjectArithmetic
         if (preg_match('/^0$|^[-]?[1-9.][0-9.]$/', $input)) {
             $n = $input;
         } elseif ($input instanceof BigNumber) {
-            $n = $input->ToString();
+            $n = $input->__ToString();
         } else {
             throw new Exception\IncorrectTypeException('Argument must be string or BigNumber');
         }
@@ -105,7 +105,7 @@ class BigNumber implements ObjectArithmetic
         if (preg_match('/^0$|^[-]?[1-9.][0-9.]$/', $input)) {
             $n = $input;
         } elseif ($input instanceof BigNumber) {
-            $n = $input->ToString();
+            $n = $input->__ToString();
         } else {
             throw new Exception\IncorrectTypeException('Argument must be string or BigNumber');
         }
@@ -127,7 +127,7 @@ class BigNumber implements ObjectArithmetic
         if (preg_match('/^0$|^[-]?[1-9.][0-9.]$/', $input)) {
             $n = $input;
         } elseif ($input instanceof BigNumber) {
-            $n = $input->ToString();
+            $n = $input->__ToString();
         } else {
             throw new Exception\IncorrectTypeException('Argument must be string or BigNumber');
         }
@@ -148,7 +148,7 @@ class BigNumber implements ObjectArithmetic
         if (preg_match('/^0$|^[-]?[1-9.][0-9.]$/', $input)) {
             $n = $input;
         } elseif ($input instanceof BigNumber) {
-            $$n = $input->ToString();
+            $$n = $input->__ToString();
         } else {
             throw new Exception\IncorrectTypeException('Argument must be real or complex number');
         }
@@ -169,6 +169,6 @@ class BigNumber implements ObjectArithmetic
      */
     public function equals(BigNumber $input): bool
     {
-        return bccomp($this->number, $input->ToString()) === 0;
+        return bccomp($this->number, $input->__ToString()) === 0;
     }
 }
