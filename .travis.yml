@@ -7,8 +7,7 @@ php:
 
 install:
   - composer install
-  
-before_script: composer require ext-bcmath *
+
 script: 
   - mkdir -p build/logs
   - vendor/bin/phpunit --configuration tests/phpunit.xml --coverage-clover build/logs/clover.xml
