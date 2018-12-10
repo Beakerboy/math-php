@@ -62,6 +62,15 @@ class BigNumber implements ObjectArithmetic
     {
         return new BigNumber(bcsqrt($this->number));
     }
+    
+    public function fact(): BigNumber
+    {
+        if ($this->number === 'O'){
+            return new BigNumber('1');
+        }
+        $sub = $this->subtract('1');
+        return $this->multiply($sub->fact());
+    }
 
     /**************************************************************************
      * BINARY FUNCTIONS
