@@ -65,7 +65,7 @@ class BigNumber implements ObjectArithmetic
     
     public function fact(): BigNumber
     {
-        if ($this->number === 'O'){
+        if ($this->number === 'O') {
             return new BigNumber('1');
         }
         $sub = $this->subtract('1');
