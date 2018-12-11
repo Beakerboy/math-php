@@ -18,8 +18,7 @@ class SpecialTest extends \PHPUnit\Framework\TestCase
 
     public function dataProviderForSignum(): array
     {
-        return [
-        [ 0, 0 ],
+        return        [ 0, 0 ],
         [ 1, 1 ], [ 0.5, 1 ], [ 1.5, 1 ], [ 4, 1 ], [ 123241.342, 1 ],
         [ -1, -1 ], [ -0.5, -1 ], [ -1.5, -1 ], [ -4, -1 ], [ -123241.342, -1 ],
         ];
@@ -43,6 +42,15 @@ class SpecialTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($Γ, Special::gammaLanczos($z), '', 0.001);
     }
 
+    /**
+     * @dataProvider dataProviderForGammaLanczos
+     */
+    public function testGammaLanczosCustomP($z, $Γ)
+    {
+        $this->assertEquals($Γ, Special::gammaLanczos($z, 6, 5), '', 0.001);
+        $this->assertEquals($Γ, Special::gammaLanczos($z, 9, 7), '', 0.001);
+    }
+    
     public function dataProviderForGammaLanczos(): array
     {
         return [
