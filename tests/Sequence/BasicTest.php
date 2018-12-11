@@ -1,7 +1,10 @@
 <?php
-namespace MathPHP\Sequence;
+namespace MathPHP\Tests\Sequence;
 
-class BasicTest extends \PHPUnit_Framework_TestCase
+use MathPHP\Sequence\Basic;
+use MathPHP\Exception;
+
+class BasicTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @testCase     arithmeticProgression produces the expected sequence
@@ -52,7 +55,7 @@ class BasicTest extends \PHPUnit_Framework_TestCase
      */
     public function testGeometricProgressionExceptionRIsZero()
     {
-        $this->setExpectedException('MathPHP\Exception\BadParameterException');
+        $this->expectException(Exception\BadParameterException::class);
         $r = 0;
         Basic::geometricProgression(10, 2, $r);
     }

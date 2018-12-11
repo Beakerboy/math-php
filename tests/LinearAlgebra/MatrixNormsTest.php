@@ -1,7 +1,9 @@
 <?php
-namespace MathPHP\LinearAlgebra;
+namespace MathPHP\Tests\LinearAlgebra;
 
-class MatrixNormsTest extends \PHPUnit_Framework_TestCase
+use MathPHP\LinearAlgebra\MatrixFactory;
+
+class MatrixNormsTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @dataProvider dataProviderForOneNorm

@@ -1,7 +1,9 @@
 <?php
-namespace MathPHP\Probability\Distribution\Discrete;
+namespace MathPHP\Tests\Probability\Distribution\Discrete;
 
-class LimitsTest extends \PHPUnit_Framework_TestCase
+use MathPHP\Probability\Distribution\Discrete;
+
+class LimitsTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Limits should look like:
@@ -17,33 +19,78 @@ class LimitsTest extends \PHPUnit_Framework_TestCase
         }
     }
 
+    /**
+     * @testCase Limits constant is correct format
+     */
     public function testBernoulliParameterLimits()
     {
-        $this->limitTest(Bernoulli::LIMITS);
+        $this->limitTest(Discrete\Bernoulli::PARAMETER_LIMITS);
     }
 
+    /**
+     * @testCase Limits constant is correct format
+     */
+    public function testBernoulliSupportLimits()
+    {
+        $this->limitTest(Discrete\Bernoulli::SUPPORT_LIMITS);
+    }
+
+    /**
+     * @testCase Limits constant is correct format
+     */
     public function testBinomialParameterLimits()
     {
-        $this->limitTest(Binomial::LIMITS);
+        $this->limitTest(Discrete\Binomial::PARAMETER_LIMITS);
     }
 
+    /**
+     * @testCase Limits constant is correct format
+     */
+    public function testBinomialSupportLimits()
+    {
+        $this->limitTest(Discrete\Binomial::SUPPORT_LIMITS);
+    }
+
+    /**
+     * @testCase Limits constant is correct format
+     */
     public function testGeometricParameterLimits()
     {
-        $this->limitTest(Geometric::LIMITS);
+        $this->limitTest(Discrete\Geometric::PARAMETER_LIMITS);
     }
 
-    public function testNegativeBinomialParameterLimits()
+    /**
+     * @testCase Limits constant is correct format
+     */
+    public function testGeometricSupportLimits()
     {
-        $this->limitTest(NegativeBinomial::LIMITS);
+        $this->limitTest(Discrete\Geometric::SUPPORT_LIMITS);
     }
 
-    public function testPoissonParameterLimits()
+    /**
+     * @testCase Limits constant is correct format
+     */
+    public function testShiftedGeometricLimits()
     {
-        $this->limitTest(Poisson::LIMITS);
+        $this->limitTest(Discrete\ShiftedGeometric::PARAMETER_LIMITS);
+        $this->limitTest(Discrete\ShiftedGeometric::SUPPORT_LIMITS);
     }
 
-    public function testShiftedGeometricParameterLimits()
+    /**
+     * @testCase Limits constant is correct format
+     */
+    public function testNegativeBinomialLimits()
     {
-        $this->limitTest(ShiftedGeometric::LIMITS);
+        $this->limitTest(Discrete\NegativeBinomial::PARAMETER_LIMITS);
+        $this->limitTest(Discrete\NegativeBinomial::SUPPORT_LIMITS);
+    }
+
+    /**
+     * @testCase Limits constant is correct format
+     */
+    public function testPoissonLimits()
+    {
+        $this->limitTest(Discrete\Poisson::PARAMETER_LIMITS);
+        $this->limitTest(Discrete\Poisson::SUPPORT_LIMITS);
     }
 }

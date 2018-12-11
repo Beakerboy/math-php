@@ -1,22 +1,26 @@
 <?php
-namespace MathPHP\Statistics;
+namespace MathPHP\Tests\Statistics;
 
-class AverageTest extends \PHPUnit_Framework_TestCase
+use MathPHP\Statistics\Average;
+use MathPHP\Exception;
+
+class AverageTest extends \PHPUnit\Framework\TestCase
 {
-
     /**
+     * @testCase     mean
      * @dataProvider dataProviderForMean
+     * @param        array $numbers
+     * @param        float $mean
      */
-    public function testMean(array $numbers, $mean)
+    public function testMean(array $numbers, float $mean)
     {
         $this->assertEquals($mean, Average::mean($numbers), '', 0.01);
     }
 
     /**
-     * Data provider for mean test
-     * Data: [ [ numbers ], mean ]
+     * @return array [numbers, mean]
      */
-    public function dataProviderForMean()
+    public function dataProviderForMean(): array
     {
         return [
             [ [ 1, 1, 1 ], 1 ],
@@ -29,27 +33,102 @@ class AverageTest extends \PHPUnit_Framework_TestCase
             [ [ 6, 7, 8, 10, 12, 14, 14, 15, 16, 20 ], 12.2 ],
             [ [ 9, 10, 11, 13, 15, 17, 17, 18, 19, 23 ], 15.2 ],
             [ [ 12, 14, 16, 20, 24, 28, 28, 30, 32, 40 ], 24.4 ],
+            [ [1.1, 1.2, 1.3, 1.3, 1.4, 1.5 ], 1.3 ],
         ];
     }
 
+    /**
+     * @testCase mean when the input array is empty
+     */
     public function testMeanNullWhenEmptyArray()
     {
         $this->assertNull(Average::mean(array()));
     }
 
     /**
-     * @dataProvider dataProviderForMedian
+     * @testCase     weightedMean
+     * @dataProvider dataProviderForWeightedMean
+     * @param        array $numbers
+     * @param        array $weights
+     * @param        float $mean
+     * @throws       \Exception
      */
-    public function testMedian(array $numbers, $median)
+    public function testWeightedMean(array $numbers, array $weights, float $mean)
+    {
+        $this->assertEquals($mean, Average::weightedMean($numbers, $weights), '', 0.0001);
+    }
+
+    /**
+     * @return array [numbers, weights, mean]
+     */
+    public function dataProviderForWeightedMean(): array
+    {
+        return [
+            // Weights add up to 1
+            [ [1, 3, 5, 7, 10], [1/5, 1/5, 1/5, 1/5, 1/5], 5.2],
+            [ [1, 2, 3, 4], [1/4, 1/4, 1/4, 1/4], 2.5],
+            [ [1, 2,3 , 4], [0.1, 0.1, 0.7, 0.1], 2.8],
+            [ [8, 6, 7], [0.5, 0.3, 0.2], 7.2],
+            [ [9, 4, 6], [0.5, 0.3, 0.2], 6.9],
+
+            // Weights do not add at up 1
+            [ [26, 3, 3, 20, 21, 14, 4, 16, 13, 14], [10, 29, 26, 18, 9, 20, 9, 14, 27, 9], 11.6433 ],
+            [ [ 1, 2, 3 ], [ 1, 1, 1 ], 2 ],
+            [ [ 2, 0.8, 2.9, 2.4, 2.8, 1.3, 2.7, 0.7, 0, 1.9 ], [2.1, 1.9, 0.5, 2.7, 1.9, 0.1, 1.5, 1.7, 2, 0.5], 1.69732 ],
+            [ [70, 80, 90], [2, 3, 1], 78.3333],
+            [ [1, 2, 5, 7], [2, 14, 8, 32], 5.25],
+        ];
+    }
+
+    /**
+     * @testCase weighted mean when the input array is empty
+     * @throws   \Exception
+     */
+    public function testWeightedMeanNullWhenEmptyArray()
+    {
+        $this->assertNull(Average::weightedMean(array(), array()));
+    }
+
+    /**
+     * @testCase     mean when the input array is empty
+     * @dataProvider dataProviderForMean
+     * @param        array $numbers
+     * @param        float $mean
+     * @throws       \Exception
+     */
+    public function testWeightedMeanIsJustMeanWhenEmptyWeights(array $numbers, float $mean)
+    {
+        $this->assertEquals($mean, Average::weightedMean($numbers, array()), '', 0.01);
+    }
+
+    /**
+     * @testCase weightedMean throws a BadDataException when the numbers and weights don't have the same number of elements
+     * @throws   Exception\BadDataException
+     */
+    public function testWeightedMeanBadDataExceptionWhenCountsDoNotMatch()
+    {
+        $numbers = [1, 2, 3];
+        $weights = [1, 1];
+
+        $this->expectException(Exception\BadDataException::class);
+        Average::weightedMean($numbers, $weights);
+    }
+
+    /**
+     * @testCase     median
+     * @dataProvider dataProviderForMedian
+     * @param        array $numbers
+     * @param        float $median
+     */
+    public function testMedian(array $numbers, float $median)
     {
         $this->assertEquals($median, Average::median($numbers), '', 0.01);
     }
 
     /**
-     * Data provider for median test
-     * Data: [ [ numbers ], median ]
+     * @return array [numbers, median]
      */
-    public function dataProviderForMedian()
+    public function dataProviderForMedian(): array
     {
         return [
             [ [ 1, 1, 1 ], 1 ],
@@ -64,22 +143,28 @@ class AverageTest extends \PHPUnit_Framework_TestCase
             [ [ 6, 7, 8, 10, 12, 14, 14, 15, 16, 20 ], 13 ],
             [ [ 9, 10, 11, 13, 15, 17, 17, 18, 19, 23 ], 16 ],
             [ [ 12, 14, 16, 20, 24, 28, 28, 30, 32, 40 ], 26 ],
+            [ [1.1, 1.2, 1.3, 1.4, 1.5 ], 1.3 ],
+            [ [1.1, 1.2, 1.3, 1.3, 1.4, 1.5 ], 1.3 ],
+            [ [1.1, 1.2, 1.3, 1.4 ], 1.25 ],
         ];
     }
-    
+
     /**
+     * @testCase     kthSmallest
      * @dataProvider dataProviderForKthSmallest
+     * @param        array $numbers
+     * @param        int $k
+     * @param        ?number $smallest
      */
-    public function testKthSmallest(array $numbers, $k, $smallest)
+    public function testKthSmallest(array $numbers, int $k, $smallest)
     {
         $this->assertEquals($smallest, Average::kthSmallest($numbers, $k));
     }
 
     /**
-     * Data provider for kth smallest test
-     * Data: [ [ numbers ], k, kth smallest ]
+     * @return array [numbers, k, smalest]
      */
-    public function dataProviderForKthSmallest()
+    public function dataProviderForKthSmallest(): array
     {
         return [
             [ [], 1, null ],
@@ -95,18 +180,29 @@ class AverageTest extends \PHPUnit_Framework_TestCase
             [ [ 6, 7, 8, 10, 12, 14, 14, 15, 16, 20 ], 7, 15 ],
             [ [ 9, 10, 11, 13, 15, 17, 17, 18, 19, 23 ], 9, 23 ],
             [ [ 12, 14, 16, 20, 24, 28, 28, 30, 32, 40 ], 1, 14 ],
+            [ [1.1, 1.2, 1.3, 1.4, 1.5], 0, 1.1 ],
+            [ [1.1, 1.2, 1.3, 1.4, 1.5], 1, 1.2 ],
+            [ [1.1, 1.2, 1.3, 1.4, 1.5], 2, 1.3 ],
+            [ [1.1, 1.2, 1.3, 1.4, 1.5], 3, 1.4 ],
+            [ [1.1, 1.2, 1.3, 1.4, 1.5], 4, 1.5 ],
         ];
     }
 
+    /**
+     * @testCase median when the array is empty
+     */
     public function testMedianNullWhenEmptyArray()
     {
         $this->assertNull(Average::median(array()));
     }
 
     /**
+     * @testCase     mode
      * @dataProvider dataProviderForMode
+     * @param        array $numbers
+     * @param        array $modes
      */
-    public function testMode(array $numbers, $modes)
+    public function testMode(array $numbers, array $modes)
     {
         $computed_modes = Average::mode($numbers);
         sort($modes);
@@ -115,10 +211,9 @@ class AverageTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Data provider for mode test
-     * Data: [ [ numbers ], mode ]
+     * @array [numbers, modes]
      */
-    public function dataProviderForMode()
+    public function dataProviderForMode(): array
     {
         return [
             [ [ 1, 1, 1 ], [1] ],
@@ -150,22 +245,33 @@ class AverageTest extends \PHPUnit_Framework_TestCase
             [ [ 6, 7, 8, 10, 12, 14, 14, 15, 16, 20 ], [14] ],
             [ [ 9, 10, 11, 13, 15, 17, 17, 18, 19, 23 ], [17] ],
             [ [ 12, 14, 16, 20, 24, 28, 28, 30, 32, 40 ], [28] ],
+            [ [ 1, 1.5, 2, 2 ], [2 ]],
+            [ [ 1, 1.1, 1.2, 1.3, 1.3, 1.4, 1.4, 1.5, 1.6, 1.7, 2, 2.5 ], [1.3, 1.4] ],
+            [ [ 1.2345678, 1.2345678, 1.23456, 1.23456789 ], [1.2345678] ],
+            [ [ 1.2345678, 1.2345678, 1.23456, 1.23456789, 1.2232323, 1.4323432, 1.234432 ], [1.2345678] ],
+            [ [ 231.424, 231.424, 333.2342, 34.23423, 354345345.23 ], [231.424] ],
+            [ [ 1, 2, 2, 2, 3, 4.4, 4.4, 4.4, 5.6, 10], [2, 4.4] ],
+            [ [ 1, 2.2, 2.20, 2.200, 3 ], [2.2] ],
+            [ [ 1, 2.34354, 2.34354000, 4, 4, 5, 6 ], [2.34354, 4] ],
+            [ [ 1, 2.458474748, 2.4584747480, 2.458474748000, 4, 4, 4, 5, 6 ], [2.45847474800, 4] ],
         ];
     }
 
     /**
+     * @testCase     geometricMean
      * @dataProvider dataProviderForGeometricMean
+     * @param        array $numbers
+     * @param        float $mean
      */
-    public function testGeometricMean(array $numbers, $mean)
+    public function testGeometricMean(array $numbers, float $mean)
     {
         $this->assertEquals($mean, Average::geometricMean($numbers), '', 0.01);
     }
 
     /**
-     * Data provider for geometric mean test
-     * Data: [ [ numbers ], mean ]
+     * @return array [numbers, mean]
      */
-    public function dataProviderForGeometricMean()
+    public function dataProviderForGeometricMean(): array
     {
         return [
             [ [ 1, 1, 1 ], 1 ],
@@ -182,29 +288,38 @@ class AverageTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
+    /**
+     * @testCase geometricMean when the input array is empty
+     */
     public function testGeomoetricMeanNullWhenEmptyArray()
     {
         $this->assertNull(Average::geometricMean(array()));
     }
 
-    public function testModeEmtyArrayWhenEmptyArray()
+    /**
+     * @testCase mode when the input array is empty
+     */
+    public function testModeEmptyArrayWhenEmptyArray()
     {
         $this->assertEmpty(Average::mode(array()));
     }
 
     /**
+     * @testCase     harmonicMean
      * @dataProvider dataProviderForHarmonicMean
+     * @param        array $numbers
+     * @param        float $mean
+     * @throws       \Exception
      */
-    public function testHamonicMean(array $numbers, $mean)
+    public function testHamonicMean(array $numbers, float $mean)
     {
         $this->assertEquals($mean, Average::harmonicMean($numbers), '', 0.01);
     }
 
     /**
-     * Data provider for hamonic mean test
-     * Data: [ [ numbers ], mean ]
+     * @return array [numbers, float]
      */
-    public function dataProviderForHarmonicMean()
+    public function dataProviderForHarmonicMean(): array
     {
         return [
             [ [ 1, 2, 4, ], 1.71429 ],
@@ -222,34 +337,51 @@ class AverageTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
+    /**
+     * @testCase harmonicMean when the input array is empty
+     * @throws   \Exception
+     */
     public function testHarmonicMeanNullWhenEmptyArray()
     {
         $this->assertNull(Average::harmonicMean(array()));
     }
 
+    /**
+     * @testCase harmonicMean with negative values
+     * @throws   \Exception
+     */
     public function testHarmonicMeanExceptionNegativeValues()
     {
-        $this->setExpectedException('MathPHP\Exception\BadDataException');
+        $this->expectException(Exception\BadDataException::class);
         Average::harmonicMean([ 1, 2, 3, -4, 5, -6, 7 ]);
     }
 
     /**
+     * @testCase     rootMeanSquare
      * @dataProvider dataProviderForRootMeanSquare
+     * @param        array $numbers
+     * @param        float $rms
      */
-    public function testRootMeanSquare(array $numbers, $rms)
+    public function testRootMeanSquare(array $numbers, float $rms)
     {
         $this->assertEquals($rms, Average::rootMeanSquare($numbers), '', 0.01);
     }
 
     /**
+     * @testCase     qudradicMean
      * @dataProvider dataProviderForRootMeanSquare
+     * @param        array $numbers
+     * @param        float $rms
      */
-    public function testquadradicMean(array $numbers, $rms)
+    public function testquadradicMean(array $numbers, float $rms)
     {
         $this->assertEquals($rms, Average::quadraticMean($numbers), '', 0.01);
     }
 
-    public function dataProviderForRootMeanSquare()
+    /**
+     * @return array [numbers, rms]
+     */
+    public function dataProviderForRootMeanSquare(): array
     {
         return [
             [ [0, 0, 0], 0 ],
@@ -260,14 +392,20 @@ class AverageTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @testCase     trimean
      * @dataProvider dataProviderForTrimean
+     * @param        array $numbers
+     * @param        float $trimean
      */
-    public function testTrimean(array $numbers, $trimean)
+    public function testTrimean(array $numbers, float $trimean)
     {
         $this->assertEquals($trimean, Average::trimean($numbers), '', 0.1);
     }
 
-    public function dataProviderForTrimean()
+    /**
+     * @return array [numbers, trimean]
+     */
+    public function dataProviderForTrimean(): array
     {
         return [
             [ [ 155, 158, 161, 162, 166, 170, 171, 174, 179 ], 166 ],
@@ -278,14 +416,22 @@ class AverageTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @testCase     truncatedMean
      * @dataProvider dataProviderForTruncatedMean
+     * @param        array $numbers
+     * @param        float $trim_percent
+     * @param        float $mean
+     * @throws       \Exception
      */
-    public function testTruncatedMean(array $numbers, $trim_percent, $mean)
+    public function testTruncatedMean(array $numbers, float $trim_percent, float $mean)
     {
         $this->assertEquals($mean, Average::truncatedMean($numbers, $trim_percent), '', 0.01);
     }
 
-    public function dataProviderForTruncatedMean()
+    /**
+     * @return array [numbers, trim_percent, mean]
+     */
+    public function dataProviderForTruncatedMean(): array
     {
         return [
             [ [ 92, 19, 101, 58, 1053, 91, 26, 78, 10, 13, -40, 101, 86, 85, 15, 89, 89, 28, -5, 41 ], 5, 56.5 ],
@@ -295,35 +441,54 @@ class AverageTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
+    /**
+     * @testCase truncatedMean trim percent is less than zero
+     * @throws   \Exception
+     */
     public function testTruncatedMeanExceptionLessThanZeroTrimPercent()
     {
-        $this->setExpectedException('MathPHP\Exception\OutOfBoundsException');
-        Average::TruncatedMean([1, 2, 3], -4);
-    }
-
-    public function testTruncatedMeanExceptionGreaterThan99TrimPercent()
-    {
-        $this->setExpectedException('MathPHP\Exception\OutOfBoundsException');
-        Average::TruncatedMean([1, 2, 3], 100);
+        $this->expectException(Exception\OutOfBoundsException::class);
+        Average::truncatedMean([1, 2, 3], -4);
     }
 
     /**
-     * @dataProvider dataProviderForInterquartileMean
+     * @testCase truncatedMean trim percent greater than 99
+     * @throws   \Exception
      */
-    public function testInterquartileMean(array $numbers, $iqm)
+    public function testTruncatedMeanExceptionGreaterThan99TrimPercent()
+    {
+        $this->expectException(Exception\OutOfBoundsException::class);
+        Average::truncatedMean([1, 2, 3], 100);
+    }
+
+    /**
+     * @testCase     interquartileMean
+     * @dataProvider dataProviderForInterquartileMean
+     * @param        array $numbers
+     * @param        float $iqm
+     * @throws       \Exception
+     */
+    public function testInterquartileMean(array $numbers, float $iqm)
     {
         $this->assertEquals($iqm, Average::interquartileMean($numbers), '', 0.01);
     }
 
     /**
+     * @testCase     iqm
      * @dataProvider dataProviderForInterquartileMean
+     * @param        array $numbers
+     * @param        float $iqm
+     * @throws       \Exception
      */
-    public function testIQM(array $numbers, $iqm)
+    public function testIQM(array $numbers, float $iqm)
     {
         $this->assertEquals($iqm, Average::iqm($numbers), '', 0.01);
     }
 
-    public function dataProviderForInterquartileMean()
+    /**
+     * @return array [numbers, iqm]
+     */
+    public function dataProviderForInterquartileMean(): array
     {
         return [
             [ [5, 8, 4, 38, 8, 6, 9, 7, 7, 3, 1, 6], 6.5 ],
@@ -332,14 +497,21 @@ class AverageTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @testCase     lehmerMean
      * @dataProvider dataProviderForLehmerMean
+     * @param        array $numbers
+     * @param        float $p
+     * @param        float $mean
      */
-    public function testLehmerMean(array $numbers, $p, $mean)
+    public function testLehmerMean(array $numbers, float $p, float $mean)
     {
         $this->assertEquals($mean, Average::lehmerMean($numbers, $p), '', 0.01);
     }
 
-    public function dataProviderForLehmerMean()
+    /**
+     * @return array [numbers, p, mean]
+     */
+    public function dataProviderForLehmerMean(): array
     {
         return [
             [ [ 3, 6, 2, 9, 1, 7, 2 ], -2, 1.290 ],
@@ -352,18 +524,28 @@ class AverageTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
+    /**
+     * @testCase lehmerMean p is negative infinity
+     */
     public function testLehmerMeanPEqualsNegativeInfinityIsMin()
     {
         $numbers = [ 3, 6, 2, 9, 1, 7, 2];
         $this->assertEquals(min($numbers), Average::lehmerMean($numbers, -\INF));
     }
 
+    /**
+     * @testCase lehmerMean p is infinity
+     */
     public function testLehmerMeanPEqualsInfinityIsMax()
     {
         $numbers = [ 3, 6, 2, 9, 1, 7, 2];
         $this->assertEquals(max($numbers), Average::lehmerMean($numbers, \INF));
     }
 
+    /**
+     * @testCase lehmerMean with a p of zero is the harmonic mean
+     * @throws   \Exception
+     */
     public function testLehmerMeanPEqualsZeroIsHarmonicMean()
     {
         $numbers = [ 3, 6, 2, 9, 1, 7, 2];
@@ -371,6 +553,9 @@ class AverageTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(Average::harmonicMean($numbers), Average::lehmerMean($numbers, $p));
     }
 
+    /**
+     * @testCase lehmerMean with a p of one half is the geometric mean
+     */
     public function testLehmerMeanPEqualsOneHalfIsGeometricMean()
     {
         $numbers = [3, 6];
@@ -378,6 +563,9 @@ class AverageTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(Average::geometricMean($numbers), Average::lehmerMean($numbers, $p));
     }
 
+    /**
+     * @testCase lehmerMean with a p of one is the arithmetic mean
+     */
     public function testLehmerMeanPEqualsOneIsArithmeticMean()
     {
         $numbers = [ 3, 6, 2, 9, 1, 7, 2];
@@ -386,22 +574,33 @@ class AverageTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @testCase     generalizedMean
      * @dataProvider dataProviderForGeneralizedMean
+     * @param        array $numbers
+     * @param        float $p
+     * @param        float $mean
      */
-    public function testGeneralizedMean(array $numbers, $p, $mean)
+    public function testGeneralizedMean(array $numbers, float $p, float $mean)
     {
         $this->assertEquals($mean, Average::generalizedMean($numbers, $p), '', 0.001);
     }
 
     /**
+     * @testCase     powerMean
      * @dataProvider dataProviderForGeneralizedMean
+     * @param        array $numbers
+     * @param        float $p
+     * @param        float $mean
      */
-    public function testPowerMean(array $numbers, $p, $mean)
+    public function testPowerMean(array $numbers, float $p, float $mean)
     {
         $this->assertEquals($mean, Average::powerMean($numbers, $p), '', 0.001);
     }
 
-    public function dataProviderForGeneralizedMean()
+    /**
+     * @return array [numbers, float, mean]
+     */
+    public function dataProviderForGeneralizedMean(): array
     {
         return [
             [ [1, 2, 3, 4, 5], -2, 1.84829867963 ],
@@ -414,18 +613,28 @@ class AverageTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
+    /**
+     * @testCase generalizedMean with a p of negative infinity
+     */
     public function testGeneralizedMeanPEqualsNegativeInfinityIsMin()
     {
         $numbers = [ 3, 6, 2, 9, 1, 7, 2];
         $this->assertEquals(min($numbers), Average::generalizedMean($numbers, -\INF));
     }
 
+    /**
+     * @testCase generalizedMean with a p of infinity
+     */
     public function testGeneralizedMeanPEqualsInfinityIsMax()
     {
         $numbers = [ 3, 6, 2, 9, 1, 7, 2];
         $this->assertEquals(max($numbers), Average::generalizedMean($numbers, \INF));
     }
 
+    /**
+     * @testCase generalizedMean with a p of negative one is the harmonic mean
+     * @throws   \Exception
+     */
     public function testGeneralizedMeanPEqualsNegativeOneIsHarmonicMean()
     {
         $numbers = [ 3, 6, 2, 9, 1, 7, 2];
@@ -433,6 +642,9 @@ class AverageTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(Average::harmonicMean($numbers), Average::generalizedMean($numbers, $p));
     }
 
+    /**
+     * @testCase generalizedMean with a p of zero is the geometric mean
+     */
     public function testGeneralizedMeanPEqualsZeroIsGeometricMean()
     {
         $numbers = [ 3, 6, 2, 9, 1, 7, 2];
@@ -440,6 +652,9 @@ class AverageTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(Average::geometricMean($numbers), Average::generalizedMean($numbers, $p));
     }
 
+    /**
+     * @testCase generalizedMean with a p of one is the arithmetic mean
+     */
     public function testGeneralizedMeanPEqualsOneIsArithmeticMean()
     {
         $numbers = [ 3, 6, 2, 9, 1, 7, 2];
@@ -447,6 +662,9 @@ class AverageTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(Average::mean($numbers), Average::generalizedMean($numbers, $p));
     }
 
+    /**
+     * @testCase generalizedMean with a p of two is the quadratic mean
+     */
     public function testGeneralizedMeanPEqualsTwoIsQuadraticMean()
     {
         $numbers = [ 3, 6, 2, 9, 1, 7, 2];
@@ -454,6 +672,9 @@ class AverageTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(Average::quadraticMean($numbers), Average::generalizedMean($numbers, $p));
     }
 
+    /**
+     * @testCase generalizedMean with a p of three is the cubic mean
+     */
     public function testGeneralizedMeanPEqualsThreeIsCubicMean()
     {
         $numbers = [ 3, 6, 2, 9, 1, 7, 2];
@@ -461,6 +682,9 @@ class AverageTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(Average::cubicMean($numbers), Average::generalizedMean($numbers, $p));
     }
 
+    /**
+     * @testCase contraharmonicMean
+     */
     public function testContraharmonicMean()
     {
         $numbers = [ 3, 6, 2, 9, 1, 7, 2 ];
@@ -468,14 +692,21 @@ class AverageTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @testCase     simpleMovingAverage
      * @dataProvider dataProviderForSimpleMovingAverage
+     * @param        array $numbers
+     * @param        int   $n
+     * @param        array $SMA
      */
     public function testSimpleMovingAverage(array $numbers, int $n, array $SMA)
     {
         $this->assertEquals($SMA, Average::simpleMovingAverage($numbers, $n), '', 0.0001);
     }
 
-    public function dataProviderForSimpleMovingAverage()
+    /**
+     * @return array [numbers, int, SMA]
+     */
+    public function dataProviderForSimpleMovingAverage(): array
     {
         return [
             [
@@ -506,14 +737,20 @@ class AverageTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @testCase     cumulativeMovingAverage
      * @dataProvider dataProviderForCumulativeMovingAverage
+     * @param        array $numbers
+     * @param        array $CMA
      */
     public function testCumulativeMovingAverage(array $numbers, array $CMA)
     {
         $this->assertEquals($CMA, Average::cumulativeMovingAverage($numbers), '', 0.001);
     }
 
-    public function dataProviderForCumulativeMovingAverage()
+    /**
+     * @return array [numbers, CMA]
+     */
+    public function dataProviderForCumulativeMovingAverage(): array
     {
         return [
             [
@@ -532,14 +769,23 @@ class AverageTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @testCase     weightedMovingAverage
      * @dataProvider dataProviderForWeightedMovingAverage
+     * @param        array $numbers
+     * @param        int   $n
+     * @param        array $weights
+     * @param        array $WMA
+     * @throws       \Exception
      */
-    public function testWeightedMovingAverage(array $numbers, int $n, array $weights, $WMA)
+    public function testWeightedMovingAverage(array $numbers, int $n, array $weights, array $WMA)
     {
         $this->assertEquals($WMA, Average::weightedMovingAverage($numbers, $n, $weights), '', 0.001);
     }
 
-    public function dataProviderForWeightedMovingAverage()
+    /**
+     * @return array [numbers, n, weights, WMA]
+     */
+    public function dataProviderForWeightedMovingAverage(): array
     {
         return [
             [
@@ -563,25 +809,36 @@ class AverageTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
-    public function testWeightedMovingAverageExceptionWeightsDiffereFromN()
+    /**
+     * @testCase weightedMovingAverage weights differ from n
+     * @throws   \Exception
+     */
+    public function testWeightedMovingAverageExceptionWeightsDifferFromN()
     {
         $numbers = [1, 2, 3, 4, 5, 6];
         $n       = 3;
         $weights = [1, 2];
 
-        $this->setExpectedException('MathPHP\Exception\BadDataException');
+        $this->expectException(Exception\BadDataException::class);
         Average::weightedMovingAverage($numbers, $n, $weights);
     }
 
     /**
+     * @testCase     exponentialMovingAverage
      * @dataProvider dataProviderForExponentialMovingAverage
+     * @param        array $numbers
+     * @param        int   $n
+     * @param        array $EMA
      */
     public function testExponentialMovingAverage(array $numbers, int $n, array $EMA)
     {
         $this->assertEquals($EMA, Average::exponentialMovingAverage($numbers, $n), '', 0.01);
     }
 
-    public function dataProviderForExponentialMovingAverage()
+    /**
+     * @return array [numbers, n, EMA]
+     */
+    public function dataProviderForExponentialMovingAverage(): array
     {
         return [
             [
@@ -612,22 +869,33 @@ class AverageTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @testCase     arithmeticGeometricMean
      * @dataProvider dataProviderForArithmeticGeometricMean
+     * @param        float $x
+     * @param        float $y
+     * @param        float $mean
      */
-    public function testArithmeticGeometricMean($x, $y, $mean)
+    public function testArithmeticGeometricMean(float $x, float $y, float $mean)
     {
         $this->assertEquals($mean, Average::arithmeticGeometricMean($x, $y), '', 0.00001);
     }
 
     /**
+     * @testCase     agm
      * @dataProvider dataProviderForArithmeticGeometricMean
+     * @param        float $x
+     * @param        float $y
+     * @param        float $mean
      */
-    public function testAGM($x, $y, $mean)
+    public function testAGM(float $x, float $y, float $mean)
     {
         $this->assertEquals($mean, Average::agm($x, $y), '', 0.00001);
     }
 
-    public function dataProviderForArithmeticGeometricMean()
+    /**
+     * @return array [x, y, mean]
+     */
+    public function dataProviderForArithmeticGeometricMean(): array
     {
         return [
             [ 24, 6, 13.4581714817256154207668131569743992430538388544 ],
@@ -639,6 +907,9 @@ class AverageTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
+    /**
+     * @testCase arithmeticGeometricMean negative
+     */
     public function testArithmeticGeometricMeanNegativeNAN()
     {
         $this->assertNan(Average::arithmeticGeometricMean(-32, 45));
@@ -648,14 +919,21 @@ class AverageTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @testCase     logarithmicMean
      * @dataProvider dataProviderForArithmeticLogarithmicMean
+     * @param        float $x
+     * @param        float $y
+     * @param        float $mean
      */
-    public function testLogarithmicMean($x, $y, $mean)
+    public function testLogarithmicMean(float $x, float $y, float $mean)
     {
         $this->assertEquals($mean, Average::logarithmicMean($x, $y), '', 0.01);
     }
 
-    public function dataProviderForArithmeticLogarithmicMean()
+    /**
+     * @return array [x, y, mean]
+     */
+    public function dataProviderForArithmeticLogarithmicMean(): array
     {
         return [
             [ 0, 0, 0 ],
@@ -668,14 +946,21 @@ class AverageTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @testCase     heronianMean
      * @dataProvider dataProviderForHeronianMean
+     * @param        float $A
+     * @param        float $B
+     * @param        float $H
      */
-    public function testHeronianMean($A, $B, $H)
+    public function testHeronianMean(float $A, float $B, float $H)
     {
         $this->assertEquals($H, Average::heronianMean($A, $B));
     }
 
-    public function dataProviderForHeronianMean()
+    /**
+     * @return array [A, B, H]
+     */
+    public function dataProviderForHeronianMean(): array
     {
         return [
             [ 4, 5, 4.490711985 ],
@@ -684,14 +969,22 @@ class AverageTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @testCase     identricMean
      * @dataProvider dataProviderForIdentricMean
+     * @param        float $x
+     * @param        float $y
+     * @param        float $mean
+     * @throws       \Exception
      */
-    public function testIdentricMean($x, $y, $mean)
+    public function testIdentricMean(float $x, float $y, float $mean)
     {
         $this->assertEquals($mean, Average::identricMean($x, $y), '', 0.001);
     }
 
-    public function dataProviderForIdentricMean()
+    /**
+     * @return array [x, y, mean]
+     */
+    public function dataProviderForIdentricMean(): array
     {
         return [
             [ 5, 5, 5 ],
@@ -702,12 +995,20 @@ class AverageTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
+    /**
+     * @testCase identricMean throws an \Exception for a negative value
+     * @throws   \Exception
+     */
     public function testIdentricMeanExceptionNegativeValue()
     {
-        $this->setExpectedException('MathPHP\Exception\OutOfBoundsException');
+        $this->expectException(Exception\OutOfBoundsException::class);
         Average::identricMean(-2, 5);
     }
 
+    /**
+     * @testCase describe
+     * @throws   \Exception
+     */
     public function testDescribe()
     {
         $averages = Average::describe([ 13, 18, 13, 14, 13, 16, 14, 21, 13 ]);

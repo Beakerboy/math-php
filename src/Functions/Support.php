@@ -7,6 +7,8 @@ use MathPHP\LinearAlgebra\MatrixFactory;
 
 class Support
 {
+    const ε = 0.000000000001;
+
     /**
      * Checks that the values of the parameters passed
      * to a function fall within the defined bounds.
@@ -25,9 +27,9 @@ class Support
      *
      * @return bool True if all parameters are within defined limits
      *
-     * @throws BadParameterException if a parameter without bounds limits is defined
-     * @throws OutOfBoundsException if any parameter is outside the defined limits
-     * @throws BadDataException if an unknown bounds character is used
+     * @throws Exception\BadParameterException if a parameter without bounds limits is defined
+     * @throws Exception\OutOfBoundsException if any parameter is outside the defined limits
+     * @throws Exception\BadDataException if an unknown bounds character is used
      */
     public static function checkLimits(array $limits, array $params)
     {
@@ -52,12 +54,12 @@ class Support
                 switch ($lower_endpoint) {
                     case '(':
                         if ($value <= $lower_limit) {
-                            throw new Exception\OutOfBoundsException("{$variable} must be > {$lower_limit}");
+                            throw new Exception\OutOfBoundsException("{$variable} must be > {$lower_limit} (lower bound), given {$value}");
                         }
                         break;
                     case '[':
                         if ($value < $lower_limit) {
-                            throw new Exception\OutOfBoundsException("{$variable} must be >= {$lower_limit}");
+                            throw new Exception\OutOfBoundsException("{$variable} must be >= {$lower_limit} (lower bound), given {$value}");
                         }
                         break;
                     default:
@@ -70,12 +72,12 @@ class Support
                 switch ($upper_endpoint) {
                     case ')':
                         if ($value >= $upper_limit) {
-                            throw new Exception\OutOfBoundsException("{$variable} must be < {$upper_limit}");
+                            throw new Exception\OutOfBoundsException("{$variable} must be < {$upper_limit} (upper bound), given {$value}");
                         }
                         break;
                     case ']':
                         if ($value > $upper_limit) {
-                            throw new Exception\OutOfBoundsException("{$variable} must be <= {$upper_limit}");
+                            throw new Exception\OutOfBoundsException("{$variable} must be <= {$upper_limit} (upper bound), given {$value}");
                         }
                         break;
                     default:
@@ -176,5 +178,31 @@ class Support
         $results = $a->scalarMultiply(exp($g) / \M_SQRT2 / \M_SQRTPI);
         // echo "\nresults=" . $results . "\n";
         return ($results->getColumn(0));
+    }
+
+    /**
+     * Is the number equivalent to zero?
+     * Due to floating-point arithmetic, zero might be represented as an infinitesimal quantity.
+     *
+     * @param  float $x
+     *
+     * @return boolean true if equivalent to zero; false otherwise
+     */
+    public static function isZero(float $x): bool
+    {
+        return ($x == 0 || abs($x) <= self::ε);
+    }
+
+    /**
+     * Is the number equivalent to a non-zero value?
+     * Due to floating-point arithmetic, zero might be represented as an infinitesimal quantity.
+     *
+     * @param  float $x
+     *
+     * @return boolean true if equivalent to a non-zero value; false otherwise
+     */
+    public static function isNotZero(float $x): bool
+    {
+        return ($x != 0 && abs($x) > self::ε);
     }
 }

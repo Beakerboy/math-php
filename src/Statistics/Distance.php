@@ -51,10 +51,10 @@ class Distance
      *
      * @return float distance between distributions
      *
-     * @throws BadDataException if p and q do not have the same number of elements
-     * @throws BadDataException if p and q are not probability distributions that add up to 1
+     * @throws Exception\BadDataException if p and q do not have the same number of elements
+     * @throws Exception\BadDataException if p and q are not probability distributions that add up to 1
      */
-    public static function bhattacharyyaDistance(array $p, array $q)
+    public static function bhattacharyyaDistance(array $p, array $q): float
     {
         // Arrays must have the same number of elements
         if (count($p) !== count($q)) {
@@ -89,10 +89,10 @@ class Distance
      *
      * @return float difference between distributions
      *
-     * @throws BadDataException if p and q do not have the same number of elements
-     * @throws BadDataException if p and q are not probability distributions that add up to 1
+     * @throws Exception\BadDataException if p and q do not have the same number of elements
+     * @throws Exception\BadDataException if p and q are not probability distributions that add up to 1
      */
-    public static function kullbackLeiblerDivergence(array $p, array $q)
+    public static function kullbackLeiblerDivergence(array $p, array $q): float
     {
         // Arrays must have the same number of elements
         if (count($p) !== count($q)) {
@@ -120,7 +120,7 @@ class Distance
 
         // ∑ P(i) log(P(i)/Q(i))
         $Dkl⟮P‖Q⟯ = array_sum(array_map(
-            function ($P, $Q) use ($p, $q) {
+            function ($P, $Q) {
                 return $P * log($P / $Q);
             },
             $p,
@@ -144,10 +144,10 @@ class Distance
      *
      * @return float difference between distributions
      *
-     * @throws BadDataException if p and q do not have the same number of elements
-     * @throws BadDataException if p and q are not probability distributions that add up to 1
+     * @throws Exception\BadDataException if p and q do not have the same number of elements
+     * @throws Exception\BadDataException if p and q are not probability distributions that add up to 1
      */
-    public static function hellingerDistance(array $p, array $q)
+    public static function hellingerDistance(array $p, array $q): float
     {
         // Arrays must have the same number of elements
         if (count($p) !== count($q)) {
@@ -208,10 +208,10 @@ class Distance
      *
      * @return float difference between distributions
      *
-     * @throws BadDataException if p and q do not have the same number of elements
-     * @throws BadDataException if p and q are not probability distributions that add up to 1
+     * @throws Exception\BadDataException if p and q do not have the same number of elements
+     * @throws Exception\BadDataException if p and q are not probability distributions that add up to 1
      */
-    public static function jensenShannonDivergence(array $p, array $q)
+    public static function jensenShannonDivergence(array $p, array $q): float
     {
         // Arrays must have the same number of elements
         if (count($p) !== count($q)) {

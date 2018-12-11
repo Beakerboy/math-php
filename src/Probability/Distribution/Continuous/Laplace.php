@@ -7,16 +7,40 @@ class Laplace extends Continuous
 {
     /**
      * Distribution parameter bounds limits
-     * x ∈ (-∞,∞)
      * μ ∈ (-∞,∞)
      * b ∈ (0,∞)
      * @var array
      */
-    const LIMITS = [
-        'x' => '(-∞,∞)',
+    const PARAMETER_LIMITS = [
         'μ' => '(-∞,∞)',
         'b' => '(0,∞)',
     ];
+
+    /**
+     * Distribution support bounds limits
+     * x ∈ (-∞,∞)
+     * @var array
+     */
+    const SUPPORT_LIMITS = [
+        'x' => '(-∞,∞)',
+    ];
+
+     /** @var float location parameter */
+    protected $μ;
+
+     /** @var float scale parameter */
+    protected $b;
+
+    /**
+     * Constructor
+     *
+     * @param float $μ location parameter
+     * @param float $b scale parameter (diversity)  b > 0
+     */
+    public function __construct(float $μ, float $b)
+    {
+        parent::__construct($μ, $b);
+    }
 
     /**
      * Laplace distribution - probability density function
@@ -27,15 +51,16 @@ class Laplace extends Continuous
      * f(x|μ,b) = -- exp| - -------  |
      *            2b     \     b    /
      *
-     * @param  number $x
-     * @param  number $μ location parameter
-     * @param  number $b scale parameter (diversity)  b > 0
+     * @param  float $x
      *
-     * @return  float
+     * @return float
      */
-    public static function PDF($x, $μ, $b): float
+    public function pdf(float $x): float
     {
-        Support::checkLimits(self::LIMITS, ['x' => $x, 'μ' => $μ, 'b' => $b]);
+        Support::checkLimits(self::SUPPORT_LIMITS, ['x' => $x]);
+
+        $μ = $this->μ;
+        $b = $this->b;
 
         return (1 / (2 * $b)) * exp(-( abs($x - $μ)/$b ));
     }
@@ -52,20 +77,40 @@ class Laplace extends Continuous
      * F(x) = 1 - - exp| - ------ |  if x ≥ μ
      *            2     \    b   /
      *
-     * @param  number $x
-     * @param  number $μ location parameter
-     * @param  number $b scale parameter (diversity)  b > 0
+     * @param  float $x
      *
-     * @return  float
+     * @return float
      */
-    public static function CDF($x, $μ, $b): float
+    public function cdf(float $x): float
     {
-        Support::checkLimits(self::LIMITS, ['x' => $x, 'μ' => $μ, 'b' => $b]);
+        Support::checkLimits(self::SUPPORT_LIMITS, ['x' => $x]);
+
+        $μ = $this->μ;
+        $b = $this->b;
 
         if ($x < $μ) {
             return (1/2) * exp(($x - $μ) / $b);
         }
         return 1 - (1/2) * exp(-($x - $μ) / $b);
+    }
+
+    /**
+     * Inverse cumulative distribution function (quantile function)
+     *
+     * @param float $p
+     *
+     * @return float
+     */
+    public function inverse(float $p): float
+    {
+        if ($p == 0) {
+            return -\INF;
+        }
+        if ($p == 1) {
+            return \INF;
+        }
+
+        return parent::inverse($p);
     }
     
     /**
@@ -73,15 +118,46 @@ class Laplace extends Continuous
      *
      * μ = μ
      *
-     * @param  number $μ location parameter
-     * @param  number $b scale parameter (diversity)  b > 0
-     *
-     * @return μ
+     * @return float μ
      */
-    public static function mean($μ, $b)
+    public function mean(): float
     {
-        Support::checkLimits(self::LIMITS, ['μ' => $μ, 'b' => $b]);
+        return $this->μ;
+    }
 
-        return $μ;
+    /**
+     * Median of the distribution
+     *
+     * median = μ
+     *
+     * @return float μ
+     */
+    public function median(): float
+    {
+        return $this->μ;
+    }
+
+    /**
+     * Mode of the distribution
+     *
+     * mode = μ
+     *
+     * @return float μ
+     */
+    public function mode(): float
+    {
+        return $this->μ;
+    }
+
+    /**
+     * Variance of the distribution
+     *
+     * var[X] = 2b²
+     *
+     * @return float
+     */
+    public function variance(): float
+    {
+        return 2 * $this->b**2;
     }
 }

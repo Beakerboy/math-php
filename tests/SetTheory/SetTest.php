@@ -1,10 +1,11 @@
 <?php
-namespace MathPHP\SetTheory;
+namespace MathPHP\Tests\SetTheory;
 
+use MathPHP\SetTheory\Set;
 use MathPHP\LinearAlgebra\Vector;
 use MathPHP\LinearAlgebra\Matrix;
 
-class SetTest extends \PHPUnit_Framework_TestCase
+class SetTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @dataProvider dataProviderForSingleSet
@@ -12,12 +13,12 @@ class SetTest extends \PHPUnit_Framework_TestCase
     public function testContstructor(array $members)
     {
         $set = new Set($members);
-        $this->assertInstanceOf('MathPHP\SetTheory\Set', $set);
+        $this->assertInstanceOf(Set::class, $set);
     }
 
     public function testInterfaces()
     {
-        $interfaces = class_implements('\MathPHP\SetTheory\Set');
+        $interfaces = class_implements(Set::class);
 
         $this->assertContains('Countable', $interfaces);
         $this->assertContains('Iterator', $interfaces);
@@ -139,7 +140,7 @@ class SetTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider dataProviderForSingleSet
+     * @dataProvider dataProviderForSingleSetAtLeastOneMember
      */
     public function testIsMember(array $members)
     {
@@ -162,7 +163,10 @@ class SetTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($set->isNotMember(99999123));
     }
 
-    public function dataProviderForSingleSet()
+    /**
+     * @return array
+     */
+    public function dataProviderForSingleSet(): array
     {
         $fh     = fopen(__FILE__, 'r');
         $vector = new Vector([1, 2, 3]);
@@ -172,6 +176,41 @@ class SetTest extends \PHPUnit_Framework_TestCase
 
         return [
             [[]],
+            [[0]],
+            [[1]],
+            [[5]],
+            [[-5]],
+            [[1, 2]],
+            [[1, 2, 3]],
+            [[1, -2, 3]],
+            [[1, 2, 3, 4, 5, 6]],
+            [[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]],
+            [[1, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 2, 2.01, 2.001, 2.15]],
+            [['a']],
+            [['a', 'b']],
+            [['a', 'b', 'c', 'd', 'e']],
+            [[1, 2, 'a', 'b', 3.14, 'hello', 'goodbye']],
+            [[1, 2, 3, new Set([1, 2]), 'a', 'b']],
+            [['a', 1, 'b', new Set([1, 'b'])]],
+            [['a', 1, 'b', new Set([1, 'b']), '4', 5]],
+            [['a', 1, 'b', new Set([1, 'b']), new Set([3, 4, 5]), '4', 5]],
+            [[1, 2, 3, [1, 2], [2, 3, 4]]],
+            [[1, 2, $fh, $vector, [4, 5], 6, 'a', $func, 12, new Set([4, 6, 7]), new Set(), 'sets']],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function dataProviderForSingleSetAtLeastOneMember(): array
+    {
+        $fh     = fopen(__FILE__, 'r');
+        $vector = new Vector([1, 2, 3]);
+        $func   = function ($x) {
+            return $x * 2;
+        };
+
+        return [
             [[0]],
             [[1]],
             [[5]],

@@ -1,20 +1,29 @@
 <?php
-namespace MathPHP\Statistics\Regression;
+namespace MathPHP\Tests\Statistics\Regression;
 
-class HanesWoolfTest extends \PHPUnit_Framework_TestCase
+use MathPHP\Statistics\Regression\HanesWoolf;
+
+class HanesWoolfTest extends \PHPUnit\Framework\TestCase
 {
-
     /**
+     * @testCase     getParameters
      * @dataProvider dataProviderForParameters
+     * @param        array $points
+     * @param        float $V
+     * @param        float $K
      */
-    public function testGetParameters(array $points, $V, $K)
+    public function testGetParameters(array $points, float $V, float $K)
     {
         $regression = new HanesWoolf($points);
         $parameters = $regression->getParameters();
         $this->assertEquals($V, $parameters['V'], '', 0.0001);
         $this->assertEquals($K, $parameters['K'], '', 0.0001);
     }
-    public function dataProviderForParameters()
+
+    /**
+     * @return array [points, V, K]
+     */
+    public function dataProviderForParameters(): array
     {
         return [
             [

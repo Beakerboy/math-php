@@ -1,14 +1,17 @@
 <?php
-namespace MathPHP\Probability\Distribution\Discrete;
+namespace MathPHP\Tests\Probability\Distribution\Discrete;
 
-class PascalTest extends \PHPUnit_Framework_TestCase
+use MathPHP\Probability\Distribution\Discrete\Pascal;
+
+class PascalTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @dataProvider dataProviderForPMF
      */
     public function testPMF(int $x, int $r, float $P, float $neagative_binomial_distribution)
     {
-        $this->assertEquals($neagative_binomial_distribution, Pascal::PMF($x, $r, $P), '', 0.001);
+        $pascal = new Pascal($r, $P);
+        $this->assertEquals($neagative_binomial_distribution, $pascal->pmf($x), '', 0.001);
     }
 
     /**

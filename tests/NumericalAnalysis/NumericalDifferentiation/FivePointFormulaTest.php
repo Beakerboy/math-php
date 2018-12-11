@@ -1,7 +1,9 @@
 <?php
-namespace MathPHP\NumericalAnalysis\NumericalDifferentiation;
+namespace MathPHP\Tests\NumericalAnalysis\NumericalDifferentiation;
 
-class FivePointFormulaTest extends \PHPUnit_Framework_TestCase
+use MathPHP\NumericalAnalysis\NumericalDifferentiation\FivePointFormula;
+
+class FivePointFormulaTest extends \PHPUnit\Framework\TestCase
 {
     public function testZeroError()
     {

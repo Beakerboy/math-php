@@ -1,7 +1,9 @@
 <?php
-namespace MathPHP\NumericalAnalysis\Interpolation;
+namespace MathPHP\Tests\NumericalAnalysis\Interpolation;
 
-class NevillesMethodTest extends \PHPUnit_Framework_TestCase
+use MathPHP\NumericalAnalysis\Interpolation\NevillesMethod;
+
+class NevillesMethodTest extends \PHPUnit\Framework\TestCase
 {
     public function testPolynomialAgrees()
     {

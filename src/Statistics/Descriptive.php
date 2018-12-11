@@ -1,10 +1,13 @@
 <?php
 namespace MathPHP\Statistics;
 
-use MathPHP\Statistics\Average;
-use MathPHP\Statistics\RandomVariable;
 use MathPHP\Exception;
 
+/**
+ * Descriptive statistics
+ * Summary statistics that quantitatively describe or summarize features of a collection of information.
+ * https://en.wikipedia.org/wiki/Descriptive_statistics
+ */
 class Descriptive
 {
     const POPULATION = true;
@@ -19,7 +22,8 @@ class Descriptive
      * R = max x - min x
      *
      * @param array $numbers
-     * @return number
+     *
+     * @return number|null
      */
     public static function range(array $numbers)
     {
@@ -39,7 +43,8 @@ class Descriptive
      *           2
      *
      * @param array $numbers
-     * @return number
+     *
+     * @return number|null
      */
     public static function midrange(array $numbers)
     {
@@ -75,9 +80,10 @@ class Descriptive
      *
      * @param array $numbers
      * @param int   $ν degrees of freedom
-     * @return numeric
      *
-     * @throws OutOfBoundsException if degrees of freedom is ≤ 0
+     * @return float|null
+     *
+     * @throws Exception\OutOfBoundsException if degrees of freedom is ≤ 0
      */
     public static function variance(array $numbers, int $ν)
     {
@@ -105,7 +111,10 @@ class Descriptive
      * N is the number of numbers in the population set
      *
      * @param array $numbers
-     * @return numeric
+     *
+     * @return float|null
+     *
+     * @throws Exception\OutOfBoundsException
      */
     public static function populationVariance(array $numbers)
     {
@@ -125,7 +134,10 @@ class Descriptive
      * n is the number of numbers in the sample set
      *
      * @param array $numbers
-     * @return numeric
+     *
+     * @return float|null
+     *
+     * @throws Exception\OutOfBoundsException
      */
     public static function sampleVariance(array $numbers)
     {
@@ -135,6 +147,58 @@ class Descriptive
 
         $n = count($numbers);
         return self::variance($numbers, $n - 1);
+    }
+
+    /**
+     * Weighted sample variance
+     *
+     * Biased case
+     *
+     *       ∑wᵢ⟮xᵢ - μw⟯²
+     * σ²w = ----------
+     *           ∑wᵢ
+     *
+     * Unbiased estimator for frequency weights
+     *
+     *       ∑wᵢ⟮xᵢ - μw⟯²
+     * σ²w = ----------
+     *         ∑wᵢ - 1
+     *
+     * μw is the weighted mean
+     *
+     * https://en.wikipedia.org/wiki/Weighted_arithmetic_mean#Weighted_sample_variance
+     *
+     * @param array $numbers
+     * @param array $weights
+     * @param bool  $biased
+     *
+     * @return number
+     *
+     * @throws Exception\BadDataException if the number of numbers and weights are not equal
+     */
+    public static function weightedSampleVariance(array $numbers, array $weights, bool $biased = false)
+    {
+        if (count($numbers) === 1) {
+            return 0;
+        }
+        if (count($numbers) !== count($weights)) {
+            throw new Exception\BadDataException('Numbers and weights must have the same number of elements.');
+        }
+
+        $μw           = Average::weightedMean($numbers, $weights);
+        $∑wᵢ⟮xᵢ − μw⟯² = array_sum(array_map(
+            function ($xᵢ, $wᵢ) use ($μw) {
+                return $wᵢ * pow(($xᵢ - $μw), 2);
+            },
+            $numbers,
+            $weights
+        ));
+
+        $∑wᵢ = $biased
+            ? array_sum($weights)
+            : array_sum($weights) - 1;
+
+        return $∑wᵢ⟮xᵢ − μw⟯² / $∑wᵢ;
     }
 
     /**
@@ -149,18 +213,19 @@ class Descriptive
      * SD+ = √⟮σ²⟯ = √⟮sample variance⟯
      *
      * @param array $numbers
-     * @param bool  $SD＋: true returns SD+ (uses population variance);
+     * @param bool $SD＋ : true returns SD+ (uses population variance);
      *              false returns SD (uses sample variance);
      *              Default is false (SD (sample variance))
-     * @return numeric
+     *
+     * @return float|null
+     *
+     * @throws Exception\OutOfBoundsException
      */
     public static function standardDeviation(array $numbers, bool $SD＋ = false)
     {
         if (empty($numbers)) {
             return null;
         }
-
-        $n = count($numbers);
 
         return $SD＋
             ? sqrt(self::populationVariance($numbers))
@@ -171,22 +236,17 @@ class Descriptive
      * sd - Standard deviation - convenience method
      *
      * @param array $numbers
-     * @param bool  $SD＋: true returns SD+ (uses population variance);
+     * @param bool $SD＋ : true returns SD+ (uses population variance);
      *              false returns SD (uses sample variance);
      *              Default is false (SD (sample variance))
-     * @return numeric
+     *
+     * @return float|null
+     *
+     * @throws Exception\OutOfBoundsException
      */
     public static function sd(array $numbers, bool $SD＋ = false)
     {
-        if (empty($numbers)) {
-            return null;
-        }
-
-        $n = count($numbers);
-
-        return $SD＋
-            ? sqrt(self::populationVariance($numbers))
-            : sqrt(self::sampleVariance($numbers));
+        return self::standardDeviation($numbers, $SD＋);
     }
 
     /**
@@ -204,7 +264,8 @@ class Descriptive
      * N is the number of numbers in the population set
      *
      * @param array $numbers
-     * @return numeric
+     *
+     * @return number|null
      */
     public static function meanAbsoluteDeviation(array $numbers)
     {
@@ -237,7 +298,8 @@ class Descriptive
      * x̄ is the median
      *
      * @param array $numbers
-     * @return numeric
+     *
+     * @return number|null
      */
     public static function medianAbsoluteDeviation(array $numbers)
     {
@@ -424,7 +486,7 @@ class Descriptive
      *
      * @return number
      */
-    public static function IQR(array $numbers, string $method = 'exclusive')
+    public static function iqr(array $numbers, string $method = 'exclusive')
     {
         return self::quartiles($numbers, $method)['IQR'];
     }
@@ -432,38 +494,60 @@ class Descriptive
     /**
      * Compute the P-th percentile of a list of numbers
      *
-     * Nearest rank method
+     * Linear interpolation between closest ranks method - Second variant, C = 1
      * P-th percentile (0 <= P <= 100) of a list of N ordered values (sorted from least to greatest)
-     * is the smallest value in the list such that P percent of the data is less than or equal to that value.
-     * This is obtained by first calculating the ordinal rank,
-     * and then taking the value from the ordered list that corresponds to that rank.
-     * https://en.wikipedia.org/wiki/Percentile
+     * Similar method used in NumPy and Excel
+     * https://en.wikipedia.org/wiki/Percentile#Second_variant.2C_.7F.27.22.60UNIQ--postMath-00000043-QINU.60.22.27.7F
      *
-     *     ⌈  P      ⌉
-     * n = | --- × N |
-     *     | 100     |
+     *      P
+     * x - --- (N - 1) + 1
+     *     100
      *
-     * n: ordinal rank
-     * P: percentile
-     * N: number of elements in list
+     * P = percentile
+     * N = number of elements in list
+     *
+     * ν(x) = νₓ + x％1(νₓ₊₁ - νₓ)
+     *
+     * ⌊x⌋  = integer part of x
+     * x％1 = fraction part of x
+     * νₓ   = number in position x in sorted list of numbers
+     * νₓ₊₁ = number in position x + 1 in sorted list of number
      *
      * @param array $numbers
-     * @param int   $P percentile to calculate
-     * @return number in list corresponding to P percentile
+     * @param float   $P percentile to calculate
      *
-     * @throws OutOfBoundsException if $P percentile is not between 0 and 100
+     * @return float in list corresponding to P percentile
+     *
+     * @throws Exception\BadDataException if $numbers is empty
+     * @throws Exception\OutOfBoundsException if $P percentile is not between 0 and 100
      */
-    public static function percentile(array $numbers, int $P)
+    public static function percentile(array $numbers, float $P): float
     {
+        if (empty($numbers)) {
+            throw new Exception\BadDataException('List of numbers must not be empty.');
+        }
         if ($P < 0 || $P > 100) {
             throw new Exception\OutOfBoundsException('Percentile P must be between 0 and 100.');
         }
-        sort($numbers);
 
         $N = count($numbers);
-        $n = ($P / 100) * $N;
+        if ($N === 1) {
+            return array_shift($numbers);
+        }
 
-        return $numbers[ ceil($n) - 1 ];
+        sort($numbers);
+
+        if ($P == 100) {
+            return  $numbers[$N - 1];
+        }
+
+        $x    = ($P / 100) * ($N - 1) + 1;
+        $⌊x⌋  = intval($x);
+        $x％1 = $x - $⌊x⌋;
+        $νₓ   = $numbers[$⌊x⌋ - 1];
+        $νₓ₊₁ = $numbers[$⌊x⌋];
+
+        return $νₓ + $x％1 * ($νₓ₊₁ - $νₓ);
     }
 
     /**
@@ -474,8 +558,9 @@ class Descriptive
      *
      * Midhinge = (first quartile, third quartile) / 2
      *
-     * @param  array  $numbers
-     * @return number
+     * @param  array $numbers
+     *
+     * @return float|null
      */
     public static function midhinge(array $numbers)
     {
@@ -501,6 +586,8 @@ class Descriptive
      * @param array $numbers
      *
      * @return number
+     *
+     * @throws Exception\OutOfBoundsException
      */
     public static function coefficientOfVariation(array $numbers)
     {
@@ -515,10 +602,14 @@ class Descriptive
      * Includes mean, median, mode, range, midrange, variance, standard deviation, quartiles, etc.
      *
      * @param array $numbers
-     * @param bool  $population: true means all possible observations of the system are present;
-     *              false means a sample is used.
+     * @param bool $population : true means all possible observations of the system are present;
+     *                           false means a sample is used.
+     *
      * @return array [ n, mean, median, mode, range, midrange, variance, sd, CV, mean_mad,
      *                 median_mad, quartiles, skewness, kurtosis, sem, ci_95, ci_99 ]
+     *
+     * @throws Exception\OutOfBoundsException
+     * @throws Exception\BadDataException
      */
     public static function describe(array $numbers, bool $population = false): array
     {
@@ -537,18 +628,18 @@ class Descriptive
             'midrange'           => self::midrange($numbers),
             'variance'           => $population ? self::populationVariance($numbers) : self::sampleVariance($numbers),
             'sd'                 => $σ,
-            'cv'                 => $σ / $μ,
+            'cv'                 => $μ ? $σ / $μ : \NAN,
             'mean_mad'           => self::meanAbsoluteDeviation($numbers),
             'median_mad'         => self::medianAbsoluteDeviation($numbers),
             'quartiles'          => self::quartiles($numbers),
             'midhinge'           => self::midhinge($numbers),
             'skewness'           => $population ? RandomVariable::populationSkewness($numbers) : RandomVariable::skewness($numbers),
-            'ses'                => RandomVariable::SES($n),
+            'ses'                => $n > 2 ? RandomVariable::ses($n) : null,
             'kurtosis'           => RandomVariable::kurtosis($numbers),
-            'sek'                => RandomVariable::SEK($n),
+            'sek'                => $n > 3 ? RandomVariable::sek($n) : null,
             'sem'                => RandomVariable::standardErrorOfTheMean($numbers),
-            'ci_95'              => RandomVariable::confidenceInterval($μ, $n, $σ, 95),
-            'ci_99'              => RandomVariable::confidenceInterval($μ, $n, $σ, 99),
+            'ci_95'              => RandomVariable::confidenceInterval($μ, $n, $σ, '95'),
+            'ci_99'              => RandomVariable::confidenceInterval($μ, $n, $σ, '99'),
         ];
     }
 
@@ -568,7 +659,7 @@ class Descriptive
      *
      * @return array [min, Q1, median, Q3, max]
      */
-    public static function fiveNumberSummary(array $numbers)
+    public static function fiveNumberSummary(array $numbers): array
     {
         $quartiles = self::quartiles($numbers);
 

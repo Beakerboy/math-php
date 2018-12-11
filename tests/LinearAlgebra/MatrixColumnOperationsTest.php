@@ -1,7 +1,10 @@
 <?php
-namespace MathPHP\LinearAlgebra;
+namespace MathPHP\Tests\LinearAlgebra;
 
-class MatrixColumnOperationsTest extends \PHPUnit_Framework_TestCase
+use MathPHP\LinearAlgebra\MatrixFactory;
+use MathPHP\Exception;
+
+class MatrixColumnOperationsTest extends \PHPUnit\Framework\TestCase
 {
 
     public function setUp()
@@ -76,7 +79,7 @@ class MatrixColumnOperationsTest extends \PHPUnit_Framework_TestCase
             [2, 3, 4],
             [3, 4, 5],
         ]);
-        $this->setExpectedException('MathPHP\Exception\MatrixException');
+        $this->expectException(Exception\MatrixException::class);
         $A->columnInterchange(4, 5);
     }
 
@@ -140,7 +143,7 @@ class MatrixColumnOperationsTest extends \PHPUnit_Framework_TestCase
             [2, 3, 4],
             [3, 4, 5],
         ]);
-        $this->setExpectedException('MathPHP\Exception\MatrixException');
+        $this->expectException(Exception\MatrixException::class);
         $A->columnMultiply(4, 5);
     }
 
@@ -151,7 +154,7 @@ class MatrixColumnOperationsTest extends \PHPUnit_Framework_TestCase
             [2, 3, 4],
             [3, 4, 5],
         ]);
-        $this->setExpectedException('MathPHP\Exception\BadParameterException');
+        $this->expectException(Exception\BadParameterException::class);
         $A->columnMultiply(2, 0);
     }
 
@@ -216,7 +219,7 @@ class MatrixColumnOperationsTest extends \PHPUnit_Framework_TestCase
             [2, 3, 4],
             [3, 4, 5],
         ]);
-        $this->setExpectedException('MathPHP\Exception\MatrixException');
+        $this->expectException(Exception\MatrixException::class);
         $A->columnAdd(4, 5, 2);
     }
 
@@ -227,7 +230,7 @@ class MatrixColumnOperationsTest extends \PHPUnit_Framework_TestCase
             [2, 3, 4],
             [3, 4, 5],
         ]);
-        $this->setExpectedException('MathPHP\Exception\BadParameterException');
+        $this->expectException(Exception\BadParameterException::class);
         $A->columnAdd(1, 2, 0);
     }
 
@@ -286,7 +289,7 @@ class MatrixColumnOperationsTest extends \PHPUnit_Framework_TestCase
 
     public function testColumnExcludeExceptionColumnDoesNotExist()
     {
-        $this->setExpectedException('MathPHP\Exception\MatrixException');
+        $this->expectException(Exception\MatrixException::class);
         $this->matrix->columnExclude(-5);
     }
 }

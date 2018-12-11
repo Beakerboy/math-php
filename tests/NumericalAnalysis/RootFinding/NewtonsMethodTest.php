@@ -1,7 +1,9 @@
 <?php
-namespace MathPHP\NumericalAnalysis\RootFinding;
+namespace MathPHP\Tests\NumericalAnalysis\RootFinding;
 
-class NewtonsMethodTest extends \PHPUnit_Framework_TestCase
+use MathPHP\NumericalAnalysis\RootFinding\NewtonsMethod;
+
+class NewtonsMethodTest extends \PHPUnit\Framework\TestCase
 {
     public function testSolve()
     {
@@ -51,7 +53,7 @@ class NewtonsMethodTest extends \PHPUnit_Framework_TestCase
         $position = 0;
         $tol      = -0.00001;
 
-        $this->setExpectedException('\Exception');
+        $this->expectException('\Exception');
         $x = NewtonsMethod::solve($func, $args, $target, $tol, $position);
     }
 
@@ -67,9 +69,7 @@ class NewtonsMethodTest extends \PHPUnit_Framework_TestCase
         $tol      = 0.00001;
 
         $x = NewtonsMethod::solve($func, $args, $target, $tol, $position);
-        if (!is_nan($x)) {
-            $this->assertEquals(NAN, $x);
-        }
+        $this->assertNan($x);
     }
 
     public function testNewtonsMethodNoRealSolutionsNAN()
@@ -84,8 +84,6 @@ class NewtonsMethodTest extends \PHPUnit_Framework_TestCase
         $tol      = 0.00001;
 
         $x = NewtonsMethod::solve($func, $args, $target, $tol, $position);
-        if (!is_nan($x)) {
-            $this->assertEquals(NAN, $x);
-        }
+        $this->assertNan($x);
     }
 }

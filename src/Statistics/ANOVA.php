@@ -1,9 +1,6 @@
 <?php
 namespace MathPHP\Statistics;
 
-use MathPHP\Statistics\Average;
-use MathPHP\Statistics\Descriptive;
-use MathPHP\Statistics\RandomVariable;
 use MathPHP\Probability\Distribution\Continuous\F;
 use MathPHP\Exception;
 
@@ -99,7 +96,7 @@ class ANOVA
      * F = MSB / MSW
      * P = F distribution CDF above F with degrees of freedom dfB and dfW
      *
-     * @param  array ...$samples Samples to analyze (at least 3 or more samples)
+     * @param  array[] ...$samples Samples to analyze (at least 3 or more samples)
      *
      * @return array [
      *                 ANOVA => [
@@ -115,9 +112,10 @@ class ANOVA
      *                 ]
      *               ]
      *
-     * @throws BadDataException if less than three samples, or if all samples don't have the same number of values
+     * @throws Exception\BadDataException if less than three samples, or if all samples don't have the same number of values
+     * @throws Exception\OutOfBoundsException
      */
-    public static function oneWay(array ...$samples)
+    public static function oneWay(array ...$samples): array
     {
         // Must have at least three samples
         $m = count($samples);
@@ -189,7 +187,8 @@ class ANOVA
 
         // Test statistics
         $F = $MSB / $MSW;
-        $P = F::above($F, $dfB, $dfW);
+        $fDist = new F($dfB, $dfW);
+        $P = $fDist->above($F);
 
         // Return ANOVA report
         return [
@@ -338,7 +337,7 @@ class ANOVA
      *   Factor A₁ |  4, 6, 8  |  6, 6, 9  | ⋯
      *   Factor A₂ |  4, 8, 9  | 7, 10, 13 | ⋯
      *      ⋮           ⋮           ⋮         ⋮
-     * @param  array ...$data Samples to analyze [
+     * @param  array[] ...$data Samples to analyze [
      *               // Factor A₁
      *               [
      *                   [4, 6, 8] // Factor B₁
@@ -379,9 +378,10 @@ class ANOVA
      *                   ...
      *                 ]
      *               ]
-     * @throws BadDataException if less than two A factors, or if B factors or values have different number elements
+     * @throws Exception\BadDataException if less than two A factors, or if B factors or values have different number elements
+     * @throws Exception\OutOfBoundsException
      */
-    public static function twoWay(array ...$data)
+    public static function twoWay(array ...$data): array
     {
         // Must have at least two rows (two types of factor A)
         $r = count($data);
@@ -412,11 +412,10 @@ class ANOVA
         $A_elements   = [];
         $B_elements   = [];
 
-        // Summaries for factor A, factor B, AB, and total
+        // Summaries for factor A, factor B, and AB
         $summary_A     = [];
         $summary_B     = [];
         $summary_AB    = [];
-        $summary_total = [];
 
         // Summary data for each AB
         // And aggregate all elements and elements for factor A
@@ -541,9 +540,12 @@ class ANOVA
         $FAB = $MSAB / $MSW;
 
         // P values
-        $PA  = F::above($FA, $dfA, $dfW);
-        $PB  = F::above($FB, $dfB, $dfW);
-        $PAB = F::above($FAB, $dfAB, $dfW);
+        $fDist1 = new F($dfA, $dfW);
+        $fDist2 = new F($dfB, $dfW);
+        $fDist3 = new F($dfAB, $dfW);
+        $PA  = $fDist1->above($FA);
+        $PB  = $fDist2->above($FB);
+        $PAB = $fDist3->above($FAB);
 
         // Return ANOVA report
         return [

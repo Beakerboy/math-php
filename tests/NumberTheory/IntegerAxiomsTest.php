@@ -1,6 +1,7 @@
 <?php
-namespace MathPHP\NumberTheory;
+namespace MathPHP\Tests\NumberTheory;
 
+use MathPHP\NumberTheory\Integer;
 use MathPHP\Algebra;
 
 /**
@@ -14,7 +15,7 @@ use MathPHP\Algebra;
  *  - Coprime
  *    - lcm(a, b) = ab
  */
-class NumberTheoryAxiomsTest extends \PHPUnit_Framework_TestCase
+class NumberTheoryAxiomsTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Axiom: If a and b are coprime ⇒ lcm(a, b) = ab

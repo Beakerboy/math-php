@@ -1,9 +1,9 @@
-Math PHP
+MathPHP
 =====================
 
 ### Powerful Modern Math Library for PHP
 
-Math PHP is the only library you need to integrate mathematical functions into your applications. It is a self-contained library in pure PHP with no external dependencies.
+MathPHP is the only library you need to integrate mathematical functions into your applications. It is a self-contained library in pure PHP with no external dependencies.
 
 It is actively under development with development (0.y.z) releases.
 
@@ -24,6 +24,9 @@ Features
  * Linear Algebra
    - [Matrix](#linear-algebra---matrix)
    - [Vector](#linear-algebra---vector)
+ * Numbers
+   - [Complex](#number---complex-numbers)
+   - [Rational](#number---rational-numbers)
  * Number Theory
    - [Integers](#number-theory---integers)
  * Numerical Analysis
@@ -36,6 +39,7 @@ Features
      - Distributions
          * [Continuous](#probability---continuous-distributions)
          * [Discrete](#probability---discrete-distributions)
+         * [Multivariate](#probability---multivariate-distributions)
          * [Tables](#probability---distribution-tables)
  * Sequences
      - [Basic](#sequences---basic)
@@ -51,9 +55,11 @@ Features
      - [Distributions](#statistics---distributions)
      - [Effect Size](#statistics---effect-size)
      - [Experiments](#statistics---experiments)
+     - [Kernel Density Estimation](#statistics---kernel-density-estimation)
      - [Random Variables](#statistics---random-variables)
      - [Regressions](#statistics---regressions)
      - [Significance Testing](#statistics---significance-testing)
+ * [Trigonometry](#trigonometry)
 
 Setup
 -----
@@ -74,11 +80,17 @@ Use [composer](http://getcomposer.org) to install the library:
 $ php composer.phar install
 ```
 
-Composer will install Math PHP inside your vendor folder. Then you can add the following to your
+Composer will install MathPHP inside your vendor folder. Then you can add the following to your
 .php files to use the library with Autoloading.
 
 ```php
 require_once(__DIR__ . '/vendor/autoload.php');
+```
+
+Alternatively, use composer on the command line to require and install MathPHP:
+
+```
+$ php composer.phar require markrogoyski/math-php:0.*
 ```
 
 ### Minimum Requirements
@@ -95,7 +107,7 @@ use MathPHP\Algebra;
 $gcd = Algebra::gcd(8, 12);
 
 // Extended greatest common divisor - gcd(a, b) = a*a' + b*b'
-$gcd = Algebra::extendedGCD(12, 8); // returns array [gcd, a', b']
+$gcd = Algebra::extendedGcd(12, 8); // returns array [gcd, a', b']
 
 // Least common multiple (LCM)
 $lcm = Algebra::lcm(5, 2);
@@ -108,8 +120,12 @@ list($a, $b, $c) = [1, 2, -8]; // x² + 2x - 8
 list($x₁, $x₂)   = Algebra::quadradic($a, $b, $c);
 
 // Cubic equation
-list($a, $b, $c, $d) = [2, 9, 3, -4]; // 2x³ + 9x² + 3x -4
-list($x₁, $x₂, $x₃)  = Algebra::cubic($a, $b, $c, $d);
+list($a₃, $a₂, $a₁, $a₀) = [2, 9, 3, -4]; // 2x³ + 9x² + 3x -4
+list($x₁, $x₂, $x₃)      = Algebra::cubic($a₃, $a₂, $a₁, $a₀);
+
+// Quartic equation
+list($a₄, $a₃, $a₂, $a₁, $a₀) = [1, -10, 35, -50, 24]; // z⁴ - 10z³ + 35z² - 50z + 24 = 0
+list($z₁, $z₂, $z₃, $z₄)      = Algebra::quartic($a₄, $a₃, $a₂, $a₁, $a₀);
 ```
 
 ### Arithmetic
@@ -121,6 +137,17 @@ $³√x = Arithmetic::cubeRoot(-8); // -2
 // Sum of digits
 $digit_sum    = Arithmetic::digitSum(99):    // 18
 $digital_root = Arithmetic::digitalRoot(99); // 9
+
+// Equality of numbers within a tolerance
+$x = 0.00000003458;
+$y = 0.00000003455;
+$ε = 0.0000000001;
+$almostEqual = Arithmetic::almostEqual($x, $y, $ε); // true
+
+// Copy sign
+$magnitude = 5;
+$sign      = -3;
+$signed_magnitude = Arithmetic::copySign($magnitude, $sign); // -5
 ```
 
 ### Finance
@@ -246,12 +273,17 @@ $Γ = Special::upperIncompleteGamma($x, $s);
 
 // Beta function
 list($x, $y) = [1, 2];
-$β = Special::beta($x, $y);
+$β = Special::beta($x, $y); // same as β
+$β = Special::β($x, $y);    // same as beta
 
 // Incomplete beta functions
 list($x, $a, $b) = [0.4, 2, 3];
 $B  = Special::incompleteBeta($x, $a, $b);
 $Iₓ = Special::regularizedIncompleteBeta($x, $a, $b);
+
+// Multivariate beta function
+$αs = [1, 2, 3];
+$β  = Special::multivariateBeta($αs);
 
 // Error function (Gauss error function)
 $error = Special::errorFunction(2);              // same as erf
@@ -316,6 +348,7 @@ $perplexity = Entropy::perplexity($p);         // log₂
 ### Linear Algebra - Matrix
 ```php
 use MathPHP\LinearAlgebra\Matrix;
+use MathPHP\LinearAlgebra\MatrixFactory;
 
 $matrix = [
     [1, 2, 3],
@@ -344,13 +377,16 @@ $rows  = $A->getM();      // number of rows
 $cols  = $A->getN();      // number of columns
 
 // Basic matrix elements (zero-based indexing)
-$row  = $A->getRow(2);
-$col  = $A->getColumn(2);
-$item = $A->get(2, 2);
+$row = $A->getRow(2);
+$col = $A->getColumn(2);
+$Aᵢⱼ = $A->get(2, 2);
+$Aᵢⱼ = $A[2][2];
 
 // Other representations of matrix data
-$vectors = $A->asVectors();           // array of column vectors
-$D       = $A->getDiagonalElements(); // array of the diagonal elements
+$vectors = $A->asVectors();                // array of column vectors
+$D       = $A->getDiagonalElements();      // array of the diagonal elements
+$d       = $A->getSuperdiagonalElements(); // array of the superdiagonal elements
+$d       = $A->getSubdiagonalElements();   // array of the subdiagonal elements
 
 // Row operations
 list($mᵢ, $mⱼ, $k) = [1, 2, 5];
@@ -367,37 +403,39 @@ $R = $A->columnAdd($nᵢ, $nⱼ, $k);     // Add k * column nᵢ to column nⱼ
 $R = $A->columnExclude($nᵢ);          // Exclude column $nᵢ
 
 // Matrix operations - return a new Matrix
-$A＋B = $A->add($B);
-$A⊕B  = $A->directSum($B);
-$A⊕B  = $A->kroneckerSum($B);
-$A−B  = $A->subtract($B);
-$AB   = $A->multiply($B);
-$２A  = $A->scalarMultiply(2);
-$A／2 = $A->scalarDivide(2);
-$A∘B  = $A->hadamardProduct($B);
-$A⊗B  = $A->kroneckerProduct($B);
-$Aᵀ 　= $A->transpose();
-$D  　= $A->diagonal();
-$⟮A∣B⟯ = $A->augment($B);
-$⟮A∣I⟯ = $A->augmentIdentity();        // Augment with the identity matrix
-$⟮A∣B⟯ = $A->augmentBelow($B);
-$rref = $A->rref();                   // Reduced row echelon form
-$A⁻¹  = $A->inverse();
-$Mᵢⱼ  = $A->minorMatrix($mᵢ, $nⱼ);    // Square matrix with row mᵢ and column nⱼ removed
-$Mk   = $A->leadingPrincipalMinor($k); // kᵗʰ-order leading principal minor
-$CM   = $A->cofactorMatrix();
-$B    = $A->meanDeviation();
-$S    = $A->covarianceMatrix();
+$A＋B  = $A->add($B);
+$A⊕B   = $A->directSum($B);
+$A⊕B   = $A->kroneckerSum($B);
+$A−B   = $A->subtract($B);
+$AB    = $A->multiply($B);
+$２A   = $A->scalarMultiply(2);
+$A／2  = $A->scalarDivide(2);
+$−A    = $A->negate();
+$A∘B   = $A->hadamardProduct($B);
+$A⊗B   = $A->kroneckerProduct($B);
+$Aᵀ 　 = $A->transpose();
+$D  　 = $A->diagonal();
+$⟮A∣B⟯  = $A->augment($B);
+$⟮A∣I⟯  = $A->augmentIdentity();         // Augment with the identity matrix
+$⟮A∣B⟯  = $A->augmentBelow($B);
+$A⁻¹   = $A->inverse();
+$Mᵢⱼ   = $A->minorMatrix($mᵢ, $nⱼ);     // Square matrix with row mᵢ and column nⱼ removed
+$Mk    = $A->leadingPrincipalMinor($k); // kᵗʰ-order leading principal minor
+$CM    = $A->cofactorMatrix();
+$B     = $A->meanDeviation();
+$S     = $A->covarianceMatrix();
+$adj⟮A⟯ = $A->adjugate();
 
 // Matrix operations - return a new Vector
 $AB = $A->vectorMultiply($X₁);
 $M  = $A->sampleMean();
 
 // Matrix operations - return a value
-$tr⟮A⟯ = $A->trace();
-$|A|  = $a->det();              // Determinant
-$Mᵢⱼ  = $A->minor($mᵢ, $nⱼ);    // First minor
-$Cᵢⱼ  = $A->cofactor($mᵢ, $nⱼ);
+$tr⟮A⟯   = $A->trace();
+$|A|    = $a->det();              // Determinant
+$Mᵢⱼ    = $A->minor($mᵢ, $nⱼ);    // First minor
+$Cᵢⱼ    = $A->cofactor($mᵢ, $nⱼ);
+$rank⟮A⟯ = $A->rank();
 
 // Matrix norms - return a value
 $‖A‖₁ = $A->oneNorm();
@@ -408,16 +446,35 @@ $max  = $A->maxNorm();
 // Matrix properties - return a bool
 $bool = $A->isSquare();
 $bool = $A->isSymmetric();
+$bool = $A->isSkewSymmetric();
 $bool = $A->isSingular();
-$bool = $A->isNonsingular(); // same as isInvertible
-$bool = $A->isInvertible();  // same as isNonsingular
+$bool = $A->isNonsingular();           // Same as isInvertible
+$bool = $A->isInvertible();            // Same as isNonsingular
 $bool = $A->isPositiveDefinite();
 $bool = $A->isPositiveSemidefinite();
 $bool = $A->isNegativeDefinite();
 $bool = $A->isNegativeSemidefinite();
+$bool = $A->isLowerTriangular();
+$bool = $A->isUpperTriangular();
+$bool = $A->isTriangular();
+$bool = $A->isDiagonal();
+$bool = $A->isUpperBidiagonal();
+$bool = $A->isLowerBidiagonal();
+$bool = $A->isBidiagonal();
+$bool = $A->isTridiagonal();
+$bool = $A->isUpperHessenberg();
+$bool = $A->isLowerHessenberg();
+$bool = $A->isInvolutory();
+$bool = $A->isSignature();
+$bool = $A->isRef();
+$bool = $A->isRref();
 
-// Matrix decomposition
-$PLU = $A->LUDecomposition(); // returns array of Matrices [L, U, P, A]; P is permutation matrix
+// Matrix decompositions
+$ref  = $A->ref();                   // Row echelon form
+$rref = $A->rref();                  // Reduced row echelon form
+$PLU  = $A->luDecomposition();       // Returns array of Matrices [L, U, P]; P is permutation matrix
+$LU   = $A->croutDecomposition();    // Returns array of Matrices [L, U]
+$L    = $A->choleskyDecomposition(); // Returns lower triangular matrix L of A = LLᵀ
 
 // Solve a linear system of equations: Ax = b
 $b = new Vector(1, 2, 3);
@@ -438,11 +495,15 @@ print($A);
  */
 
 // Specialized matrices
-list($m, $n, $k)     = [4, 4, 2];
-$identity_matrix = MatrixFactory::identity($n);    // Ones on the main diagonal
-$zero_matrix     = MatrixFactory::zero($m, $n);    // All zeros
-$ones_matrix     = MatrixFactory::one($m, $n);     // All ones
-$eye_matrix      = MatrixFactory::eye($m, $n, $k); // Ones (or other value) on the k-th diagonal
+list($m, $n, $k)              = [4, 4, 2];
+$identity_matrix              = MatrixFactory::identity($n);             // Ones on the main diagonal
+$zero_matrix                  = MatrixFactory::zero($m, $n);             // All zeros
+$ones_matrix                  = MatrixFactory::one($m, $n);              // All ones
+$eye_matrix                   = MatrixFactory::eye($m, $n, $k);          // Ones (or other value) on the k-th diagonal
+$exchange_matrix              = MatrixFactory::exchange($n);             // Ones on the reverse diagonal
+$downshift_permutation_matrix = MatrixFactory::downshiftPermutation($n); // Permutation matrix that pushes the components of a vector down one notch with wraparound
+$upshift_permutation_matrix   = MatrixFactory::upshiftPermutation($n);   // Permutation matrix that pushes the components of a vector up one notch with wraparound
+$hilbert_matrix               = MatrixFactory::hilbert($n);              // Square matrix with entries being the unit fractions
 
 // Vandermonde matrix
 $V = MatrixFactory::create([1, 2, 3], 4); // 4 x 3 Vandermonde matrix
@@ -510,6 +571,63 @@ $json = json_encode($A); // JsonSerializable
 $Aᵢ   = $A[$i];          // ArrayAccess
 ```
 
+### Number - Complex Numbers
+```php
+use MathPHP\Number\Complex;
+
+list($r, $i) = [2, 4];
+$complex     = new Complex($r, $i);
+
+// Accessors
+$r = $complex->r;
+$i = $complex->i;
+
+// Unary functions
+$conjugate     = $complex->complexConjugate();
+$│c│           = $complex->abs();     // absolute value (modulus)
+$arg⟮c⟯         = $complex->arg();     // argument (phase)
+$√c            = $complex->sqrt();    // positive square root
+list($z₁, $z₂) = $complex->roots();
+$c⁻¹           = $complex->inverse();
+$−c            = $complex->negate();
+$polar         = $complex->polarForm();
+
+// Binary functions
+$c＋c = $complex->add($complex);
+$c−c  = $complex->subtract($complex);
+$c×c  = $complex->multiply($complex);
+$c／c = $complex->divide($complex);
+
+// Other functions
+$bool   = $complex->equals($complex);
+$string = (string) $complex;
+```
+
+### Number - Rational Numbers
+```php
+use MathPHP\Number\Rational;
+
+$whole       = 0;
+$numerator   = 2;
+$denominator = 3;
+
+$rational = new Rational($whole, $numerator, $denominator); // ²/₃
+
+// Unary functions
+$│rational│ = $rational->abs();
+
+// Binary functions
+$sum      = $rational->add($rational);
+$diff     = $rational->subtract($rational);
+$product  = $rational->multiply($rational);
+$quotient = $rational->divide($rational);
+
+// Other functions
+$bool   = $rational->equals($rational);
+$float  = $rational->toFloat();
+$string = (string) $rational;
+```
+
 ### Number Theory - Integers
 ```php
 use MathPHP\NumberTheory\Integer;
@@ -519,12 +637,19 @@ $n = 225;
 // Prime factorization
 $factors = Integer::primeFactorization($n);
 
+// Perfect Number
+$bool = Integer::isPerfectNumber($n);
+
 // Perfect powers
 $bool        = Integer::isPerfectPower($n);
 list($m, $k) = Integer::perfectPower($n);
 
 // Coprime
 $bool = Integer::coprime(4, 35);
+
+// Even and odd
+$bool = Integer::isEven($n);
+$bool = Integer::isOdd($n);
 ```
 
 ### Numerical Analysis - Interpolation
@@ -803,175 +928,336 @@ $divisions = Combinatorics::multinomial($groups);
 ```php
 use MathPHP\Probability\Distribution\Continuous;
 
+$p = 0.1;
+
 // Beta distribution
-$α   = 1; // shape parameter
-$β   = 1; // shape parameter
-$x   = 2;
-$pdf = Beta::PDF($α, $β, $x);
-$cdf = Beta::CDF($α, $β, $x);
-$μ   = Beta::mean($α, $β);
+$α      = 1; // shape parameter
+$β      = 1; // shape parameter
+$x      = 2;
+$beta   = new Continuous\Beta($α, $β);
+$pdf    = $beta->pdf($x);
+$cdf    = $beta->cdf($x);
+$icdf   = $beta->inverse($p);
+$μ      = $beta->mean();
+$median = $beta->median();
+$mode   = $beta->mode();
+$σ²     = $beta->variance();
 
 // Cauchy distribution
-$x   = 1;
-$x₀  = 2; // location parameter
-$γ   = 3; // scale parameter
-$pdf = Cauchy::PDF(x, x₀, γ);
-$cdf = Cauchy::CDF(x, x₀, γ);
+$x₀     = 2; // location parameter
+$γ      = 3; // scale parameter
+$x      = 1;
+$cauchy = new Continuous\Cauchy(x₀, γ);
+$pdf    = $cauchy->pdf(x);
+$cdf    = $cauchy->cdf(x);
+$icdf   = $cauchy->inverse($p);
+$μ      = $cauchy->mean();
+$median = $cauchy->median();
+$mode   = $cauchy->mode();
 
 // χ²-distribution (Chi-Squared)
-$x   = 1;
-$k   = 2; // degrees of freedom
-$pdf = ChiSquared::PDF($x, $k);
-$cdf = ChiSquared::CDF($x, $k);
+$k      = 2; // degrees of freedom
+$x      = 1;
+$χ²     = new Continuous\ChiSquared($k);
+$pdf    = $χ²->pdf($x);
+$cdf    = $χ²->cdf($x);
+$μ      = $χ²->mean($x);
+$median = $χ²->median();
+$mode   = $χ²->mode();
+$σ²     = $χ²->variance();
+
+// Dirac delta distribution
+$x     = 1;
+$dirac = new Continuous\DiracDelta();
+$pdf   = $dirac->pdf($x);
+$cdf   = $dirac->cdf($x);
+$icdf  = $dirac->inverse($p);
+$μ     = $dirac->mean();
 
 // Exponential distribution
-$x   = 2; // random variable
-$λ   = 1; // rate parameter
-$pdf = Exponential::PDF($x, $λ);
-$cdf = Exponential::CDF($x, $λ);
-$μ   = Exponential::mean($λ);
+$λ           = 1; // rate parameter
+$x           = 2;
+$exponential = new Continuous\Exponential($λ);
+$pdf         = $exponential->pdf($x);
+$cdf         = $exponential->cdf($x);
+$icdf        = $exponential->inverse($p);
+$μ           = $exponential->mean();
+$median      = $exponential->median();
+$σ²          = $exponential->variance();
 
 // F-distribution
-$x   = 2;
-$d₁  = 3; // degree of freedom v1
-$d₂  = 4; // degree of freedom v2
-$pdf = F::PDF($x, $d₁, $d₂);
-$cdf = F::CDF($x, $d₁, $d₂);
-$μ   = F::mean($d₁, $d₂);
+$d₁   = 3; // degree of freedom v1
+$d₂   = 4; // degree of freedom v2
+$x    = 2;
+$f    = new Continuous\F($d₁, $d₂);
+$pdf  = $f->pdf($x);
+$cdf  = $f->cdf($x);
+$μ    = $f->mean();
+$mode = $f->mode();
+$σ²   = $f->variance();
+
+// Gamma distribution
+$k      = 2; // shape parameter
+$θ      = 3; // scale parameter
+$x      = 4;
+$gamma  = new Continuous\Gamma($k, $θ);
+$pdf    = $gamma->pdf($x);
+$cdf    = $gamma->cdf($x);
+$μ      = $gamma->mean();
+$median = $gamma->median();
+$mode   = $gamma->mode();
+$σ²     = $gamma->variance();
 
 // Laplace distribution
-$x   = 1;
-$μ   = 1;   // location parameter
-$b   = 1.5; // scale parameter (diversity)
-$pdf = Laplace::PDF($x, $μ, $b);
-$cdf = Laplace::CDF($x, $μ, $b);
+$μ       = 1;   // location parameter
+$b       = 1.5; // scale parameter (diversity)
+$x       = 1;
+$laplace = new Continuous\Laplace($μ, $b);
+$pdf     = $laplace->pdf($x);
+$cdf     = $laplace->cdf($x);
+$icdf    = $laplace->inverse($p);
+$μ       = $laplace->mean();
+$median  = $laplace->median();
+$mode    = $laplace->mode();
+$σ²      = $laplace->variance();
 
 // Logistic distribution
-$x   = 3;
-$μ   = 2;   // location parameter
-$s   = 1.5; // scale parameter
-$pdf = Logistic::PDF($x, $μ, $s);
-$cdf = Logistic::CDF($x, $μ, $s);
+$μ        = 2;   // location parameter
+$s        = 1.5; // scale parameter
+$x        = 3;
+$logistic = new Continuous\Logistic($μ, $s);
+$pdf      = $logistic->pdf($x);
+$cdf      = $logistic->cdf($x);
+$icdf     = $logistic->inverse($p);
+$μ        = $logistic->mean();
+$median   = $logistic->median();
+$mode     = $logistic->mode();
+$σ²       = $logisitic->variance();
 
 // Log-logistic distribution (Fisk distribution)
-$x   = 2;
-$α   = 1; // scale parameter
-$β   = 1; // shape parameter
-$pdf = LogLogistic::PDF($x, $α, $β);
-$cdf = LogLogistic::CDF($x, $α, $β);
-$μ   = LogLogistic::mean($α, $β);
+$α           = 1; // scale parameter
+$β           = 1; // shape parameter
+$x           = 2;
+$logLogistic = new Continuous\LogLogistic($α, $β);
+$pdf         = $logLogistic->pdf($x);
+$cdf         = $logLogistic->cdf($x);
+$icdf        = $logLogistic->inverse($p);
+$μ           = $logLogistic->mean();
+$median      = $logLogistic->median();
+$mode        = $logLogistic->mode();
+$σ²          = $logLogistic->variance();
 
 // Log-normal distribution
-$x = 4.3;
-$μ = 6;   // scale parameter
-$σ = 2;   // location parameter
-$pdf  = LogNormal::PDF($x, $μ, $σ);
-$cdf  = LogNormal::CDF($x, $μ, $σ);
-$mean = LogNormal::mean($μ, $σ);
-
-// Normal distribution
-list($x, $σ, $μ) = [2, 1, 0];
-$pdf = Normal::PDF($x, $μ, $σ);
-$cdf = Normal::CDF($x, $μ, $σ);
+$μ         = 6;   // scale parameter
+$σ         = 2;   // location parameter
+$x         = 4.3;
+$logNormal = new Continuous\LogNormal($μ, $σ);
+$pdf       = $logNormal->pdf($x);
+$cdf       = $logNormal->cdf($x);
+$icdf      = $logNormal->inverse($p);
+$μ         = $logNormal->mean();
+$median    = $logNormal->median();
+$mode      = $logNormal->mode();
+$σ²        = $logNormal->variance();
 
 // Noncentral T distribution
-list($x, $ν, $μ) = [8, 50, 10];
-$pdf  = NoncentralT::PDF($x, $ν, $μ);
-$cdf  = NoncentralT::CDF($x, $ν, $μ);
-$mean = NoncentralT::mean($ν, $μ);
+$ν            = 50; // degrees of freedom
+$μ            = 10; // noncentrality parameter
+$x            = 8;
+$noncenetralT = new Continuous\NoncentralT($ν, $μ);
+$pdf          = $noncenetralT->pdf($x);
+$cdf          = $noncenetralT->cdf($x);
+$μ            = $noncenetralT->mean();
+
+// Normal distribution
+$σ      = 1;
+$μ      = 0;
+$x      = 2;
+$normal = new Continuous\Normal($μ, $σ);
+$pdf    = $normal->pdf($x);
+$cdf    = $normal->cdf($x);
+$icdf   = $normal->inverse($p);
+$μ      = $normal->mean();
+$median = $normal->median();
+$mode   = $normal->mode();
+$σ²     = $normal->variance();
 
 // Pareto distribution
-$x   = 2;
-$a   = 1; // shape parameter
-$b   = 1; // scale parameter
-$pdf = Pareto::PDF($x, $a, $b);
-$cdf = Pareto::CDF($x, $a, $b);
-$μ   = Pareto::mean($a, $b);
+$a      = 1; // shape parameter
+$b      = 1; // scale parameter
+$x      = 2;
+$pareto = new Continuous\Pareto($a, $b);
+$pdf    = $pareto->pdf($x);
+$cdf    = $pareto->cdf($x);
+$icdf   = $pareto->inverse($p);
+$μ      = $pareto->mean();
+$median = $pareto->median();
+$mode   = $pareto->mode();
+$σ²     = $pareto->variance();
 
 // Standard normal distribution
-$z   = 2;
-$pdf = StandardNormal::PDF($z);
-$cdf = StandardNormal::CDF($z);
+$z              = 2;
+$standardNormal = new Continuous\StandardNormal();
+$pdf            = $standardNormal->pdf($z);
+$cdf            = $standardNormal->cdf($z);
+$icdf           = $standardNormal->inverse($p);
+$μ              = $standardNormal->mean();
+$median         = $standardNormal->median();
+$mode           = $standardNormal->mode();
+$σ²             = $standardNormal->variance();
 
 // Student's t-distribution
-$x   = 2;
-$ν   = 3;   // degrees of freedom
-$p   = 0.4; // proportion of area
-$pdf = StudentT::PDF($x, $ν);
-$cdf = StudentT::CDF($x, $ν);
-$t   = StudentT::inverse2Tails($p, $ν);  // t such that the area greater than t and the area beneath -t is p
+$ν        = 3;   // degrees of freedom
+$p        = 0.4; // proportion of area
+$x        = 2;
+$studentT = new Continuous\StudentT::pdf($ν);
+$pdf      = $studentT->pdf($x);
+$cdf      = $studentT->cdf($x);
+$t        = $studentT->inverse2Tails($p);  // t such that the area greater than t and the area beneath -t is p
+$μ        = $studentT->mean();
+$median   = $studentT->median();
+$mode     = $studentT->mode();
+$σ²       = $studentT->variance();
 
 // Uniform distribution
-$a   = 1; // lower boundary of the distribution
-$b   = 4; // upper boundary of the distribution
-$x   = 2;
-$pdf = Uniform::PDF($a, $b, $x);
-$cdf = Uniform::CDF($a, $b, $x);
-$μ   = Uniform::mean($a, $b);
+$a       = 1; // lower boundary of the distribution
+$b       = 4; // upper boundary of the distribution
+$x       = 2;
+$uniform = new Continuous\Uniform($a, $b);
+$pdf     = $uniform->pdf($x);
+$cdf     = $uniform->cdf($x);
+$μ       = $uniform->mean();
+$median  = $uniform->median();
+$mode    = $uniform->mode();
+$σ²      = $uniform->variance();
 
 // Weibull distribution
-$x   = 2;
-$k   = 1; // shape parameter
-$λ   = 2; // scale parameter
-$pdf = Weibull::PDF($x, $k, $λ);
-$cdf = Weibull::CDF($x, $k, $λ);
-$μ   = Weibull::mean($k, $λ);
+$k       = 1; // shape parameter
+$λ       = 2; // scale parameter
+$x       = 2;
+$weibull = new Continuous\Weibull($k, $λ);
+$pdf     = $weibull->pdf($x);
+$cdf     = $weibull->cdf($x);
+$icdf    = $weibull->inverse($p);
+$μ       = $weibull->mean();
+$median  = $weibull->median();
+$mode    = $weibull->mode();
 
-// Other CDFs - All continuous distributions (...params will be distribution-specific)
-// Replace 'DistributionName' with desired distribution.
-$inv_cdf = DistributionName::inverse($target, ...$params);   // Inverse CDF of the distribution
-$between = DistributionName::between($x₁, $x₂, ...$params);  // Probability of being between two points, x₁ and x₂
-$outside = DistributionName::outside($x₁, $x₂, ...$params);  // Probability of being between below x₁ and above x₂
-$above   = DistributionName::above($x, ...$params);          // Probability of being above x to ∞
+// Other CDFs - All continuous distributions - Replace {$distribution} with desired distribution.
+$between = $distribution->between($x₁, $x₂);  // Probability of being between two points, x₁ and x₂
+$outside = $distribution->outside($x₁, $x);   // Probability of being between below x₁ and above x₂
+$above   = $distribution->above($x);          // Probability of being above x to ∞
 
 // Random Number Generator
-$random  = DistributionName::rand(...$params);               // A random number with a given distribution
+$random  = $distribution->rand();  // A random number with a given distribution
 ```
 
 ### Probability - Discrete Distributions
 ```php
 use MathPHP\Probability\Distribution\Discrete;
 
-// Binomial distribution
-$n = 2;   // number of events
-$r = 1;   // number of successful events
-$P = 0.5; // probability of success
-$pmf = Binomial::PMF($n, $r, $P);
-$cdf = Binomial::CDF($n, $r, $P);
-
 // Bernoulli distribution (special case of binomial where n = 1)
-$pmf = Bernoulli::PMF($r, $P);
-$cdf = Bernoulli::CDF($r, $P);
+$p         = 0.3;
+$k         = 0;
+$bernoulli = new Discrete\Bernoulli($p);
+$pmf       = $bernoulli->pmf($k);
+$cdf       = $bernoulli->cdf($k);
+
+// Binomial distribution
+$n        = 2;   // number of events
+$p        = 0.5; // probability of success
+$r        = 1;   // number of successful events
+$binomial = new Discrete\Binomial($n, $p);
+$pmf      = $binomial->pmf($r);
+$cdf      = $binomial->cdf($r);
+
+// Categorical distribution
+$k             = 3;                                    // number of categories
+$probabilities = ['a' => 0.3, 'b' => 0.2, 'c' => 0.5]; // probabilities for categorices a, b, and c
+$categorical   = new Discrete\Categorical($k, $probabilities);
+$pmf_a         = $categorical->pmf('a');
+$mode          = $categorical->mode();
 
 // Geometric distribution (failures before the first success)
-$k = 2;   // number of trials
-$p = 0.5; // success probability
-$pmf = Geometric::PMF($k, $p);
-$cdf = Geometric::CDF($k, $p);
+$p         = 0.5; // success probability
+$k         = 2;   // number of trials
+$geometric = new Discrete\Geometric($p);
+$pmf       = $geometric->pmf($k);
+$cdf       = $geometric->cdf($k);
+
+// Hypergeometric distribution
+$N        = 50; // population size
+$K        = 5;  // number of success states in the population
+$n        = 10; // number of draws
+$k        = 4;  // number of observed successes
+$hypergeo = new Discrete\Hypergeometric($N, $K, $n);
+$pmf      = $hypergeo->pmf($k);
+$cdf      = $hypergeo->cdf($k);
+$μ        = $hypergeo->mean();
 
 // Multinomial distribution
 $frequencies   = [7, 2, 3];
 $probabilities = [0.40, 0.35, 0.25];
-$pmf = Multinomial::PMF($frequencies, $probabilities);
+$multinomial   = new Discrete\Multinomial($probabilities);
+$pmf           = $multinomial->pmf($frequencies);
 
 // Negative binomial distribution (Pascal)
-$x = 2;   // number of trials required to produce r successes
-$r = 1;   // number of successful events
-$P = 0.5; // probability of success on an individual trial
-$pmf = NegativeBinomial::PMF($x, $r, $P);  // same as Pascal::PMF
-$pmf = Pascal::PMF($x, $r, $P);            // same as NegativeBinomial::PMF
+$r                = 1;   // number of successful events
+$P                = 0.5; // probability of success on an individual trial
+$x                = 2;   // number of trials required to produce r successes
+$negativeBinomial = new Discrete\NegativeBinomial($r, $p);
+$pmf              = $negativeBinomial->pmf($x);
+
+// Pascal distribution (Negative binomial)
+$r      = 1;   // number of successful events
+$P      = 0.5; // probability of success on an individual trial
+$x      = 2;   // number of trials required to produce r successes
+$pascal = new Discrete\Pascal($r, $p);
+$pmf    = $pascal->pmf($x);
 
 // Poisson distribution
-$k = 3; // events in the interval
-$λ = 2; // average number of successful events per interval
-$pmf = Poisson::PMF($k, $λ);
-$cdf = Poisson::CDF($k, $λ);
+$λ       = 2; // average number of successful events per interval
+$k       = 3; // events in the interval
+$poisson = new Discrete\Poisson($λ);
+$pmf     = $poisson->pmf($k);
+$cdf     = $poisson->cdf($k);
 
 // Shifted geometric distribution (probability to get one success)
-$k = 2;   // number of trials
-$p = 0.5; // success probability
-$pmf = ShiftedGeometric::PMF($k, $p);
-$cdf = ShiftedGeometric::CDF($k, $p);
+$p                = 0.5; // success probability
+$k                = 2;   // number of trials
+$shiftedGeometric = new Discrete\ShiftedGeometric($p);
+$pmf              = $shiftedGeometric->pmf($k);
+$cdf              = $shiftedGeometric->cdf($k);
+
+// Uniform distribution
+$a       = 1; // lower boundary of the distribution
+$b       = 4; // upper boundary of the distribution
+$k       = 2; // percentile
+$uniform = new Discrete\Uniform($a, $b);
+$pmf     = $uniform->pmf();
+$cdf     = $uniform->cdf($k);
+$μ       = $uniform->mean();
+```
+
+### Probability - Multivariate Distributions
+```php
+use MathPHP\Probability\Distribution\Multivariate;
+
+// Dirichlet distribution
+$αs        = [1, 2, 3];
+$xs        = [0.07255081, 0.27811903, 0.64933016];
+$dirichlet = new Multivariate\Dirichlet($αs);
+$pdf       = $dirichlet->pdf($xs);
+
+// Normal distribution
+$μ      = [1, 1.1];
+$∑      = MatrixFactory::create([
+    [1, 0],
+    [0, 1],
+]);
+$X      = [0.7, 1.4];
+$normal = new Multivariate\Normal($μ, $∑);
+$pdf    = $normal->pdf($X);
 ```
 
 ### Probability - Distribution Tables
@@ -980,7 +1266,7 @@ use MathPHP\Probability\Distribution\Table;
 
 // Provided solely for completeness' sake.
 // It is statistics tradition to provide these tables.
-// Math PHP has dynamic distribution CDF functions you can use instead.
+// MathPHP has dynamic distribution CDF functions you can use instead.
 
 // Standard Normal Table (Z Table)
 $table       = Table\StandardNormal::Z_SCORES;
@@ -1099,6 +1385,10 @@ $lazy_caterer = Advanced::lazyCaterers($n);
 // Magic squares series (magic constants; magic sums)
 $magic_squares = Advanced::magicSquares($n);
 // [0, 1, 5, 15, 34, 65] - Indexed from 0
+
+// Perfect numbers
+$perfect_numbers = Advanced::perfectNumbers($n);
+// [6, 28, 496, 8128, 33550336, 8589869056] - Indexed from 0
 
 // Perfect powers sequence
 $perfect_powers = Advanced::perfectPowers($n);
@@ -1293,6 +1583,10 @@ $mean   = Average::mean($numbers);
 $median = Average::median($numbers);
 $mode   = Average::mode($numbers); // Returns an array — may be multimodal
 
+// Weighted mean
+$weights       = [12, 1, 23, 6, 12, 26, 21, 12, 1];
+$weighted_mean = Average::weightedMean($numbers, $weights)
+
 // Other means of a list of numbers
 $geometric_mean      = Average::geometricMean($numbers);
 $harmonic_mean       = Average::harmonicMean($numbers);
@@ -1385,11 +1679,18 @@ $Y = [2, 3, 4, 4, 6];
 // Covariance
 $σxy = Correlation::covariance($X, $Y);  // Has optional parameter to set population (defaults to sample covariance)
 
+// Weighted covariance
+$w    = [2, 3, 1, 1, 5];
+$σxyw = Correlation::weightedCovariance($X, $Y, $w);
+
 // r - Pearson product-moment correlation coefficient (Pearson's r)
 $r = Correlation::r($X, $Y);  // Has optional parameter to set population (defaults to sample correlation coefficient)
 
+// Weighted correlation coefficient
+$rw = Correlation::weightedCorrelationCoefficient($X, $Y, $w);
+
 // R² - Coefficient of determination
-$R² = Correlation::R2($X, $Y);  // Has optional parameter to set population (defaults to sample coefficient of determination)
+$R² = Correlation::r2($X, $Y);  // Has optional parameter to set population (defaults to sample coefficient of determination)
 
 // τ - Kendall rank correlation coefficient (Kendall's tau)
 $τ = Correlation::kendallsTau($X, $Y);
@@ -1403,10 +1704,16 @@ print_r($stats);
 /* Array (
     [cov] => 2.25
     [r]   => 0.95940322360025
-    [R2]  => 0.92045454545455
+    [r2]  => 0.92045454545455
     [tau] => 0.94868329805051
     [rho] => 0.975
 ) */
+
+// Confidence ellipse - create an ellipse surrounding the data at a specified standard deviation
+$sd           = 1;
+$num_points   = 11; // Optional argument specifying number of points of the ellipse
+$ellipse_data = Correlation::confidenceEllipse($X, $Y, $sd, $num_points);
+
 ```
 
 ### Statistics - Descriptive
@@ -1427,13 +1734,17 @@ $S² = Descriptive::sampleVariance($numbers);     // n - 1 degrees of freedom
 $df = 5;                                    // degrees of freedom
 $S² = Descriptive::variance($numbers, $df); // can specify custom degrees of freedom
 
-// Standard deviation (Uses population variance)
+// Weighted sample variance
+$weights = [0.1, 0.2, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1];
+$σ²w     = Descriptive::weightedSampleVariance($numbers, $weights, $biased = false);
+
+// Standard deviation (For a sample; uses sample variance)
 $σ = Descriptive::sd($numbers);                // same as standardDeviation;
 $σ = Descriptive::standardDeviation($numbers); // same as sd;
 
-// SD+ (Standard deviation for a sample; uses sample variance)
-$SD＋ = Descriptive::sd($numbers, Descriptive::SAMPLE); // SAMPLE constant = true
-$SD＋ = Descriptive::standardDeviation($numbers, true); // same as sd with SAMPLE constant
+// SD+ (Standard deviation for a population; uses population variance)
+$SD＋ = Descriptive::sd($numbers, Descriptive::POPULATION); // POPULATION constant = true
+$SD＋ = Descriptive::standardDeviation($numbers, true);     // same as sd with POPULATION constant
 
 // Coefficient of variation (cᵥ)
 $cᵥ = Descriptive::coefficientOfVariation($numbers);
@@ -1450,7 +1761,7 @@ $quartiles = Descriptive::quartilesInclusive($numbers);
 
 // IQR - Interquartile range
 $IQR = Descriptive::interquartileRange($numbers); // Same as IQR; has optional parameter to specify quartile method.
-$IQR = Descriptive::IQR($numbers);                // Same as interquartileRange; has optional parameter to specify quartile method.
+$IQR = Descriptive::iqr($numbers);                // Same as interquartileRange; has optional parameter to specify quartile method.
 
 // Percentiles
 $twentieth_percentile    = Descriptive::percentile($numbers, 20);
@@ -1621,7 +1932,43 @@ $LL = Experiment::likelihoodRatio($a, $b, $c, $d);
 $sensitivity = 0.67;
 $specificity = 0.91;
 $LL          = Experiment::likelihoodRatioSS($sensitivity, $specificity);
+```
 
+### Statistics - Kernel Density Estimation
+```php
+use MathPHP\Statistics\KernelDensityEstimation
+
+$data = [-2.76, -1.09, -0.5, -0.15, 0.22, 0.69, 1.34, 1.75];
+$x    = 0.5;
+
+// Density estimator with default bandwidth (normal distribution approximation) and kernel function (standard normal)
+$kde     = new KernelDensityEstimation($data);
+$density = $kde->evaluate($x)
+
+// Custom bandwidth
+$h = 0.1;
+$kde->setBandwidth($h);
+
+// Library of built-in kernel functions
+$kde->setKernelFunction(KernelDensityEstimation::STANDARD_NORMAL);
+$kde->setKernelFunction(KernelDensityEstimation::NORMAL);
+$kde->setKernelFunction(KernelDensityEstimation::UNIFORM);
+$kde->setKernelFunction(KernelDensityEstimation::TRIANGULAR);
+$kde->setKernelFunction(KernelDensityEstimation::EPANECHNIKOV);
+$kde->setKernelFunction(KernelDensityEstimation::TRICUBE);
+
+// Set custom kernel function (user-provided callable)
+$kernel = function ($x) {
+  if (abs($x) > 1) {
+      return 0;
+  } else {
+      return 70 / 81 * ((1 - abs($x) ** 3) ** 3);
+  }
+};
+$kde->setKernelFunction($kernel);
+
+// All customization optionally can be done in the constructor
+$kde = new KernelDesnsityEstimation($data, $h, $kernel);
 ```
 
 ### Statistics - Random Variables
@@ -1639,14 +1986,14 @@ $third_central_moment  = RandomVariable::centralMoment($X, 3);
 $skewness = RandomVariable::skewness($X);            // general method of calculating skewness
 $skewness = RandomVariable::populationSkewness($X);  // similar to Excel's SKEW.P
 $skewness = RandomVariable::sampleSkewness($X);      // similar to Excel's SKEW
-$SES      = RandomVariable::SES(count($X));          // standard error of skewness
+$SES      = RandomVariable::ses(count($X));          // standard error of skewness
 
 // Kurtosis (excess)
 $kurtosis    = RandomVariable::kurtosis($X);
 $platykurtic = RandomVariable::isPlatykurtic($X); // true if kurtosis is less than zero
 $leptokurtic = RandomVariable::isLeptokurtic($X); // true if kurtosis is greater than zero
 $mesokurtic  = RandomVariable::isMesokurtic($X);  // true if kurtosis is zero
-$SEK         = RandomVariable::SEK(count($X));    // standard error of kurtosis
+$SEK         = RandomVariable::sek(count($X));    // standard error of kurtosis
 
 // Standard error of the mean (SEM)
 $sem = RandomVariable::standardErrorOfTheMean($X); // same as sem
@@ -1667,31 +2014,31 @@ use MathPHP\Statistics\Regression;
 $points = [[1,2], [2,3], [4,5], [5,7], [6,8]];
 
 // Simple linear regression (least squares method)
-$regression = new Regresion\Linear($points);
+$regression = new Regression\Linear($points);
 $parameters = $regression->getParameters();          // [m => 1.2209302325581, b => 0.6046511627907]
 $equation   = $regression->getEquation();            // y = 1.2209302325581x + 0.6046511627907
 $y          = $regression->evaluate(5);              // Evaluate for y at x = 5 using regression equation
-$ci         = $regression->CI(5, 0.5);               // Confidence interval for x = 5 with p-value of 0.5
-$pi         = $regression->PI(5, 0.5);               // Prediction interval for x = 5 with p-value of 0.5; Optional number of trials parameter.
+$ci         = $regression->ci(5, 0.5);               // Confidence interval for x = 5 with p-value of 0.5
+$pi         = $regression->pi(5, 0.5);               // Prediction interval for x = 5 with p-value of 0.5; Optional number of trials parameter.
 $Ŷ          = $regression->yHat();
 $r          = $regression->r();                      // same as correlationCoefficient
 $r²         = $regression->r2();                     // same as coefficientOfDetermination
 $se         = $regression->standardErrors();         // [m => se(m), b => se(b)]
 $t          = $regression->tValues();                // [m => t, b => t]
 $p          = $regression->tProbability();           // [m => p, b => p]
-$F          = $regression->FStatistic();
-$p          = $regression->FProbability();
+$F          = $regression->fStatistic();
+$p          = $regression->fProbability();
 $h          = $regression->leverages();
 $e          = $regression->residuals();
 $D          = $regression->cooksD();
-$DFFITS     = $regression->DFFITS();
+$DFFITS     = $regression->dffits();
 $SStot      = $regression->sumOfSquaresTotal();
 $SSreg      = $regression->sumOfSquaresRegression();
 $SSres      = $regression->sumOfSquaresResidual();
 $MSR        = $regression->meanSquareRegression();
 $MSE        = $regression->meanSquareResidual();
 $MSTO       = $regression->meanSquareTotal();
-$error      = $regression->errorSD();                // Standard error of the residuals
+$error      = $regression->errorSd();                // Standard error of the residuals
 $V          = $regression->regressionVariance();
 $n          = $regression->getSampleSize();          // 5
 $points     = $regression->getPoints();              // [[1,2], [2,3], [4,5], [5,7], [6,8]]
@@ -1701,7 +2048,7 @@ $ν          = $regression->degreesOfFreedom();
 
 // Linear regression through a fixed point (least squares method)
 $force_point = [0,0];
-$regression  = new Regresion\LinearThroughPoint($points, $force_point);
+$regression  = new Regression\LinearThroughPoint($points, $force_point);
 $parameters  = $regression->getParameters();
 $equation    = $regression->getEquation();
 $y           = $regression->evaluate(5);
@@ -1711,28 +2058,28 @@ $r²          = $regression->r2();
  ⋮                     ⋮
 
 // Theil–Sen estimator (Sen's slope estimator, Kendall–Theil robust line)
-$regression  = new Regresion\TheilSen($points);
+$regression  = new Regression\TheilSen($points);
 $parameters  = $regression->getParameters();
 $equation    = $regression->getEquation();
 $y           = $regression->evaluate(5);
  ⋮                     ⋮
 
 // Use Lineweaver-Burk linearization to fit data to the Michaelis–Menten model: y = (V * x) / (K + x)
-$regression  = new Regresion\LineweaverBurk($points);
+$regression  = new Regression\LineweaverBurk($points);
 $parameters  = $regression->getParameters();  // [V, K]
 $equation    = $regression->getEquation();    // y = Vx / (K + x)
 $y           = $regression->evaluate(5);
  ⋮                     ⋮
 
 // Use Hanes-Woolf linearization to fit data to the Michaelis–Menten model: y = (V * x) / (K + x)
-$regression  = new Regresion\HanesWoolf($points);
+$regression  = new Regression\HanesWoolf($points);
 $parameters  = $regression->getParameters();  // [V, K]
 $equation    = $regression->getEquation();    // y = Vx / (K + x)
 $y           = $regression->evaluate(5);
  ⋮                     ⋮
 
 // Power law regression - power curve (least squares fitting)
-$regression = new Regresion\PowerLaw($points);
+$regression = new Regression\PowerLaw($points);
 $parameters = $regression->getParameters();   // [a => 56.483375436574, b => 0.26415375648621]
 $equation   = $regression->getEquation();     // y = 56.483375436574x^0.26415375648621
 $y          = $regression->evaluate(5);
@@ -1741,7 +2088,7 @@ $y          = $regression->evaluate(5);
 // LOESS - Locally Weighted Scatterplot Smoothing (Local regression)
 $α          = 1/3;                         // Smoothness parameter
 $λ          = 1;                           // Order of the polynomial fit
-$regression = new Regresion\LOESS($points, $α, $λ);
+$regression = new Regression\LOESS($points, $α, $λ);
 $y          = $regression->evaluate(5);
 $Ŷ          = $regression->yHat();
  ⋮                     ⋮
@@ -1782,36 +2129,76 @@ $z  = Significance::zTestTwoSample($μ₁, $μ₂, $n₁, $n₂, $σ₁, $σ₂)
 $M = 8; // Sample mean
 $μ = 7; // Population mean
 $σ = 1; // Population SD
-$z = Significance::zScore($μ, $σ, $x);
+$z = Significance::zScore($M, $μ, $σ);
 
-// T test - One sample (t and p values)
-$Hₐ = 280; // Alternate hypothesis (M Sample mean)
-$s  = 50;  // SD of sample
-$n  = 15;  // Sample size
-$H₀ = 300; // Null hypothesis (μ₀ Population mean)
-$t  = Significance::tTestOneSample($Hₐ, $s, $n, $H₀);
-/* [
-  't'  => -1.549, // t score
-  'p1' => 0.0718, // one-tailed p value
-  'p2' => 0.1437, // two-tailed p value
-] */
+// T test - One sample (from sample data)
+$a     = [3, 4, 4, 5, 5, 5, 6, 6, 7, 8]; // Data set
+$H₀    = 300;                            // Null hypothesis (μ₀ Population mean)
+$tTest = Significance::tTest($a, $H₀)
+print_r($tTest);
+/* Array (
+    [t]    => 0.42320736951516  // t score
+    [df]   => 9                 // degrees of freedom
+    [p1]   => 0.34103867713806  // one-tailed p value
+    [p2]   => 0.68207735427613  // two-tailed p value
+    [mean] => 5.3               // sample mean
+    [sd]   => 1.4944341180973   // standard deviation
+) */
 
-// T test - Two samples (t and p values)
-$μ₁ = 42.14; // Sample mean of population 1
-$μ₂ = 43.23; // Sample mean of population 2
-$n₁ = 10;    // Sample size of population 1
-$n₂ = 10;    // Sample size of population 2
-$σ₁ = 0.683; // Standard deviation of sample mean 1
-$σ₂ = 0.750; // Standard deviation of sample mean 2
-$t  = Significance::tTestTwoSample($μ₁, $μ₂, $n₁, $n₂, $σ₁, $σ₂);
-/* [
-  't'  => -3.3978,  // t score
-  'p1' => 0.001604, // one-tailed p value
-  'p2' => 0.181947, // two-tailed p value
+// T test - One sample (from summary data)
+$Hₐ    = 280; // Alternate hypothesis (M Sample mean)
+$s     = 50;  // Standard deviation of sample
+$n     = 15;  // Sample size
+$H₀    = 300; // Null hypothesis (μ₀ Population mean)
+$tTest = Significance::tTestOneSampleFromSummaryData($Hₐ, $s, $n, $H₀);
+print_r($tTest);
+/* Array (
+    [t]    => -1.549193338483    // t score
+    [df]   => 14                 // degreees of freedom
+    [p1]   => 0.071820000122611  // one-tailed p value
+    [p2]   => 0.14364000024522   // two-tailed p value
+    [mean] => 280                // sample mean
+    [sd]   => 50                 // standard deviation
+) */
+
+// T test - Two samples (from sample data)
+$x₁    = [27.5, 21.0, 19.0, 23.6, 17.0, 17.9, 16.9, 20.1, 21.9, 22.6, 23.1, 19.6, 19.0, 21.7, 21.4];
+$x₂    = [27.1, 22.0, 20.8, 23.4, 23.4, 23.5, 25.8, 22.0, 24.8, 20.2, 21.9, 22.1, 22.9, 20.5, 24.4];
+$tTest = Significance::tTest($x₁, $x₂);
+print_r($tTest);
+/* Array (
+    [t]     => -2.4553600286929   // t score
+    [df]    => 24.988527070145    // degrees of freedom
+    [p1]    => 0.010688914613979  // one-tailed p value
+    [p2]    => 0.021377829227958  // two-tailed p value
+    [mean1] => 20.82              // mean of sample x₁
+    [mean2] => 22.98667           // mean of sample x₂
+    [sd1]   => 2.804894           // standard deviation of x₁
+    [sd2]   => 1.952605           // standard deviation of x₂
+) */
+
+// T test - Two samples (from summary data)
+$μ₁    = 42.14; // Sample mean of population 1
+$μ₂    = 43.23; // Sample mean of population 2
+$n₁    = 10;    // Sample size of population 1
+$n₂    = 10;    // Sample size of population 2
+$σ₁    = 0.683; // Standard deviation of sample mean 1
+$σ₂    = 0.750; // Standard deviation of sample mean 2
+$tTest = Significance::tTestTwoSampleFromSummaryData($μ₁, $μ₂, $n₁, $n₂, $σ₁, $σ₂);
+print_r($tTest);
+/* Array (
+   [t] => -3.3972305988708     // t score
+   [df] => 17.847298548027     // degrees of freedom
+   [p1] => 0.0016211251126198  // one-tailed p value
+   [p2] => 0.0032422502252396  // two-tailed p value
+   [mean1] => 42.14
+   [mean2] => 43.23
+   [sd1] => 0.6834553
+   [sd2] => 0.7498889
 ] */
 
 // T score
-$Hₐ = 280; //Alternate hypothesis (M Sample mean)
+$Hₐ = 280; // Alternate hypothesis (M Sample mean)
 $s  = 50;  // SD of sample
 $n  = 15;  // Sample size
 $H₀ = 300; // Null hypothesis (μ₀ Population mean)
@@ -1824,8 +2211,21 @@ $χ²       = Significance::chiSquaredTest($observed, $expected);
 // ['chi-square' => 14.2, 'p' => 0.014388]
 ```
 
+### Trigonometry
+```php
+use MathPHP\Trigonometry;
+
+$n      = 9;
+$points = Trigonometry::unitCircle($n); // Produce n number of points along the unit circle
+```
+
 Unit Tests
 ----------
+
+Beyond 100% code coverage!
+
+MathPHP has thousands of unit tests testing individual functions directly with numerous data inputs to achieve 100% test coverage.
+MathPHP unit tests also test mathematical axioms which indirectly test the same functions in multiple different ways ensuring that those math properties all work out according to the axioms.
 
 ```bash
 $ cd tests
@@ -1838,7 +2238,7 @@ $ phpunit
 Standards
 ---------
 
-Math PHP conforms to the following standards:
+MathPHP conforms to the following standards:
 
  * PSR-1 - Basic coding standard (http://www.php-fig.org/psr/psr-1/)
  * PSR-2 - Coding style guide (http://www.php-fig.org/psr/psr-2/)
@@ -1847,4 +2247,4 @@ Math PHP conforms to the following standards:
 License
 -------
 
-Math PHP is licensed under the MIT License.
+MathPHP is licensed under the MIT License.

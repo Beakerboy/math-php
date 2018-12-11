@@ -1,7 +1,11 @@
 <?php
-namespace MathPHP\LinearAlgebra;
+namespace MathPHP\Tests\LinearAlgebra;
 
-class VectorTest extends \PHPUnit_Framework_TestCase
+use MathPHP\LinearAlgebra\Vector;
+use MathPHP\LinearAlgebra\Matrix;
+use MathPHP\Exception;
+
+class VectorTest extends \PHPUnit\Framework\TestCase
 {
 
     public function setUp()
@@ -12,7 +16,7 @@ class VectorTest extends \PHPUnit_Framework_TestCase
 
     public function testConstructor()
     {
-        $this->assertInstanceOf('MathPHP\LinearAlgebra\Vector', $this->vector);
+        $this->assertInstanceOf(Vector::class, $this->vector);
     }
 
     public function testGetVector()
@@ -51,7 +55,7 @@ class VectorTest extends \PHPUnit_Framework_TestCase
 
     public function testGetException()
     {
-        $this->setExpectedException('MathPHP\Exception\VectorException');
+        $this->expectException(Exception\VectorException::class);
         $this->vector->get(100);
     }
 
@@ -66,7 +70,7 @@ class VectorTest extends \PHPUnit_Framework_TestCase
 
     public function testArrayAccessInterfaceOffsetSet()
     {
-        $this->setExpectedException('MathPHP\Exception\VectorException');
+        $this->expectException(Exception\VectorException::class);
         $this->vector[0] = 1;
     }
 
@@ -77,7 +81,7 @@ class VectorTest extends \PHPUnit_Framework_TestCase
 
     public function testArrayAccessOffsetUnsetException()
     {
-        $this->setExpectedException('MathPHP\Exception\VectorException');
+        $this->expectException(Exception\VectorException::class);
         unset($this->vector[0]);
     }
 

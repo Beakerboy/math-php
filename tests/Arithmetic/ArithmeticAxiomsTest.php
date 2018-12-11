@@ -1,5 +1,7 @@
 <?php
-namespace MathPHP;
+namespace MathPHP\Tests\Arithmetic;
+
+use MathPHP\Arithmetic;
 
 /**
  * Tests of arithmetic axioms
@@ -16,11 +18,11 @@ namespace MathPHP;
  *    - dr(a×b) = dr(dr(a) × dr(b))
  *    - dr(n) = 0 ⇔ n = 9m for m = 1, 2, 3 ⋯
  */
-class ArithmeticAxiomsTest extends \PHPUnit_Framework_TestCase
+class ArithmeticAxiomsTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Axiom: dr(n) = n ⇔ n ∈ {0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
-     * The digital root of {\displaystyle n} n is {\displaystyle n} n itself if and only if the number has exactly one digit.
+     * The digital root of n is n itself if and only if the number has exactly one digit.
      */
     public function testDigitalRootEqualsN()
     {

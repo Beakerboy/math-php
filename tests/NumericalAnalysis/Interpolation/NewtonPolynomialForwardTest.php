@@ -1,7 +1,9 @@
 <?php
-namespace MathPHP\NumericalAnalysis\Interpolation;
+namespace MathPHP\Tests\NumericalAnalysis\Interpolation;
 
-class NewtonPolynomialForwardTest extends \PHPUnit_Framework_TestCase
+use MathPHP\NumericalAnalysis\Interpolation\NewtonPolynomialForward;
+
+class NewtonPolynomialForwardTest extends \PHPUnit\Framework\TestCase
 {
     public function testPolynomialAgrees()
     {

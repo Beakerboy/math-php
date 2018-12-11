@@ -1,14 +1,17 @@
 <?php
-namespace MathPHP\Probability\Distribution\Discrete;
+namespace MathPHP\Tests\Probability\Distribution\Discrete;
 
-class NegativeBinomialTest extends \PHPUnit_Framework_TestCase
+use MathPHP\Probability\Distribution\Discrete\NegativeBinomial;
+
+class NegativeBinomialTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @dataProvider dataProviderForPMF
      */
     public function testPMF(int $x, int $r, float $P, float $pmf)
     {
-        $this->assertEquals($pmf, NegativeBinomial::PMF($x, $r, $P), '', 0.001);
+        $negativeBinomial = new NegativeBinomial($r, $P);
+        $this->assertEquals($pmf, $negativeBinomial->pmf($x), '', 0.001);
     }
 
     /**

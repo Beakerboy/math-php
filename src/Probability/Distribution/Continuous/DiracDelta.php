@@ -1,9 +1,6 @@
 <?php
 namespace MathPHP\Probability\Distribution\Continuous;
 
-use MathPHP\Functions\Special;
-use MathPHP\Functions\Support;
-
 /**
  * Dirac Delta Function
  * https://en.wikipedia.org/wiki/Dirac_delta_function
@@ -12,16 +9,31 @@ class DiracDelta extends Continuous
 {
     /**
      * Distribution parameter bounds limits
+     *
+     * @var array
+     */
+    const PARAMETER_LIMITS = [];
+
+    /**
+     * Distribution support bounds limits
      * x  ∈ (-∞,∞)
      *
      * @var array
      */
-    const LIMITS = [
+    const SUPPORT_LIMITS = [
         'x'  => '(-∞,∞)',
     ];
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        parent::__construct();
+    }
+
     /**
      * Probability density function
-     *
      *
      *
      *          /‾
@@ -31,11 +43,11 @@ class DiracDelta extends Continuous
      *          \_
      *
      *
-     * @param number $x
+     * @param float $x
      *
-     * @return number probability
+     * @return float probability
      */
-    public static function PDF($x)
+    public function pdf(float $x): float
     {
         if ($x == 0) {
             return \INF;
@@ -43,6 +55,7 @@ class DiracDelta extends Continuous
             return 0;
         }
     }
+
     /**
      * Cumulative distribution function
      * https://en.wikipedia.org/wiki/Heaviside_step_function
@@ -51,11 +64,12 @@ class DiracDelta extends Continuous
      *  |   δ(x) dx = 1
      * \|-∞
      *
-     * @param number $x
+     * @param float $x
      * @todo how to handle x = 0, depending on context, some say CDF=.5 @ x=0
-     * @return number
+     *
+     * @return int
      */
-    public static function CDF($x)
+    public function cdf(float $x): int
     {
         if ($x >= 0) {
             return 1;
@@ -66,8 +80,39 @@ class DiracDelta extends Continuous
     /**
      * The inverse of the CDF function
      *
+     * @return int
      */
-    public static function inverse($p, ...$params)
+    public function inverse(float $p): int
+    {
+        return 0;
+    }
+
+    /**
+     * Mean of the distribution
+     *
+     * @return int
+     */
+    public function mean(): int
+    {
+        return 0;
+    }
+
+    /**
+     * Median of the distribution
+     *
+     * @return int
+     */
+    public function median(): int
+    {
+        return 0;
+    }
+
+    /**
+     * Mode of the distribution
+     *
+     * @return int
+     */
+    public function mode(): int
     {
         return 0;
     }

@@ -1,17 +1,25 @@
 <?php
-namespace MathPHP\Statistics\Regression;
+namespace MathPHP\Tests\Statistics\Regression;
 
-class LinearThroughPointTest extends \PHPUnit_Framework_TestCase
+use MathPHP\Statistics\Regression\LinearThroughPoint;
+
+class LinearThroughPointTest extends \PHPUnit\Framework\TestCase
 {
+    /**
+     * @testCase constructor
+     */
     public function testConstructor()
     {
         $points = [ [1,2], [2,3], [4,5], [5,7], [6,8] ];
         $force = [0,0];
         $regression = new LinearThroughPoint($points, $force);
-        $this->assertInstanceOf('MathPHP\Statistics\Regression\Regression', $regression);
-        $this->assertInstanceOf('MathPHP\Statistics\Regression\LinearThroughPoint', $regression);
+        $this->assertInstanceOf(\MathPHP\Statistics\Regression\Regression::class, $regression);
+        $this->assertInstanceOf(\MathPHP\Statistics\Regression\LinearThroughPoint::class, $regression);
     }
 
+    /**
+     * @testCase getPoints
+     */
     public function testGetPoints()
     {
         $points = [ [1,2], [2,3], [4,5], [5,7], [6,8] ];
@@ -20,6 +28,9 @@ class LinearThroughPointTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($points, $regression->getPoints());
     }
 
+    /**
+     * @testCase getXs
+     */
     public function testGetXs()
     {
         $points = [ [1,2], [2,3], [4,5], [5,7], [6,8] ];
@@ -28,6 +39,9 @@ class LinearThroughPointTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals([1,2,4,5,6], $regression->getXs());
     }
 
+    /**
+     * @testCase getYs
+     */
     public function testGetYs()
     {
         $points = [ [1,2], [2,3], [4,5], [5,7], [6,8] ];
@@ -37,8 +51,9 @@ class LinearThroughPointTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @testCase     getEquation - Equation matches pattern y = mx + b
      * @dataProvider dataProviderForEquation
-     * Equation matches pattern y = mx + b
+     * @param        array $points
      */
     public function testGetEquation(array $points)
     {
@@ -47,7 +62,10 @@ class LinearThroughPointTest extends \PHPUnit_Framework_TestCase
         $this->assertRegExp('/^y = [-]?\d+[.]\d+x [+\-] \d+[.]\d+$/', $regression->getEquation());
     }
 
-    public function dataProviderForEquation()
+    /**
+     * @return array [points]
+     */
+    public function dataProviderForEquation(): array
     {
         return [
             [ [ [0,0], [1,1], [2,2], [3,3], [4,4] ] ],
@@ -57,9 +75,14 @@ class LinearThroughPointTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @testCase     getParameters
      * @dataProvider dataProviderForParameters
+     * @param        array $points
+     * @param        array $force_point
+     * @param        float $m
+     * @param        float $b
      */
-    public function testGetParameters(array $points, array $force_point, $m, $b)
+    public function testGetParameters(array $points, array $force_point, float $m, float $b)
     {
         $regression = new LinearThroughPoint($points, $force_point);
         $parameters = $regression->getParameters();
@@ -67,7 +90,10 @@ class LinearThroughPointTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($b, $parameters['b'], '', 0.0001);
     }
 
-    public function dataProviderForParameters()
+    /**
+     * @return array [points, force_point, m, b]
+     */
+    public function dataProviderForParameters(): array
     {
         return [
             [
@@ -90,16 +116,22 @@ class LinearThroughPointTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @testCase     getSampleSize
      * @dataProvider dataProviderForSampleSize
+     * @param        array $points
+     * @param        int   $n
      */
-    public function testGetSampleSize(array $points, $n)
+    public function testGetSampleSize(array $points, int $n)
     {
         $force = [0,0];
         $regression = new LinearThroughPoint($points, $force);
         $this->assertEquals($n, $regression->getSampleSize());
     }
 
-    public function dataProviderForSampleSize()
+    /**
+     * @return array [points, n]
+     */
+    public function dataProviderForSampleSize(): array
     {
         return [
             [
@@ -112,16 +144,23 @@ class LinearThroughPointTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @testCase     evaluate
      * @dataProvider dataProviderForEvaluate
+     * @param        array $points
+     * @param        float $x
+     * @param        float $y
      */
-    public function testEvaluate(array $points, $x, $y)
+    public function testEvaluate(array $points, float $x, float $y)
     {
         $force = [0,0];
         $regression = new LinearThroughPoint($points, $force);
         $this->assertEquals($y, $regression->evaluate($x), '', 0.0001);
     }
 
-    public function dataProviderForEvaluate()
+    /**
+     * @return array [points, x, y]
+     */
+    public function dataProviderForEvaluate(): array
     {
         return [
             [
@@ -146,17 +185,26 @@ class LinearThroughPointTest extends \PHPUnit_Framework_TestCase
             ],
         ];
     }
-    
+
     /**
+     * @testCase     ci
      * @dataProvider dataProviderForCI
+     * @param        array $points
+     * @param        float $x
+     * @param        float $p
+     * @param        float $ci
+     * @throws       \Exception
      */
-    public function testCI(array $points, $x, $p, $ci)
+    public function testCI(array $points, float $x, float $p, float $ci)
     {
         $regression = new LinearThroughPoint($points);
-        $this->assertEquals($ci, $regression->CI($x, $p), '', .0000001);
+        $this->assertEquals($ci, $regression->ci($x, $p), '', .0000001);
     }
-    
-    public function dataProviderForCI()
+
+    /**
+     * @return array [points, x, p, ci]
+     */
+    public function dataProviderForCI(): array
     {
         return [
             [
@@ -173,17 +221,27 @@ class LinearThroughPointTest extends \PHPUnit_Framework_TestCase
             ],
         ];
     }
-    
+
     /**
+     * @testCase     PI
      * @dataProvider dataProviderForPI
+     * @param        array $points
+     * @param        float $x
+     * @param        float $p
+     * @param        float $q
+     * @param        float $pi
+     * @throws       \Exception
      */
-    public function testPI(array $points, $x, $p, $q, $pi)
+    public function testPI(array $points, float $x, float $p, float $q, float $pi)
     {
         $regression = new LinearThroughPoint($points);
-        $this->assertEquals($pi, $regression->PI($x, $p, $q), '', .0000001);
+        $this->assertEquals($pi, $regression->pi($x, $p, $q), '', .0000001);
     }
-    
-    public function dataProviderForPI()
+
+    /**
+     * @return array [points, x, p, q, pi]
+     */
+    public function dataProviderForPI(): array
     {
         return [
             [
@@ -200,19 +258,26 @@ class LinearThroughPointTest extends \PHPUnit_Framework_TestCase
             ],
         ];
     }
-    
+
     /**
+     * @testCase     sum of squares
      * @dataProvider dataProviderForSumSquares
+     * @param        array $points
+     * @param        array $force
+     * @param        array $sums
      */
-    public function testSumSquares(array $points, $force, $sums)
+    public function testSumSquares(array $points, array $force, array $sums)
     {
         $regression = new LinearThroughPoint($points, $force);
         $this->assertEquals($sums['sse'], $regression->sumOfSquaresResidual(), '', .0000001);
         $this->assertEquals($sums['ssr'], $regression->sumOfSquaresRegression(), '', .0000001);
         $this->assertEquals($sums['sst'], $regression->sumOfSquaresTotal(), '', .0000001);
     }
-    
-    public function dataProviderForSumSquares()
+
+    /**
+     * @return array [points, force, sums]
+     */
+    public function dataProviderForSumSquares(): array
     {
         return [
             [

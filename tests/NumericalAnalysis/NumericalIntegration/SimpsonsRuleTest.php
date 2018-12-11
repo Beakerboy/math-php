@@ -1,8 +1,9 @@
 <?php
+namespace MathPHP\Tests\NumericalAnalysis\NumericalIntegration;
 
-namespace MathPHP\NumericalAnalysis\NumericalIntegration;
+use MathPHP\NumericalAnalysis\NumericalIntegration\SimpsonsRule;
 
-class SimpsonsRuleTest extends \PHPUnit_Framework_TestCase
+class SimpsonsRuleTest extends \PHPUnit\Framework\TestCase
 {
     public function testapproximatePolynomial()
     {
@@ -49,14 +50,14 @@ class SimpsonsRuleTest extends \PHPUnit_Framework_TestCase
     {
         // There are not even even number of subintervals, or
         // equivalently, there are not an add number of points
-        $this->setExpectedException('\Exception');
+        $this->expectException('\Exception');
         SimpsonsRule::approximate([[0,0], [4,4], [2,2], [6,6]]);
     }
 
     public function testNonConstantSpacingException()
     {
         // There is not constant spacing between points
-        $this->setExpectedException('\Exception');
+        $this->expectException('\Exception');
         SimpsonsRule::approximate([[0,0], [3,3], [2,2]]);
     }
 }

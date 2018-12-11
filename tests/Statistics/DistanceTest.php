@@ -1,19 +1,29 @@
 <?php
-namespace MathPHP\Statistics;
+namespace MathPHP\Tests\Statistics;
 
-class DistanceTest extends \PHPUnit_Framework_TestCase
+use MathPHP\Statistics\Distance;
+use MathPHP\Exception;
+
+class DistanceTest extends \PHPUnit\Framework\TestCase
 {
     /**
+     * @testCase     bhattacharyyaDistance
      * @dataProvider dataProviderForBhattacharyyaDistance
+     * @param        array $p
+     * @param        array $q
+     * @param        float $expected
      */
-    public function testBhattacharyyaDistance(array $p, array $q, $expected)
+    public function testBhattacharyyaDistance(array $p, array $q, float $expected)
     {
         $BD = Distance::bhattacharyyaDistance($p, $q);
 
         $this->assertEquals($expected, $BD, '', 0.0001);
     }
 
-    public function dataProviderForBhattacharyyaDistance()
+    /**
+     * @return array [p, q, distance]
+     */
+    public function dataProviderForBhattacharyyaDistance(): array
     {
         return [
             [
@@ -34,37 +44,50 @@ class DistanceTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
+    /**
+     * @testCase bhattacharyyaDistance when arrays are different lengths
+     */
     public function testBhattacharyyaDistanceExceptionArraysDifferentLength()
     {
         $p = [0.4, 0.5, 0.1];
         $q = [0.2, 0.8];
 
-        $this->setExpectedException('MathPHP\Exception\BadDataException');
+        $this->expectException(Exception\BadDataException::class);
         Distance::bhattacharyyaDistance($p, $q);
     }
 
+    /**
+     * @testCase bhattacharyyaDistance when probabilities do not add up to one
+     */
     public function testBhattacharyyaDistanceExceptionNotProbabilityDistributionThatAddsUpToOne()
     {
         $p = [0.2, 0.2, 0.1];
         $q = [0.2, 0.4, 0.6];
 
-        $this->setExpectedException('MathPHP\Exception\BadDataException');
+        $this->expectException(Exception\BadDataException::class);
         Distance::bhattacharyyaDistance($p, $q);
     }
 
     /**
+     * @testCase     kullbackLeiblerDivergence
      * @dataProvider dataProviderForKullbackLeiblerDivergence
+     * @param        array $p
+     * @param        array $q
+     * @param        float $expected
      */
-    public function testKullbackLeiblerDivergence(array $p, array $q, $expected)
+    public function testKullbackLeiblerDivergence(array $p, array $q, float $expected)
     {
         $BD = Distance::kullbackLeiblerDivergence($p, $q);
 
         $this->assertEquals($expected, $BD, '', 0.0001);
     }
 
-    public function dataProviderForKullbackLeiblerDivergence()
+    /**
+     * Test data created using Python's scipi.stats.Distance
+     * @return array [p, q, distance]
+     */
+    public function dataProviderForKullbackLeiblerDivergence(): array
     {
-        // Test data created using Python's scipi.stats.Distance
         return [
             [
                 [0.5, 0.5],
@@ -94,37 +117,50 @@ class DistanceTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
+    /**
+     * @testCase kullbackLeiblerDivergence when arrays are different lengths
+     */
     public function testKullbackLeiblerDivergenceExceptionArraysDifferentLength()
     {
         $p = [0.4, 0.5, 0.1];
         $q = [0.2, 0.8];
 
-        $this->setExpectedException('MathPHP\Exception\BadDataException');
+        $this->expectException(Exception\BadDataException::class);
         Distance::kullbackLeiblerDivergence($p, $q);
     }
 
+    /**
+     * @testCase kullbackLeiblerDivergence when probabilities do not add up to one
+     */
     public function testKullbackLeiblerDivergenceExceptionNotProbabilityDistributionThatAddsUpToOne()
     {
         $p = [0.2, 0.2, 0.1];
         $q = [0.2, 0.4, 0.6];
 
-        $this->setExpectedException('MathPHP\Exception\BadDataException');
+        $this->expectException(Exception\BadDataException::class);
         Distance::kullbackLeiblerDivergence($p, $q);
     }
 
     /**
+     * @testCase     hellingerDistance
      * @dataProvider dataProviderForHellingerDistance
+     * @param        array $p
+     * @param        array $q
+     * @param        float $expected
      */
-    public function testHellingerDistance(array $p, array $q, $expected)
+    public function testHellingerDistance(array $p, array $q, float $expected)
     {
         $BD = Distance::hellingerDistance($p, $q);
 
         $this->assertEquals($expected, $BD, '', 0.0001);
     }
 
-    public function dataProviderForHellingerDistance()
+    /**
+     * Test data created with Python's numpy/scipy: norm(np.sqrt(p) - np.sqrt(q)) / np.sqrt(2)
+     * @return array [p, q, distance]
+     */
+    public function dataProviderForHellingerDistance(): array
     {
-        // Test data created with Python's numpy/scipy: norm(np.sqrt(p) - np.sqrt(q)) / np.sqrt(2)
         return [
             [
                 [0.2905, 0.4861, 0.2234],
@@ -154,40 +190,53 @@ class DistanceTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
+    /**
+     * @testCase hellingerDistance when the arrays are different lengths
+     */
     public function testHellingerDistanceExceptionArraysDifferentLength()
     {
         $p = [0.4, 0.5, 0.1];
         $q = [0.2, 0.8];
 
-        $this->setExpectedException('MathPHP\Exception\BadDataException');
+        $this->expectException(Exception\BadDataException::class);
         Distance::hellingerDistance($p, $q);
     }
 
+    /**
+     * @testCase hellingerDistance when the probabilities do not add up to one
+     */
     public function testHellingerDistanceExceptionNotProbabilityDistributionThatAddsUpToOne()
     {
         $p = [0.2, 0.2, 0.1];
         $q = [0.2, 0.4, 0.6];
 
-        $this->setExpectedException('MathPHP\Exception\BadDataException');
+        $this->expectException(Exception\BadDataException::class);
         Distance::hellingerDistance($p, $q);
     }
 
     /**
+     * @testCase     jensenShannonDivergence
      * @dataProvider dataProviderForJensenShannonDivergence
+     * @param        array $p
+     * @param        array $q
+     * @param        float $expected
      */
-    public function testJensenShannonDivergence(array $p, array $q, $expected)
+    public function testJensenShannonDivergence(array $p, array $q, float $expected)
     {
         $BD = Distance::jensenShannonDivergence($p, $q);
 
         $this->assertEquals($expected, $BD, '', 0.0001);
     }
 
-    public function dataProviderForJensenShannonDivergence()
+    /**
+     * Test data created with Python's numpy/scipi where p and q are numpy.arrays:
+     * def jsd(p, q):
+     *     M = (p + q) / 2
+     *     return (scipy.stats.Distance(p, M) + scipy.stats.Distance(q, M)) / 2
+     * @return array [p, q, distance]
+     */
+    public function dataProviderForJensenShannonDivergence(): array
     {
-        // Test data created with Python's numpy/scipi where p and q are numpy.arrays:
-        // def jsd(p, q):
-        //     M = (p + q) / 2
-        //     return (scipy.stats.Distance(p, M) + scipy.stats.Distance(q, M)) / 2
         return [
             [
                 [0.4, 0.6],
@@ -212,21 +261,27 @@ class DistanceTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
+    /**
+     * @testCase jensenShannonDivergence when the arrays are different lengths
+     */
     public function testJensenShannonDivergenceExceptionArraysDifferentLength()
     {
         $p = [0.4, 0.5, 0.1];
         $q = [0.2, 0.8];
 
-        $this->setExpectedException('MathPHP\Exception\BadDataException');
+        $this->expectException(Exception\BadDataException::class);
         Distance::jensenShannonDivergence($p, $q);
     }
 
+    /**
+     * @testCase jensenShannonDivergence when the probabilities do not add up to one
+     */
     public function testJensenShannonDivergenceExceptionNotProbabilityDistributionThatAddsUpToOne()
     {
         $p = [0.2, 0.2, 0.1];
         $q = [0.2, 0.4, 0.6];
 
-        $this->setExpectedException('MathPHP\Exception\BadDataException');
+        $this->expectException(Exception\BadDataException::class);
         Distance::jensenShannonDivergence($p, $q);
     }
 }

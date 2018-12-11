@@ -7,6 +7,34 @@ use MathPHP\Exception;
 class Integer
 {
     /**
+     * Detect if an integer is a perfect number.
+     * A perfect number is a positive integer that is equal to the sum of its proper positive divisors,
+     * that is, the sum of its positive divisors excluding the number itself
+     * @see https://en.wikipedia.org/wiki/Perfect_number
+     *
+     * @param  int $n
+     *
+     * @return bool
+     */
+    public static function isPerfectNumber(int $n): bool
+    {
+        if ($n <= 1) {
+            return false;
+        }
+
+        $∑  = 1;
+        $√n = sqrt($n);
+
+        for ($i = 2; $i <= $√n; $i++) {
+            if ($n % $i === 0) {
+                $∑ += $i + ($n / $i);
+            }
+        }
+
+        return $∑ === $n;
+    }
+
+    /**
      * Detect if an integer is a perfect power.
      * A perfect power is a positive integer that can be expressed as an integer power of another positive integer.
      * If n is a perfect power, then exists m > 1 and k > 1 such that mᵏ = n.
@@ -119,5 +147,29 @@ class Integer
     public static function coprime(int $a, int $b): bool
     {
         return (Algebra::gcd($a, $b) === 1);
+    }
+
+    /**
+     * Odd number
+     *
+     * @param  int $x
+     *
+     * @return bool true if x is odd; false otherwise
+     */
+    public static function isOdd(int $x): bool
+    {
+        return (abs($x) % 2) === 1;
+    }
+
+    /**
+     * Even number
+     *
+     * @param  int $x
+     *
+     * @return bool true if x is even; false otherwise
+     */
+    public static function isEven(int $x): bool
+    {
+        return (abs($x) % 2) === 0;
     }
 }

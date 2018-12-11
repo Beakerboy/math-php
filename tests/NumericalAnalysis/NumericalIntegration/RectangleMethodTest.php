@@ -1,8 +1,9 @@
 <?php
+namespace MathPHP\Tests\NumericalAnalysis\NumericalIntegration;
 
-namespace MathPHP\NumericalAnalysis\NumericalIntegration;
+use MathPHP\NumericalAnalysis\NumericalIntegration\RectangleMethod;
 
-class RectangleMethodTest extends \PHPUnit_Framework_TestCase
+class RectangleMethodTest extends \PHPUnit\Framework\TestCase
 {
     public function testSolvePolynomial()
     {

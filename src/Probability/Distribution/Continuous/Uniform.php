@@ -1,20 +1,52 @@
 <?php
 namespace MathPHP\Probability\Distribution\Continuous;
 
+use MathPHP\Exception\OutOfBoundsException;
+
 class Uniform extends Continuous
 {
     /**
      * Distribution parameter bounds limits
-     * x ∈ (-∞,∞)
      * a ∈ (-∞,∞)
      * b ∈ (-∞,∞)
      * @var array
      */
-    const LIMITS = [
-        'x' => '(-∞,∞)',
+    const PARAMETER_LIMITS = [
         'a' => '(-∞,∞)',
         'b' => '(-∞,∞)',
     ];
+
+    /**
+     * Distribution support bounds limits
+     * x ∈ (-∞,∞)
+     * @var array
+     */
+    const SUPPORT_LIMITS = [
+        'x' => '(-∞,∞)',
+    ];
+    
+    /** @var float Lower Bound Parameter */
+    protected $a;
+
+    /** @var float Upper Bound Parameter */
+    protected $b;
+
+    /**
+     * Constructor
+     *
+     * @param float $a lower bound parameter
+     * @param float $b upper bound parameter
+     *
+     * @throws OutOfBoundsException
+     */
+    public function __construct(float $a, float $b)
+    {
+        if ($b <= $a) {
+            throw new OutOfBoundsException("b must be > a: Given a:$a and b:$b");
+        }
+
+        parent::__construct($a, $b);
+    }
 
     /**
      * Continuous uniform distribution - probability desnsity function
@@ -26,15 +58,19 @@ class Uniform extends Continuous
      *
      * pdf = 0      for x < a, x > b
      *
-     * @param number $a lower boundary of the distribution
-     * @param number $b upper boundary of the distribution
-     * @param number $x percentile
+     * @param float $x percentile
+     *
+     * @return float
      */
-    public static function PDF($a, $b, $x)
+    public function pdf(float $x): float
     {
+        $a = $this->a;
+        $b = $this->b;
+
         if ($x < $a || $x > $b) {
             return 0;
         }
+
         return 1 / ($b - $a);
     }
     
@@ -50,18 +86,22 @@ class Uniform extends Continuous
      *
      * cdf = 1      x ≥ b
      *
-     * @param number $a lower boundary of the distribution
-     * @param number $b upper boundary of the distribution
-     * @param number $x percentile
+     * @param float $x percentile
+     *
+     * @return float
      */
-    public static function CDF($a, $b, $x)
+    public function cdf(float $x): float
     {
+        $a = $this->a;
+        $b = $this->b;
+
         if ($x < $a) {
             return 0;
         }
         if ($x >= $b) {
             return 1;
         }
+
         return ($x - $a) / ($b - $a);
     }
     
@@ -72,13 +112,52 @@ class Uniform extends Continuous
      * μ = -----
      *       2
      *
-     * @param number $a lower boundary of the distribution
-     * @param number $b upper boundary of the distribution
      *
-     * @return number
+     * @return float
      */
-    public static function mean($a, $b)
+    public function mean(): float
     {
-        return ($a + $b) / 2;
+        return ($this->a + $this->b) / 2;
+    }
+
+    /**
+     * Median of the distribution
+     *
+     *     a + b
+     * μ = -----
+     *       2
+     *
+     *
+     * @return float
+     */
+    public function median(): float
+    {
+        return ($this->a + $this->b) / 2;
+    }
+
+    /**
+     * Mode of the distribution
+     *
+     * mode = any value in (a, b)
+     *
+     * @return float
+     */
+    public function mode(): float
+    {
+        return $this->a;
+    }
+
+    /**
+     * Variance of the distribution
+     *
+     *      (b - a)²
+     * σ² = --------
+     *         12
+     *
+     * @return float
+     */
+    public function variance(): float
+    {
+        return pow($this->b - $this->a, 2) / 12;
     }
 }
