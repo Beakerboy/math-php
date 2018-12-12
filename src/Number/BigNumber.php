@@ -167,13 +167,24 @@ class BigNumber implements ObjectArithmetic
         if (preg_match('/^0$|^[-]?[1-9.][0-9.]$/', $input)) {
             $n = $input;
         } elseif ($input instanceof BigNumber) {
-            $$n = $input->__ToString();
+            $n = $input->__ToString();
         } else {
-            throw new Exception\IncorrectTypeException('Argument must be real or complex number');
+            throw new Exception\IncorrectTypeException('Argument must be string or BigNumber');
         }
         return new BigNumber(bcdiv($this->number, $n));
     }
     
+    public function pow($input)): BigNumber
+    {
+        if (preg_match('/^0$|^[-]?[1-9.][0-9.]$/', $input)) {
+            $n = $input;
+        } elseif ($input instanceof BigNumber) {
+            $n = $input->__ToString();
+        } else {
+            throw new Exception\IncorrectTypeException('Argument must be real or complex number');
+        }
+        return new BigNumber(bcpow($this->number, $n));
+    }
     /**************************************************************************
      * COMPARISON FUNCTIONS
      **************************************************************************/
@@ -190,4 +201,15 @@ class BigNumber implements ObjectArithmetic
     {
         return bccomp($this->number, $input->__ToString()) === 0;
     }
+    
+    //Convert a float to a string
+    private function floatToString($number): string
+    {
+        $string_number = strval($number);
+        //If stringnumber contains the letter 'e'
+            //find the position of the '.'
+            //either move the dcimal point, or add sufficient zeros to the left or right.
+        return $string_number;
+    }
+    
 }
