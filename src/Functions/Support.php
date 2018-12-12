@@ -90,7 +90,7 @@ class Support
         return true;
     }
 
-    /*
+        /*
      * Calculate n+1 parameters for the Lanczos gamma approximation
      *
      * http://my.fit.edu/~gabdo/gamma.txt
@@ -106,10 +106,9 @@ class Support
         $Dc_array = [];
         for ($i=0; $i<=$n; $i++) {
             if ($i == 0) {
-                $Dc_array[] = new BigNumber('2');
+                $Dc_array[] = 2;
             } else {
-                $I_Big = new BigNumber(strval($i));
-                $Dc_array[] = $I_Big->multiply('2')->subtract('1')->dfact()->multiply('2');
+                $Dc_array[] = new BigNumber(strval(2 * Combinatorics::doubleFactorial(2 * $i - 1)));
             }
         }
         $Dc = MatrixFactory::create($Dc_array);
@@ -119,35 +118,30 @@ class Support
         $Dr_array = [];
         for ($i=0; $i<=$n; $i++) {
             if ($i == 0) {
-                $Dr_array[] = new BigNumber('1');
+                $Dr_array[] = 1;
             } else {
-                $I_Big = new BigNumber(strval($i));
-                $numerator = $I_Big->multiply('2')->fact()->multiply('-1');
-                $denominator = $I_Big->subtract('1')->fact()->multiply($I_Big->fact())->multiply('2');
-                $Dr_array[] = $numerator->divide($denominator);
+                $numerator = -1 * Combinatorics::factorial(2 * $i);
+                $denominator = 2 * Combinatorics::factorial($i - 1) * Combinatorics::factorial($i);
+                $Dr_array[] = new BigNumber(strval($numerator / $denominator));
             }
         }
         $Dr = MatrixFactory::create($Dr_array);
        // echo "\nDr=" . $Dr . "\n";
-
         // Upper Triangle
         $B_array = [];
         for ($i=0; $i<=$n; $i++) {
             for ($j=0; $j<=$n; $j++) {
                 if ($i == 0) {
-                    $B_array[$i][$j] = new BigNumber('1');
+                    $B_array[$i][$j] = 1;
                 } elseif ($i > $j) {
-                    $B_array[$i][$j] = new BigNumber('0');
+                    $B_array[$i][$j] = 0;
                 } else {
-                    $neg_one = new BigNumber('-1');
-                    $combin = new BigNumber(strval(Combinatorics::combinations($i + $j - 1, $j - $i)));
-                    $B_array[$i][$j] = $neg_one->pow($combin->multiply(strval($j - $i)));
+                    $B_array[$i][$j] = new BigNumber(strval((-1) ** ($j - $i) * Combinatorics::combinations($i + $j - 1, $j - $i)));
                 }
             }
         }
         $B = MatrixFactory::create($B_array);
        // echo "\nB=" . $B . "\n";
-
         // Lower Triangle
         $C_array = [];
         for ($i=0; $i<=$n; $i++) {
@@ -157,32 +151,31 @@ class Support
                 } elseif ($i < $j) {
                     $C_array[$i][$j] = 0;
                 } else {
-                    $two = new BigNumber('2');
                     $numerator = (-1) ** ($i + $j + 2) * 4 ** $j * $i * Combinatorics::factorial($i + $j - 1);
-                    $dif = new BigNumber(strval($i - $j));
-                    $denominator = $dif->fact()->multiply($two->multiply(strval($j))->fact());
-                    $C_array[$i][$j] = $numerator->divide($denominator);
+                    $denominator = Combinatorics::factorial($i - $j) * Combinatorics::factorial(2 * $j);
+                    $C_array[$i][$j] = new BigNumber(strval($numerator / $denominator));
                 }
             }
         }
         $C = MatrixFactory::create($C_array);
        // echo "\nC=" . $C . "\n";
-
         $M = $Dr->multiply($B)->multiply($C->multiply($Dc));
        // echo "\nM=" . $M . "\n";
-
         // Column vector
         $f_array = [];
         for ($i=0; $i<=$n; $i++) {
-            $f_array[] = \M_SQRT2 * (\M_E / (2 * ($i + $g) + 1)) ** ($i + 0.5);
+            $f_array[] = new BigNumber(strval(\M_SQRT2 * (\M_E / (2 * ($i + $g) + 1)) ** ($i + 0.5)));
         }
         $f = MatrixFactory::create([$f_array])->transpose();
        // echo "\nf=" . $f . "\n";
-
         $a = $M->multiply($f);
         // echo "\na=" . $a . "\n";
-
-        $results = $a->scalarMultiply(exp($g) / \M_SQRT2 / \M_SQRTPI);
+        $a_array = $a->getColumn(0);
+        foreach ($a_array as $key=>$value) {
+            $a_array[$key] = $value->floatval(__ToString());
+        }
+        $a_mat = MatrixFactory::create([$a_array])->transpose();
+        $results = $a_mat->scalarMultiply(exp($g) / \M_SQRT2 / \M_SQRTPI);
         // echo "\nresults=" . $results . "\n";
         return ($results->getColumn(0));
     }
