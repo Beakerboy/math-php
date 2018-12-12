@@ -4,6 +4,7 @@ namespace MathPHP\Functions;
 use MathPHP\Probability\Combinatorics;
 use MathPHP\Exception;
 use MathPHP\LinearAlgebra\MatrixFactory;
+use MathPHP\Number\BigNumber;
 
 class Support
 {
@@ -105,9 +106,10 @@ class Support
         $Dc_array = [];
         for ($i=0; $i<=$n; $i++) {
             if ($i == 0) {
-                $Dc_array[] = 2;
+                $Dc_array[] = new BigNumber('2');
             } else {
-                $Dc_array[] = 2 * Combinatorics::doubleFactorial(2 * $i - 1);
+                $I_Big = new BigNumber(strval($i));
+                $Dc_array[] = $I_Big->multiply('2')->subtract('1')->dfact()->multiply('2');
             }
         }
         $Dc = MatrixFactory::create($Dc_array);
@@ -117,11 +119,12 @@ class Support
         $Dr_array = [];
         for ($i=0; $i<=$n; $i++) {
             if ($i == 0) {
-                $Dr_array[] = 1;
+                $Dr_array[] = new BigNumber('1');
             } else {
-                $numerator = -1 * Combinatorics::factorial(2 * $i);
-                $denominator = 2 * Combinatorics::factorial($i - 1) * Combinatorics::factorial($i);
-                $Dr_array[] = $numerator / $denominator;
+                $I_Big = new BigNumber(strval($i));
+                $numerator = $I_Big->multiply('2')->fact()->multiply('-1');
+                $denominator = $I_Big->subtract('1')->fact()->multiply($I_Big->fact())->multiply('2');
+                $Dr_array[] = $numerator->divide($denominator);
             }
         }
         $Dr = MatrixFactory::create($Dr_array);
@@ -132,9 +135,9 @@ class Support
         for ($i=0; $i<=$n; $i++) {
             for ($j=0; $j<=$n; $j++) {
                 if ($i == 0) {
-                    $B_array[$i][$j] = 1;
+                    $B_array[$i][$j] = new BigNumber('1');
                 } elseif ($i > $j) {
-                    $B_array[$i][$j] = 0;
+                    $B_array[$i][$j] = new BigNumber('0');
                 } else {
                     $B_array[$i][$j] = (-1) ** ($j - $i) * Combinatorics::combinations($i + $j - 1, $j - $i);
                 }
