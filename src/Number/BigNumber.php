@@ -174,7 +174,7 @@ class BigNumber implements ObjectArithmetic
         return new BigNumber(bcdiv($this->number, $n));
     }
     
-    public function pow($input)): BigNumber
+    public function pow($input): BigNumber
     {
         if (preg_match('/^0$|^[-]?[1-9.][0-9.]$/', $input)) {
             $n = $input;
