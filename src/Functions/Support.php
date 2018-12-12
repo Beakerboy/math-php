@@ -139,7 +139,9 @@ class Support
                 } elseif ($i > $j) {
                     $B_array[$i][$j] = new BigNumber('0');
                 } else {
-                    $B_array[$i][$j] = (-1) ** ($j - $i) * Combinatorics::combinations($i + $j - 1, $j - $i);
+                    $neg_one = new BigNumber('-1');
+                    $combin = new BigNumber(strval(Combinatorics::combinations($i + $j - 1, $j - $i)));
+                    $B_array[$i][$j] = $neg_one->pow($combin->multiply(strval($j - $i)));
                 }
             }
         }
@@ -155,9 +157,11 @@ class Support
                 } elseif ($i < $j) {
                     $C_array[$i][$j] = 0;
                 } else {
+                    $two = new BigNumber('2');
                     $numerator = (-1) ** ($i + $j + 2) * 4 ** $j * $i * Combinatorics::factorial($i + $j - 1);
-                    $denominator = Combinatorics::factorial($i - $j) * Combinatorics::factorial(2 * $j);
-                    $C_array[$i][$j] = $numerator / $denominator;
+                    $dif = new BigNumber(strval($i - $j));
+                    $denominator = $dif->fact()->multiply($two->multiply(strval($j))->fact());
+                    $C_array[$i][$j] = $numerator->divide($denominator);
                 }
             }
         }
