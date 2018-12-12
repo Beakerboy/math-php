@@ -211,5 +211,4 @@ class BigNumber implements ObjectArithmetic
             //either move the dcimal point, or add sufficient zeros to the left or right.
         return $string_number;
     }
-    
 }
