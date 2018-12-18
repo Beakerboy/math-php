@@ -179,9 +179,10 @@ class Support
         // Column vector
         $f_array = [];
         for ($i=0; $i<=$n; $i++) {
-            $f_array[] = new BigNumber(strval(\M_SQRT2 * (\M_E / (2 * ($i + $g) + 1)) ** ($i + 0.5)));
+            $f_array[] = \M_SQRT2 * (\M_E / (2 * ($i + $g) + 1)) ** ($i + 0.5);
         }
-        $f = new ObjectSquareMatrix([$f_array])->transpose();
+        $ft = MatrixFactory::create([$f_array]);
+        $f = $ft->transpose();
        // echo "\nf=" . $f . "\n";
         $a = $M->multiply($f);
         // echo "\na=" . $a . "\n";
