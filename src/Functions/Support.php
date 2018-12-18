@@ -105,10 +105,16 @@ class Support
         // Diagonal Matrix
         $Dc_array = [];
         for ($i=0; $i<=$n; $i++) {
-            if ($i == 0) {
-                $Dc_array[] = 2;
-            } else {
-                $Dc_array[] = new BigNumber(strval(2 * Combinatorics::doubleFactorial(2 * $i - 1)));
+            for ($j=0; $j<=$n; $j++) {
+                if ($i==$j) {
+                    if ($i == 0) {
+                        $Dc_array[$i][$j] = new BigNumber('2');
+                    } else {
+                        $Dc_array[$i][$j] = new BigNumber(strval(2 * Combinatorics::doubleFactorial(2 * $i - 1)));
+                    }
+                } else {
+                    $Dc_array[$i][$j] = new BigNumber('0');
+                }
             }
         }
         $Dc = MatrixFactory::create($Dc_array);
@@ -117,12 +123,18 @@ class Support
         // Diagonal Matrix
         $Dr_array = [];
         for ($i=0; $i<=$n; $i++) {
-            if ($i == 0) {
-                $Dr_array[] = 1;
-            } else {
-                $numerator = -1 * Combinatorics::factorial(2 * $i);
-                $denominator = 2 * Combinatorics::factorial($i - 1) * Combinatorics::factorial($i);
-                $Dr_array[] = new BigNumber(strval($numerator / $denominator));
+            for ($j=0; $j<=$n; $j++) {
+                if ($i==$j) {
+                    if ($i == 0) {
+                        $Dr_array[$i][$j] = new BigNumber('1');
+                    } else {
+                        $numerator = -1 * Combinatorics::factorial(2 * $i);
+                        $denominator = 2 * Combinatorics::factorial($i - 1) * Combinatorics::factorial($i);
+                        $Dr_array[$i][$j] = new BigNumber(strval($numerator / $denominator));
+                    }
+                } else {
+                    $Dr_array[$i][$j] = new BigNumber('0');
+                }
             }
         }
         $Dr = MatrixFactory::create($Dr_array);
@@ -147,9 +159,9 @@ class Support
         for ($i=0; $i<=$n; $i++) {
             for ($j=0; $j<=$n; $j++) {
                 if ($i == 0 && $j == 0) {
-                    $C_array[$i][$j] = .5;
+                    $C_array[$i][$j] = new BigNumber('.5');
                 } elseif ($i < $j) {
-                    $C_array[$i][$j] = 0;
+                    $C_array[$i][$j] = new BigNumber('0');
                 } else {
                     $numerator = (-1) ** ($i + $j + 2) * 4 ** $j * $i * Combinatorics::factorial($i + $j - 1);
                     $denominator = Combinatorics::factorial($i - $j) * Combinatorics::factorial(2 * $j);
