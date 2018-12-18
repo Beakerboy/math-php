@@ -104,7 +104,7 @@ class ObjectSquareMatrix extends SquareMatrix
                 $R[$i][$j] = $this->A[$i][$j]->subtract($B[$i][$j]);
             }
         }
-        return MatrixFactory:create($R);
+        return MatrixFactory::create($R);
     }
     
     /**
