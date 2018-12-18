@@ -171,7 +171,9 @@ class Support
         }
         $C = MatrixFactory::create($C_array);
        // echo "\nC=" . $C . "\n";
-        $M = $Dr->multiply($B)->multiply($C->multiply($Dc));
+        $M1 = $Dr->multiply($B);
+        $M2 = $C->multiply($Dc)
+        $M = $M1->multiply($M2);
        // echo "\nM=" . $M . "\n";
         // Column vector
         $f_array = [];
