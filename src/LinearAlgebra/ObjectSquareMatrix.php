@@ -3,6 +3,7 @@ namespace MathPHP\LinearAlgebra;
 
 use MathPHP\Exception;
 use MathPHP\Number\ObjectArithmetic;
+use MathPHP\Functions\Map\Multi;
 
 /**
  * ObjectSquareMatrix
@@ -101,6 +102,39 @@ class ObjectSquareMatrix extends SquareMatrix
         for ($i = 0; $i < $this->m; $i++) {
             for ($j = 0; $j < $this->n; $j++) {
                 $R[$i][$j] = $this->A[$i][$j]->subtract($B[$i][$j]);
+            }
+        }
+        return MatrixFactory:create($R);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public function multiply($B): Matrix
+    {
+        if ((!$B instanceof Matrix) && (!$B instanceof Vector)) {
+            throw new Exception\IncorrectTypeException('Can only do matrix multiplication with a Matrix or Vector');
+        }
+        if ($B instanceof Vector) {
+            $B = $B->asColumnMatrix();
+        }
+        if ($B->getM() !== $this->n) {
+            throw new Exception\MatrixException("Matrix dimensions do not match");
+        }
+        $n = $B->getN();
+        $m = $this->m;
+        $R = [];
+        for ($i = 0; $i < $m; $i++) {
+            for ($j = 0; $j < $n; $j++) {
+                $VA        = $this->getRow($i);
+                $VB        = $B->getColumn($j);
+                $sum = $VA[0]->multiply($VB[0]);
+                foreach ($VA as $key => $value) {
+                    if ($key > 0) {
+                        $sum = $sum->add($VA[$key]->multiply($VB[$key]));
+                    }
+                }
+                $R[$i][$j] = $sum;
             }
         }
         return MatrixFactory::create($R);
