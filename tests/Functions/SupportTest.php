@@ -355,7 +355,7 @@ class SupportTest extends \PHPUnit\Framework\TestCase
             ],
         ];
     }
-  
+
     /*
      * @testCase     isZero returns true for infinitesimal quantities less than the defined epsilon
      * @dataProvider dataProviderForZero
