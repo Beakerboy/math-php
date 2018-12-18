@@ -172,7 +172,7 @@ class Support
         $C = MatrixFactory::create($C_array);
        // echo "\nC=" . $C . "\n";
         $M1 = $Dr->multiply($B);
-        $M2 = $C->multiply($Dc)
+        $M2 = $C->multiply($Dc);
         $M = $M1->multiply($M2);
        // echo "\nM=" . $M . "\n";
         // Column vector
@@ -185,7 +185,7 @@ class Support
         $a = $M->multiply($f);
         // echo "\na=" . $a . "\n";
         $a_array = $a->getColumn(0);
-        foreach ($a_array as $key=>$value) {
+        foreach ($a_array as $key => $value) {
             $a_array[$key] = $value->floatval(__ToString());
         }
         $a_mat = MatrixFactory::create([$a_array])->transpose();
