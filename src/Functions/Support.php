@@ -119,7 +119,7 @@ class Support
             }
         }
         $Dc = MatrixFactory::create($Dc_array);
-       // echo "\nDC=" . $Dc . "\n";
+
         
         // Diagonal Matrix
         $Dr_array = [];
@@ -139,7 +139,7 @@ class Support
             }
         }
         $Dr = new ObjectSquareMatrix($Dr_array);
-       // echo "\nDr=" . $Dr . "\n";
+
         // Upper Triangle
         $B_array = [];
         for ($i=0; $i<=$n; $i++) {
@@ -154,7 +154,7 @@ class Support
             }
         }
         $B = new ObjectSquareMatrix($B_array);
-       // echo "\nB=" . $B . "\n";
+
         // Lower Triangle
         $C_array = [];
         for ($i=0; $i<=$n; $i++) {
@@ -171,11 +171,9 @@ class Support
             }
         }
         $C = new ObjectSquareMatrix($C_array);
-       // echo "\nC=" . $C . "\n";
-        $M1 = $Dr->multiply($B);
-        $M2 = $C->multiply($Dc);
-        $M = $M1->multiply($M2);
-       // echo "\nM=" . $M . "\n";
+
+        $M = $Dr->multiply($B)->multiply($C->multiply($Dc));
+
         // Column vector
         $f_array = [];
         for ($i=0; $i<=$n; $i++) {
@@ -183,16 +181,16 @@ class Support
         }
         $ft = MatrixFactory::create([$f_array]);
         $f = $ft->transpose();
-       // echo "\nf=" . $f . "\n";
+
         $a = $M->multiply($f);
-        // echo "\na=" . $a . "\n";
+
         $a_array = $a->getColumn(0);
         foreach ($a_array as $key => $value) {
             $a_array[$key] = floatval($value->__ToString());
         }
         $a_mat = MatrixFactory::create([$a_array])->transpose();
         $results = $a_mat->scalarMultiply(exp($g) / \M_SQRT2 / \M_SQRTPI);
-        // echo "\nresults=" . $results . "\n";
+
         return ($results->getColumn(0));
     }
 
