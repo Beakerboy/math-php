@@ -214,6 +214,6 @@ class BigNumber implements ObjectArithmetic
     
     private function isNumberAsString(string $number): bool
     {
-        return preg_match('/^0$|^[-]?[1-9]{1}[0-9]*[.]?[0-9]*$/', $number);
+        return preg_match('/^0$|^[-]?[1-9]{1}[0-9]*[.]?[0-9]+$/', $number);
     }
 }
