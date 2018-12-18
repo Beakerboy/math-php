@@ -144,9 +144,9 @@ class Support
         for ($i=0; $i<=$n; $i++) {
             for ($j=0; $j<=$n; $j++) {
                 if ($i == 0) {
-                    $B_array[$i][$j] = 1;
+                    $B_array[$i][$j] = new BigNumber('1');
                 } elseif ($i > $j) {
-                    $B_array[$i][$j] = 0;
+                    $B_array[$i][$j] = new BigNumber('0');
                 } else {
                     $B_array[$i][$j] = new BigNumber(strval((-1) ** ($j - $i) * Combinatorics::combinations($i + $j - 1, $j - $i)));
                 }
