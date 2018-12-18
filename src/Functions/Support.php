@@ -4,6 +4,7 @@ namespace MathPHP\Functions;
 use MathPHP\Probability\Combinatorics;
 use MathPHP\Exception;
 use MathPHP\LinearAlgebra\MatrixFactory;
+use MathPHP\LinearAlgebra\ObjectSquareMatrix;
 use MathPHP\Number\BigNumber;
 
 class Support
@@ -137,7 +138,7 @@ class Support
                 }
             }
         }
-        $Dr = MatrixFactory::create($Dr_array);
+        $Dr = new ObjectSquareMatrix($Dr_array);
        // echo "\nDr=" . $Dr . "\n";
         // Upper Triangle
         $B_array = [];
@@ -152,7 +153,7 @@ class Support
                 }
             }
         }
-        $B = MatrixFactory::create($B_array);
+        $B = new ObjectSquareMatrix($B_array);
        // echo "\nB=" . $B . "\n";
         // Lower Triangle
         $C_array = [];
@@ -169,7 +170,7 @@ class Support
                 }
             }
         }
-        $C = MatrixFactory::create($C_array);
+        $C = new ObjectSquareMatrix($C_array);
        // echo "\nC=" . $C . "\n";
         $M1 = $Dr->multiply($B);
         $M2 = $C->multiply($Dc);
@@ -180,13 +181,13 @@ class Support
         for ($i=0; $i<=$n; $i++) {
             $f_array[] = new BigNumber(strval(\M_SQRT2 * (\M_E / (2 * ($i + $g) + 1)) ** ($i + 0.5)));
         }
-        $f = MatrixFactory::create([$f_array])->transpose();
+        $f = new ObjectSquareMatrix([$f_array])->transpose();
        // echo "\nf=" . $f . "\n";
         $a = $M->multiply($f);
         // echo "\na=" . $a . "\n";
         $a_array = $a->getColumn(0);
         foreach ($a_array as $key => $value) {
-            $a_array[$key] = $value->floatval(__ToString());
+            $a_array[$key] = floatval($value->__ToString());
         }
         $a_mat = MatrixFactory::create([$a_array])->transpose();
         $results = $a_mat->scalarMultiply(exp($g) / \M_SQRT2 / \M_SQRTPI);
