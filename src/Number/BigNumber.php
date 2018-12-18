@@ -119,7 +119,7 @@ class BigNumber implements ObjectArithmetic
      *
      * @throws Exception\IncorrectTypeException if the argument is not string or BigNumber.
      */
-    public function subtract($c): Complex
+    public function subtract($input): Complex
     {
         if (self::isNumberAsString($input)) {
             $n = $input;
