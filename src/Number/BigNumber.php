@@ -97,7 +97,7 @@ class BigNumber implements ObjectArithmetic
      */
     public function add($input): BigNumber
     {
-        if (preg_match('/^0$|^[-]?[1-9.][0-9.]$/', $input)) {
+        if (isNumberAsString($input)) {
             $n = $input;
         } elseif ($input instanceof BigNumber) {
             $n = $input->__ToString();
@@ -121,7 +121,7 @@ class BigNumber implements ObjectArithmetic
      */
     public function subtract($c): Complex
     {
-        if (preg_match('/^0$|^[-]?[1-9.][0-9.]$/', $input)) {
+        if (isNumberAsString($input)) {
             $n = $input;
         } elseif ($input instanceof BigNumber) {
             $n = $input->__ToString();
@@ -143,7 +143,7 @@ class BigNumber implements ObjectArithmetic
      */
     public function multiply($input): BigNumber
     {
-        if (preg_match('/^0$|^[-]?[1-9.][0-9.]$/', $input)) {
+        if (isNumberAsString($input)) {
             $n = $input;
         } elseif ($input instanceof BigNumber) {
             $n = $input->__ToString();
@@ -164,7 +164,7 @@ class BigNumber implements ObjectArithmetic
      */
     public function divide($input): BigNumber
     {
-        if (preg_match('/^0$|^[-]?[1-9.][0-9.]$/', $input)) {
+        if (isNumberAsString($input)) {
             $n = $input;
         } elseif ($input instanceof BigNumber) {
             $n = $input->__ToString();
@@ -176,7 +176,7 @@ class BigNumber implements ObjectArithmetic
     
     public function pow($input): BigNumber
     {
-        if (preg_match('/^0$|^[-]?[1-9.][0-9.]$/', $input)) {
+        if (isNumberAsString($input)) {
             $n = $input;
         } elseif ($input instanceof BigNumber) {
             $n = $input->__ToString();
@@ -210,5 +210,10 @@ class BigNumber implements ObjectArithmetic
             //find the position of the '.'
             //either move the dcimal point, or add sufficient zeros to the left or right.
         return $string_number;
+    }
+    
+    private function isNumberAsString(string $number): bool
+    {
+        return preg_match('/^0$|^[-]?[1-9]{1}[0-9]*[.]?[0-9]*$/', $number);
     }
 }
