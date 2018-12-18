@@ -165,6 +165,52 @@ class ObjectMatrixTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * @dataProvider dataProviderMul
+     */
+    public function testMul(array $A, array $B, array $expected)
+    {
+        $A = MatrixFactory::create($A);
+        $B = MatrixFactory::create($B);
+        $sum = $A->multiply($B);
+        $expected = matrixFactory::create($expected);
+        $this->assertEquals($sum, $expected);
+    }
+
+    public function dataProviderMul()
+    {
+        return [
+            [
+                [
+                    [new Polynomial([1, 0]), new Polynomial([0, 0])],
+                    [new Polynomial([0, 0]), new Polynomial([1, 0])],
+                ],
+                [
+                    [new Polynomial([1, 0]), new Polynomial([1, 1])],
+                    [new Polynomial([1, 1]), new Polynomial([1, 0])],
+                ],
+                [
+                    [new Polynomial([1, 0, 0]), new Polynomial([1, 1, 0])],
+                    [new Polynomial([1, 1, 0]), new Polynomial([1, 0, 0])],
+                ],
+            ],
+            [
+                [
+                    [new Polynomial([1, 0]), new Polynomial([1, 0])],
+                    [new Polynomial([1, 0]), new Polynomial([1, 0])],
+                ],
+                [
+                    [new Polynomial([1, 0]), new Polynomial([1, 1])],
+                    [new Polynomial([1, 1]), new Polynomial([1, 0])],
+                ],
+                [
+                    [new Polynomial([2, 1, 0]), new Polynomial([2, 1, 0])],
+                    [new Polynomial([2, 1, 0]), new Polynomial([2, 1, 0])],
+                ],
+            ],
+        ];
+    }
+    
+    /**
      * @dataProvider dataProviderDet
      */
     public function testDet(array $A, Polynomial $expected)
