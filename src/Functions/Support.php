@@ -129,9 +129,11 @@ class Support
                     if ($i == 0) {
                         $Dr_array[$i][$j] = new BigNumber('1');
                     } else {
-                        $numerator = -1 * Combinatorics::factorial(2 * $i);
-                        $denominator = 2 * Combinatorics::factorial($i - 1) * Combinatorics::factorial($i);
-                        $Dr_array[$i][$j] = new BigNumber(strval($numerator / $denominator));
+                        $I_o = new BigNumber(strval($i));
+                        $numerator = $I_o->multiply('2')->fact()->multiply('-1');
+                        $denominator = $I_o->subtract('1')->fact()->multiply($I_o->fact())->multiply('2');
+
+                        $Dr_array[$i][$j] = $numerator->divide($denominator);
                     }
                 } else {
                     $Dr_array[$i][$j] = new BigNumber('0');
