@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("add",["Function"],[["add",,[[,,,,0,"File:Bitwise.php:add"],["Arithmetic",,,,0,"File:Arithmetic.php:Arithmetic.add","PHPClass:Arithmetic:add"],["ObjectArithmetic",,,,0,"File3:ObjectArithmetic.php:ObjectArithmetic.add","PHPClass:ObjectArithmetic:add"]]]]);

@@ -6,6 +6,7 @@ use MathPHP\Functions\Support;
 use MathPHP\Exception;
 
 /**
+ * Class: Matrix
  * m x n Matrix
  */
 class Matrix implements \ArrayAccess, \JsonSerializable
@@ -44,7 +45,7 @@ class Matrix implements \ArrayAccess, \JsonSerializable
     protected $P;
 
     /**
-     * Constructor
+     * Constructor: __construct
      * @param array $A of arrays $A m x n matrix
      *
      * @throws Exception\BadDataException if any rows have a different column count
@@ -77,6 +78,7 @@ class Matrix implements \ArrayAccess, \JsonSerializable
      **************************************************************************/
 
     /**
+     * Function: getMatrix
      * Get matrix
      * @return array of arrays
      */

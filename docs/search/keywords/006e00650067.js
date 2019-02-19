@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("neg",["Function"],[["negate",,[["Polynomial",,,,0,"File:Polynomial.php:Polynomial.negate","PHPClass:Polynomial:negate"]]]]);

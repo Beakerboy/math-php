@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("__i",["Function"],[["__invoke",,[["Polynomial",,,,0,"File:Polynomial.php:Polynomial.__invoke","PHPClass:Polynomial:__invoke"]]]]);

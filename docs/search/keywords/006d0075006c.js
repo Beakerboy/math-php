@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("mul",["Function"],[["multiply",,[["Arithmetic",,,,0,"File:Arithmetic.php:Arithmetic.multiply","PHPClass:Arithmetic:multiply"],["ObjectArithmetic",,,,0,"File3:ObjectArithmetic.php:ObjectArithmetic.multiply","PHPClass:ObjectArithmetic:multiply"],["Polynomial",,,,0,"File:Polynomial.php:Polynomial.multiply","PHPClass:Polynomial:multiply"]]]]);

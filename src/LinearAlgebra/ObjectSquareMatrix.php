@@ -5,7 +5,7 @@ use MathPHP\Exception;
 use MathPHP\Number\ObjectArithmetic;
 
 /**
- * ObjectSquareMatrix
+ * Class: ObjectSquareMatrix
  *
  * The objectSquareMatrix extends Matrix functions to a matrix of objects.
  * The object must implement the MatrixArithmetic interface to prove
@@ -20,7 +20,7 @@ class ObjectSquareMatrix extends SquareMatrix
     protected $object_type;
 
     /**
-     * Constructor
+     * Constructor: __construct
      *
      * The constuctor follows performs all the same checks as the parent, but also checks that
      * all of the elements in the arry are of the same data type.

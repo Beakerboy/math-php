@@ -2,11 +2,15 @@
 namespace MathPHP\LinearAlgebra;
 
 use MathPHP\Exception;
-
+ /**
+  * Class: FunctionMatrix
+  */
 class FunctionMatrix extends Matrix
 {
     /**
-     * Evaluate
+     * Function: evaluate
+     * Evaluate the functions with the given parameters and
+     * return the result as a matrix.
      *
      * @param array $params
      *

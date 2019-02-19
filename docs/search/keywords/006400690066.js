@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("dif",["Function"],[["differentiate",,[["Polynomial",,,,0,"File:Polynomial.php:Polynomial.differentiate","PHPClass:Polynomial:differentiate"]]]]);

@@ -1,0 +1,1 @@
+NDFramePage.OnPageTitleLoaded("File:Arithmetic.php","Arithmetic.php");NDSummary.OnSummaryLoaded("File:Arithmetic.php",[["PHP","PHP"]],[["Classes","Class"],["Functions","Function"],["Groups","Group"]],[[1,0,0,"Arithmetic","Arithmetic"],[2,0,2,"Functions","Arithmetic.Functions"],[3,0,1,"add","Arithmetic.add"],[22,0,1,"multiply","Arithmetic.multiply"]]);

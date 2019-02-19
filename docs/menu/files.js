@@ -1,0 +1,1 @@
+NDMenu.OnSectionLoaded("files.js",[[2,"Functions","File:",[[1,"Arithmetic.php"],[1,"Bitwise.php"],[1,"Polynomial.php"]]],[2,"Linear Algebra","File2:",[[1,"FunctionMatrix.php"],[1,"Matrix.php"],[1,"ObjectSquareMatrix.php"]]],[2,"Number","File3:",[[1,"Complex.php"],[1,"ObjectArithmetic.php"]]]]);

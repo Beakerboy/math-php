@@ -2,11 +2,13 @@
 namespace MathPHP\Functions;
 
 /**
+ * Class: Arithmetic
  * Arithmetic of functions. These functions return functions themselves.
  */
 class Arithmetic
 {
     /**
+     * Function: add
      * Adds any number of single variable (callback) functions {f(x)}. Returns
      * the sum as a callback function.
      *
@@ -30,6 +32,7 @@ class Arithmetic
     }
 
     /**
+     * Function: multiply
      * Multiplies any number of single variable (callback) functions {f(x)}.
      * Returns the product as a callback function.
      *
