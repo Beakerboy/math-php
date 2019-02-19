@@ -96,6 +96,31 @@ class LogNormal extends Continuous
 
         return 1/2 + 1/2 * Special::erf($⟮ln x − μ⟯ / $√2σ);
     }
+
+    /**
+     * Inverse of CDF (quantile)
+     *
+     * exp(μ + σ * normal-inverse(p))
+     *
+     * @param float $p
+     *
+     * @return float
+     */
+    public function inverse(float $p): float
+    {
+        if ($p == 0) {
+            return 0;
+        }
+        if ($p == 1) {
+            return \INF;
+        }
+
+        $μ = $this->μ;
+        $σ = $this->σ;
+        $standard_normal = new StandardNormal();
+
+        return exp($μ + $σ * $standard_normal->inverse($p));
+    }
     
     /**
      * Mean of the distribution
@@ -125,27 +150,32 @@ class LogNormal extends Continuous
     }
 
     /**
-     * Inverse of CDF (quantile)
+     * Mode of the distribution
      *
-     * exp(μ + σ * normal-inverse(p))
-     *
-     * @param float $p
+     * mode = exp(μ - σ²)
      *
      * @return float
      */
-    public function inverse(float $p): float
+    public function mode(): float
     {
-        if ($p == 0) {
-            return 0;
-        }
-        if ($p == 1) {
-            return \INF;
-        }
+        return exp($this->μ - $this->σ**2);
+    }
 
+    /**
+     * Variance of the distribution
+     *
+     * var[X] = [exp(σ²) - 1][exp(2μ + σ²)]
+     *
+     * @return float
+     */
+    public function variance(): float
+    {
         $μ = $this->μ;
         $σ = $this->σ;
-        $standard_normal = new StandardNormal();
 
-        return exp($μ + $σ * $standard_normal->inverse($p));
+        $σ²  = $σ**2;
+        $２μ = 2*$μ;
+
+        return (exp($σ²) - 1) * exp($２μ + $σ²);
     }
 }

@@ -26,10 +26,10 @@ class Weibull extends Continuous
         'x' => '(-∞,∞)',
     ];
 
-    /** @var number Shape Parameter */
+    /** @var float Shape Parameter */
     protected $k;
 
-    /** @var number Scale Parameter */
+    /** @var float Scale Parameter */
     protected $λ;
 
     /**
@@ -99,22 +99,7 @@ class Weibull extends Continuous
         $ℯ⁻⁽x／λ⁾ᵏ = exp(-pow($x / $λ, $k));
         return 1 - $ℯ⁻⁽x／λ⁾ᵏ;
     }
-    
-    /**
-     * Mean of the distribution
-     *
-     * μ = λΓ(1 + 1/k)
-     *
-     * @return float
-     */
-    public function mean(): float
-    {
-        $k = $this->k;
-        $λ = $this->λ;
 
-        return $λ * Special::gamma(1 + 1 / $k);
-    }
-    
     /**
      * Inverse CDF (Quantile function)
      *
@@ -131,5 +116,62 @@ class Weibull extends Continuous
         $λ = $this->λ;
 
         return $λ * (-1 * log(1 - $p))**(1/$k);
+    }
+    
+    /**
+     * Mean of the distribution
+     *
+     * μ = λΓ(1 + 1/k)
+     *
+     * @return float
+     */
+    public function mean(): float
+    {
+        $k = $this->k;
+        $λ = $this->λ;
+
+        return $λ * Special::gamma(1 + 1 / $k);
+    }
+
+    /**
+     * Median of the distribution
+     *
+     * median = λ(ln 2)¹ᐟᵏ
+     *
+     * @return float
+     */
+    public function median(): float
+    {
+        $k = $this->k;
+        $λ = $this->λ;
+
+        $⟮ln 2⟯¹ᐟᵏ = pow(log(2), 1/$k);
+
+        return $λ * $⟮ln 2⟯¹ᐟᵏ;
+    }
+
+    /**
+     * Mode of the distribution
+     *
+     *    / k - 1  \¹ᐟᵏ
+     * λ |  -----  |
+     *    \   k    /
+     *
+     * 0  k ≤ 1
+     *
+     * @return float
+     */
+    public function mode(): float
+    {
+        $k = $this->k;
+        $λ = $this->λ;
+
+        if ($k <= 1) {
+            return 0;
+        }
+
+        $⟮⟮k − 1⟯／k⟯¹ᐟᵏ = pow(($k - 1) / $k, 1/$k);
+
+        return $λ * $⟮⟮k − 1⟯／k⟯¹ᐟᵏ;
     }
 }

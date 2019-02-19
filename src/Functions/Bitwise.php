@@ -1,9 +1,14 @@
 <?php
 namespace MathPHP\Functions;
 
+/**
+ * Class:Bitwise 
+ * Functions that operate on ints in a bitwise fashion.
+ */
 class Bitwise
 {
     /**
+     * Function: add
      * Add two ints ignoring the signing bit.
      *
      * 8 bit examples:

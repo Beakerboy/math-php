@@ -30,19 +30,19 @@ class LogLogistic extends Continuous
         'x' => '[0,∞)',
     ];
 
-     /** @var number Scale Parameter */
+     /** @var float Scale Parameter */
     protected $α;
 
-    /** @var number Shape Parameter */
+    /** @var float Shape Parameter */
     protected $β;
 
     /**
      * Constructor
      *
-     * @param number $α scale parameter α > 0
-     * @param number $β shape parameter β > 0
+     * @param float $α scale parameter α > 0
+     * @param float $β shape parameter β > 0
      */
-    public function __construct($α, $β)
+    public function __construct(float $α, float $β)
     {
         parent::__construct($α, $β);
     }
@@ -56,10 +56,10 @@ class LogLogistic extends Continuous
      *
      * @param float $x (x > 0)
      *
-     * @return number
+     * @return float
      */
 
-    public function pdf(float $x)
+    public function pdf(float $x): float
     {
         Support::checkLimits(self::SUPPORT_LIMITS, ['x' => $x]);
 
@@ -80,9 +80,9 @@ class LogLogistic extends Continuous
      *
      * @param float $x (x > 0)
      *
-     * @return number
+     * @return float
      */
-    public function cdf(float $x)
+    public function cdf(float $x): float
     {
         Support::checkLimits(self::SUPPORT_LIMITS, ['x' => $x]);
 
@@ -92,6 +92,27 @@ class LogLogistic extends Continuous
         $⟮x／α⟯⁻ᵝ = pow($x / $α, -$β);
         return 1 / (1 + $⟮x／α⟯⁻ᵝ);
     }
+
+    /**
+     * Inverse CDF (Quantile function)
+     *
+     *                 /   p   \ 1/β
+     * F⁻¹(p;α,β) = α |  -----  |
+     *                 \ 1 - p /
+     *
+     * @param float $p
+     *
+     * @return float
+     */
+    public function inverse(float $p): float
+    {
+        Support::checkLimits(['p' => '[0,1]'], ['p' => $p]);
+
+        $α = $this->α;
+        $β = $this->β;
+
+        return $α * ($p / (1 - $p))**(1/$β);
+    }
     
     /**
      * Mean of the distribution
@@ -100,9 +121,9 @@ class LogLogistic extends Continuous
      * μ = --------  if β > 1, else undefined
      *     sin(π/β)
      *
-     * @return number
+     * @return float
      */
-    public function mean()
+    public function mean(): float
     {
         $α = $this->α;
         $β = $this->β;
@@ -114,25 +135,66 @@ class LogLogistic extends Continuous
 
         return \NAN;
     }
-    
-    /**
-     * Inverse CDF (Quantile function)
-     *
-     *                 /   p   \ 1/β
-     * F⁻¹(p;α,β) = α |  -----  |
-     *                 \ 1 - p /
-     *
-     * @param float $p
-     *
-     * @return number
-     */
-    public function inverse(float $p)
-    {
-        Support::checkLimits(['p' => '[0,1]'], ['p' => $p]);
 
+    /**
+     * Median of the distribution
+     *
+     * median = α
+     *
+     * @return float
+     */
+    public function median(): float
+    {
+        return $this->α;
+    }
+
+    /**
+     * Mode of the distribution
+     *
+     * mode = 0                 β ≤ 1
+     *
+     *           / β - 1 \ 1/β
+     * mode = α |  -----  |     β > 1
+     *           \ β + 1 /
+     *
+     * @return float
+     */
+    public function mode(): float
+    {
         $α = $this->α;
         $β = $this->β;
-        
-        return $α * ($p / (1 - $p))**(1/$β);
+
+        if ($β <= 1) {
+            return 0;
+        }
+
+        return $α * pow(($β - 1) / ($β + 1), 1/$β);
+    }
+
+    /**
+     * Variance of the distribution
+     *
+     *              /   2β       β²  \
+     * var[X] = α² |  ------ - -----  |    β > 2
+     *              \ sin 2β   sin²β  /
+     *
+     * @return float
+     */
+    public function variance(): float
+    {
+        $α = $this->α;
+        $β = $this->β;
+
+        if ($β <= 2) {
+            return \NAN;
+        }
+
+        $α²    = $α**2;
+        $β²    = $β**2;
+        $２β   = 2 * $β;
+        $sin2β = sin($２β);
+        $sin²β = sin($β)**2;
+
+        return $α² * (($２β/$sin2β) - ($β²/$sin²β));
     }
 }

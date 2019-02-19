@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("che",["Function"],[["checkNumericOrPolynomial",,[["Polynomial",,,,0,"File:Polynomial.php:Polynomial.checkNumericOrPolynomial","PHPClass:Polynomial:checkNumericOrPolynomial"]]]]);

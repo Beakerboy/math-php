@@ -139,4 +139,40 @@ class Normal extends Continuous
     {
         return $this->μ;
     }
+
+    /**
+     * Mode of the distribution
+     *
+     * mode = μ
+     *
+     * @return float
+     */
+    public function mode(): float
+    {
+        return $this->μ;
+    }
+
+    /**
+     * Variance of the distribution
+     *
+     * var[X] = σ²
+     *
+     * @return float
+     */
+    public function variance(): float
+    {
+        return $this->σ**2;
+    }
+    
+    /**
+     * Random number - Box–Muller transform
+     *
+     * https://en.wikipedia.org/wiki/Box%E2%80%93Muller_transform
+     */
+    public function rand()
+    {
+        $rand1 = random_int(0, \PHP_INT_MAX) / \PHP_INT_MAX;
+        $rand2 = random_int(0, \PHP_INT_MAX) / \PHP_INT_MAX;
+        return sqrt(-2 * log($rand1)) * cos(2 * pi() * $rand2) * $this->σ + $this->μ;
+    }
 }

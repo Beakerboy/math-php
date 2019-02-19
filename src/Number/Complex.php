@@ -5,6 +5,7 @@ use MathPHP\Exception;
 use MathPHP\Functions\Special;
 
 /**
+ * Class: Complex
  * Complex Numbers
  *
  * A complex number is a number that can be expressed in the form a + bi,
@@ -33,7 +34,7 @@ class Complex implements ObjectArithmetic
     const EPSILON = 1e-6;
     
     /**
-     * Constructor
+     * Constructor: __construct
      *
      * @param number $r Real part
      * @param number $i Imaginary part
@@ -45,6 +46,7 @@ class Complex implements ObjectArithmetic
     }
     
     /**
+     * Function: __toString
      * String representation of a complex number
      * a + bi, a - bi, etc.
      *
@@ -66,6 +68,7 @@ class Complex implements ObjectArithmetic
     }
 
     /**
+     * Function: __get
      * Get r or i
      *
      * @param string $part

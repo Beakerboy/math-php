@@ -12,10 +12,16 @@ class ChiSquaredTest extends \PHPUnit\Framework\TestCase
      * @param        int $k
      * @param        float $pdf
      */
-    public function testPdf(float $x, int $k, float $pdf)
+    public function testPdf(float $x, int $k, float $expectedPdf)
     {
+        // Given
         $chiSquared = new ChiSquared($k);
-        $this->assertEquals($pdf, $chiSquared->pdf($x), '', 0.00000001);
+
+        // When
+        $pdf = $chiSquared->pdf($x);
+
+        // Then
+        $this->assertEquals($expectedPdf, $pdf, '', 0.00000001);
     }
 
     /**
@@ -77,12 +83,18 @@ class ChiSquaredTest extends \PHPUnit\Framework\TestCase
      * @dataProvider dataProviderForCdf
      * @param        float $x
      * @param        int $k
-     * @param        float $cdf
+     * @param        float $expectedCdf
      */
-    public function testCdf(float $x, int $k, float $cdf)
+    public function testCdf(float $x, int $k, float $expectedCdf)
     {
+        // Given
         $chiSquared = new ChiSquared($k);
-        $this->assertEquals($cdf, $chiSquared->cdf($x), '', 0.000001);
+
+        // When
+        $cdf = $chiSquared->cdf($x);
+
+        // Then
+        $this->assertEquals($expectedCdf, $cdf, '', 0.000001);
     }
 
     /**
@@ -145,8 +157,113 @@ class ChiSquaredTest extends \PHPUnit\Framework\TestCase
      */
     public function testMean()
     {
+        // Given
         $k = 5;
         $chiSquared = new ChiSquared($k);
-        $this->assertEquals($k, $chiSquared->mean());
+
+        // When
+        $mean = $chiSquared->mean();
+
+        // Then
+        $this->assertEquals($k, $mean);
+    }
+
+    /**
+     * @testCase     median
+     * @dataProvider dataProviderForMedian
+     * @param        float $k
+     * @param        float $expected
+     */
+    public function testMedian(float $k, float $expected)
+    {
+        // Given
+        $chiSquared = new ChiSquared($k);
+
+        // When
+        $median = $chiSquared->median();
+
+        // Then
+        $this->assertEquals($expected, $median, '', 0.00000001);
+    }
+
+    /**
+     * @return array
+     */
+    public function dataProviderForMedian(): array
+    {
+        return [
+            [1, 0.47050754458162],
+            [2, 1.40466392318244],
+            [3, 2.38149672306054],
+            [4, 3.36968449931408],
+            [5, 4.36252400548703],
+            [20, 19.3407133058986],
+        ];
+    }
+
+    /**
+     * @testCase     mode
+     * @dataProvider dataProviderForMode
+     * @param        float $k
+     * @param        float $expected
+     */
+    public function testMode(float $k, float $expected)
+    {
+        // Given
+        $chiSquared = new ChiSquared($k);
+
+        // When
+        $mode = $chiSquared->mode();
+
+        // Then
+        $this->assertEquals($expected, $mode, '', 0.00000001);
+    }
+
+    /**
+     * @return array
+     */
+    public function dataProviderForMode(): array
+    {
+        return [
+            [1, 0],
+            [2, 0],
+            [3, 1],
+            [4, 2],
+            [5, 3],
+            [20, 18],
+        ];
+    }
+
+    /**
+     * @testCase     variance
+     * @dataProvider dataProviderForVariance
+     * @param        float $k
+     * @param        float $expected
+     */
+    public function testVariance(float $k, float $expected)
+    {
+        // Given
+        $chiSquared = new ChiSquared($k);
+
+        // When
+        $variance = $chiSquared->variance();
+
+        // Then
+        $this->assertEquals($expected, $variance, '', 0.00000001);
+    }
+
+    /**
+     * @return array
+     */
+    public function dataProviderForVariance(): array
+    {
+        return [
+            [1, 2],
+            [2, 4],
+            [3, 6],
+            [4, 8],
+            [5, 10],
+            [20, 40],
+        ];
     }
 }

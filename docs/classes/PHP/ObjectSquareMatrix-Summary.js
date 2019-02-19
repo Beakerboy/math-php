@@ -1,0 +1,1 @@
+NDFramePage.OnPageTitleLoaded("PHPClass:ObjectSquareMatrix","ObjectSquareMatrix");NDSummary.OnSummaryLoaded("PHPClass:ObjectSquareMatrix",[["PHP","PHP"]],[["Classes","Class"],["Functions","Function"],["Groups","Group"]],[[32,0,0,"ObjectSquareMatrix"],[33,0,2,"Functions","Functions"],[34,0,1,"__construct","__construct"]]);

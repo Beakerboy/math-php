@@ -1,9 +1,6 @@
 <?php
 namespace MathPHP\Probability\Distribution\Continuous;
 
-use MathPHP\Functions\Support;
-use MathPHP\Exception;
-
 abstract class Continuous extends \MathPHP\Probability\Distribution\Distribution implements ContinuousDistribution
 {
     const GUESS_THRESHOLD = 10;
@@ -68,9 +65,9 @@ abstract class Continuous extends \MathPHP\Probability\Distribution\Distribution
      * @param float $x₁ Lower bound
      * @param float $x₂ Upper bound
      *
-     * @return number
+     * @return float
      */
-    public function between(float $x₁, float $x₂)
+    public function between(float $x₁, float $x₂): float
     {
         $upper_area = $this->cdf($x₂);
         $lower_area = $this->cdf($x₁);
@@ -86,9 +83,9 @@ abstract class Continuous extends \MathPHP\Probability\Distribution\Distribution
      * @param float $x₁ Lower bound
      * @param float $x₂ Upper bound
      *
-     * @return number
+     * @return float
      */
-    public function outside(float $x₁, float $x₂)
+    public function outside(float $x₁, float $x₂): float
     {
         return 1 - $this->between($x₁, $x₂);
     }
@@ -101,15 +98,19 @@ abstract class Continuous extends \MathPHP\Probability\Distribution\Distribution
      *
      * @param float $x
      *
-     * @return number
+     * @return float
      */
-    public function above(float $x)
+    public function above(float $x): float
     {
         return 1 - $this->cdf($x);
     }
     
     /**
      * Produce a random number with a particular distribution
+     *
+     * @return number
+     *
+     * @throws \Exception
      */
     public function rand()
     {

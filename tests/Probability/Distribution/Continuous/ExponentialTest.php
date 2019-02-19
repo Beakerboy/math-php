@@ -164,6 +164,85 @@ class ExponentialTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * @testCase     median
+     * @dataProvider dataProviderForMedian
+     * @param        number $λ
+     * @param        number $expectedMedian
+     */
+    public function testMedian($λ, $expectedMedian)
+    {
+        // Given
+        $exponential = new Exponential($λ);
+
+        // When
+        $median = $exponential->median();
+
+        // then
+        $this->assertEquals($expectedMedian, $median, '', 0.0000001);
+    }
+
+    /**
+     * @return array [λ, median]
+     */
+    public function dataProviderForMedian(): array
+    {
+        return [
+            [1, 0.69314718055995],
+            [2, 0.34657359027997],
+            [3, 0.23104906018665],
+            [4, 0.17328679513999],
+        ];
+    }
+
+    /**
+     * @testCase     mode
+     * @dataProvider dataProviderForMedian
+     * @param        number $λ
+     */
+    public function testMode($λ)
+    {
+        // Given
+        $exponential = new Exponential($λ);
+
+        // When
+        $mode = $exponential->mode();
+
+        // then
+        $this->assertEquals(0, $mode);
+    }
+
+    /**
+     * @testCase     variance
+     * @dataProvider dataProviderForVariance
+     * @param        number $λ
+     * @param        number $expectedVariance
+     */
+    public function testVariance($λ, $expectedVariance)
+    {
+        // Given
+        $exponential = new Exponential($λ);
+
+        // When
+        $variance = $exponential->variance();
+
+        // then
+        $this->assertEquals($expectedVariance, $variance, '', 0.0000001);
+    }
+
+    /**
+     * @return array [λ, variance]
+     */
+    public function dataProviderForVariance(): array
+    {
+        return [
+            [1, 1],
+            [2, 0.25],
+            [3, 0.111111111111111],
+            [4, 0.0625],
+        ];
+    }
+
+    /**
      * @testCase     inverse of cdf is x
      * @dataProvider dataProviderForInverse
      * @param        float $λ

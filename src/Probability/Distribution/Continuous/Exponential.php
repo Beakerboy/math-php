@@ -80,18 +80,6 @@ class Exponential extends Continuous
 
         return 1 - exp(-$λ * $x);
     }
-    
-    /**
-     * Mean of the distribution
-     *
-     * μ = λ⁻¹
-     *
-     * @return float
-     */
-    public function mean(): float
-    {
-        return 1 / $this->λ;
-    }
 
     /**
      * Inverse cumulative distribution function (quantile function)
@@ -116,5 +104,57 @@ class Exponential extends Continuous
         }
 
         return -log(1 - $p) / $this->λ;
+    }
+    
+    /**
+     * Mean of the distribution
+     *
+     * μ = λ⁻¹
+     *
+     * @return float
+     */
+    public function mean(): float
+    {
+        return 1 / $this->λ;
+    }
+
+    /**
+     * Median of the distribution
+     *
+     *          ln(2)
+     * median = -----
+     *            λ
+     *
+     * @return float
+     */
+    public function median(): float
+    {
+        return log(2) / $this->λ;
+    }
+
+    /**
+     * Mode of the distribution
+     *
+     * mode = 0
+     *
+     * @return float
+     */
+    public function mode(): float
+    {
+        return 0;
+    }
+
+    /**
+     * Variance of the distribution
+     *
+     *           1
+     * var[X] = --
+     *          λ²
+     *
+     * @return float
+     */
+    public function variance(): float
+    {
+        return 1 / ($this->λ**2);
     }
 }

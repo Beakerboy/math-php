@@ -11,12 +11,18 @@ class GammaTest extends \PHPUnit\Framework\TestCase
      * @param        float $x   x ∈ (0,1)
      * @param        float $k   shape parameter α > 0
      * @param        float $θ   scale parameter θ > 0
-     * @param        float $pdf
+     * @param        float $expectedPdf
      */
-    public function testPdf(float $x, float $k, float $θ, float $pdf)
+    public function testPdf(float $x, float $k, float $θ, float $expectedPdf)
     {
+        // Given
         $gamma = new Gamma($k, $θ);
-        $this->assertEquals($pdf, $gamma->pdf($x), '', 0.00000001);
+
+        // When
+        $pdf = $gamma->pdf($x);
+
+        // Then
+        $this->assertEquals($expectedPdf, $pdf, '', 0.00000001);
     }
 
     /**
@@ -46,7 +52,6 @@ class GammaTest extends \PHPUnit\Framework\TestCase
             [5, 4, 5, 0.01226265],
             [15, 4, 5, 0.04480836],
             [115, 4, 5, 4.161876e-08],
-
         ];
     }
 
@@ -56,12 +61,18 @@ class GammaTest extends \PHPUnit\Framework\TestCase
      * @param        float $x   x ∈ (0,1)
      * @param        float $k   shape parameter α > 0
      * @param        float $θ   scale parameter θ > 0
-     * @param        float $cdf
+     * @param        float $expectedCdf
      */
-    public function testCdf(float $x, float $k, float $θ, float $cdf)
+    public function testCdf(float $x, float $k, float $θ, float $expectedCdf)
     {
+        // Given
         $gamma = new Gamma($k, $θ);
-        $this->assertEquals($cdf, $gamma->cdf($x), '', 0.000001);
+
+        // When
+        $cdf = $gamma->cdf($x);
+
+        // Then
+        $this->assertEquals($expectedCdf, $cdf, '', 0.000001);
     }
 
     /**
@@ -103,8 +114,14 @@ class GammaTest extends \PHPUnit\Framework\TestCase
      */
     public function testMean(float $k, float $θ, float $μ)
     {
+        // Given
         $gamma = new Gamma($k, $θ);
-        $this->assertEquals($μ, $gamma->mean(), '', 0.0001);
+
+        // When
+        $mean = $gamma->mean();
+
+        // Then
+        $this->assertEquals($μ, $mean, '', 0.0001);
     }
 
     /**
@@ -118,6 +135,144 @@ class GammaTest extends \PHPUnit\Framework\TestCase
             [1, 2, 2.0],
             [2, 1, 2.0],
             [9, 0.5, 4.5],
+        ];
+    }
+
+    /**
+     * @testCase     median returns the expected approximation of the average
+     * @dataProvider dataProviderForMedian
+     * @param        float $k
+     * @param        float $θ
+     * @param        float $expectedApproximation
+     */
+    public function testMedian(float $k, float $θ, float $expectedApproximation)
+    {
+        // Given
+        $gamma = new Gamma($k, $θ);
+
+        // When
+        $median = $gamma->median();
+
+        // Then
+        $this->assertEquals($expectedApproximation, $median, '', 0.000001);
+    }
+
+    /**
+     * Data provider for median
+     * @return array [k, θ, μ]
+     */
+    public function dataProviderForMedian(): array
+    {
+        return [
+            [1, 1, 0.6875],
+            [1, 2, 1.375],
+            [2, 1, 1.6774193548387],
+            [9, 0.5, 4.33455882352943],
+        ];
+    }
+
+    /**
+     * @testCase     mode
+     * @dataProvider dataProviderForMode
+     * @param        float $k
+     * @param        float $θ
+     * @param        float $expected
+     */
+    public function testMode(float $k, float $θ, float $expected)
+    {
+        // Given
+        $gamma = new Gamma($k, $θ);
+
+        // When
+        $mode = $gamma->mode();
+
+        // Then
+        $this->assertEquals($expected, $mode, '', 0.000001);
+    }
+
+    /**
+     * Data provider for mode
+     * @return array [k, θ, μ]
+     */
+    public function dataProviderForMode(): array
+    {
+        return [
+            [1, 1, 0],
+            [1, 2, 0],
+            [2, 1, 1],
+            [2, 2, 2],
+            [2, 3, 3],
+            [3, 1, 2],
+            [3, 2, 4],
+            [3, 3, 6],
+        ];
+    }
+
+    /**
+     * @testCase     mode is not a number if k < 1
+     * @dataProvider dataProviderForModeNan
+     * @param        float $k
+     * @param        float $θ
+     */
+    public function testModeNan(float $k, float $θ)
+    {
+        // Given
+        $gamma = new Gamma($k, $θ);
+
+        // When
+        $mode = $gamma->mode();
+
+        // Then
+        $this->assertNan($mode);
+    }
+
+    /**
+     * Data provider for mode NAN
+     * @return array [k, θ]
+     */
+    public function dataProviderForModeNan(): array
+    {
+        return [
+            [0.1, 1],
+            [0.5, 3],
+            [0.9, 6],
+        ];
+    }
+
+    /**
+     * @testCase     variance
+     * @dataProvider dataProviderForVariance
+     * @param        float $k
+     * @param        float $θ
+     * @param        float $expected
+     */
+    public function testVariance(float $k, float $θ, float $expected)
+    {
+        // Given
+        $gamma = new Gamma($k, $θ);
+
+        // When
+        $variance = $gamma->variance();
+
+        // Then
+        $this->assertEquals($expected, $variance, '', 0.000001);
+    }
+
+    /**
+     * Data provider for variance
+     * @return array [k, θ, variance]
+     */
+    public function dataProviderForVariance(): array
+    {
+        return [
+            [1, 1, 1],
+            [1, 2, 4],
+            [2, 1, 2],
+            [2, 2, 8],
+            [2, 3, 18],
+            [3, 1, 3],
+            [3, 2, 12],
+            [3, 3, 27],
         ];
     }
 }

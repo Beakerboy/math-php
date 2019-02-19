@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("sub",["Function"],[["subtract",,[["ObjectArithmetic",,,,0,"File3:ObjectArithmetic.php:ObjectArithmetic.subtract","PHPClass:ObjectArithmetic:subtract"],["Polynomial",,,,0,"File:Polynomial.php:Polynomial.subtract","PHPClass:Polynomial:subtract"]]]]);

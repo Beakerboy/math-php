@@ -92,23 +92,6 @@ class Beta extends Continuous
     }
 
     /**
-     * Mean of the distribution
-     *
-     *       α
-     * μ = -----
-     *     α + β
-     *
-     * @return float
-     */
-    public function mean(): float
-    {
-        $α = $this->α;
-        $β = $this->β;
-
-        return $α / ($α + $β);
-    }
-
-    /**
      * Inverse cumulative distribution function (quantile function)
      * Iterative method
      *
@@ -142,5 +125,117 @@ class Beta extends Continuous
         }
 
         throw new MathException("Failed to converge on a Beta inverse within a tolerance of $tolerance after {$max_iterations} iterations");
+    }
+
+    /**
+     * Mean of the distribution
+     *
+     *       α
+     * μ = -----
+     *     α + β
+     *
+     * @return float
+     */
+    public function mean(): float
+    {
+        $α = $this->α;
+        $β = $this->β;
+
+        return $α / ($α + $β);
+    }
+
+    /**
+     * Median of the distribution
+     *
+     * Closed forms
+     *  - For symmetric cases α = β, median = 1/2
+     *  - For α = 1 and β > 0, median = 1 - 2^(-1/β)
+     *  - For α > 0 and β = 1, median = 2^(-1/α)
+     *  - For α = 3 and β = 2, median = 0.6142724318676105
+     *  - For α = 2 and β = 3, median = 0.38572756813238945
+     *
+     * Approximation
+     *             α  - ⅓
+     *  median =  ---------
+     *            α + β - ⅔
+     *
+     * @see https://en.wikipedia.org/wiki/Beta_distribution#Median
+     *
+     * @return float
+     */
+    public function median(): float
+    {
+        $α = $this->α;
+        $β = $this->β;
+
+        if ($α == $β) {
+            return 0.5;
+        }
+
+        if ($α == 1 && $β > 0) {
+            return 1 - 2**(-1 / $β);
+        }
+
+        if ($β == 1 && $α > 0) {
+            return 2**(-1 / $α);
+        }
+
+        if ($α == 3 && $β == 2) {
+            return 0.6142724318676105;
+        }
+
+        if ($α == 2 && $β == 3) {
+            return 0.38572756813238945;
+        }
+
+        return ($α - 1/3) / ($α + $β - 2/3);
+    }
+
+    /**
+     * Mode of the distribution
+     *
+     *          α - 1
+     * mode = ---------    α, β > 1
+     *        α + β - 2
+     *
+     * mode = 0            α = 1, β > 1
+     * mode = 1            α > 1, β = 1
+     *
+     * @return float
+     */
+    public function mode(): float
+    {
+        $α = $this->α;
+        $β = $this->β;
+
+        if ($α == 1 && $β > 1) {
+            return 0;
+        }
+        if ($α > 1 && $β == 1) {
+            return 1;
+        }
+
+        return ($α - 1) / ($α + $β - 2);
+    }
+
+    /**
+     * Variance of the distribution
+     *
+     *                  αβ
+     * var[X] = -------------------
+     *          ⟮α ＋ β⟯²⟮α ＋ β ＋ 1⟯
+     *
+     * @return float
+     */
+    public function variance(): float
+    {
+        $α = $this->α;
+        $β = $this->β;
+
+        $αβ          = $α * $β;
+        $⟮α ＋ β⟯²     = ($α + $β)**2;
+        $⟮α ＋ β ＋ 1⟯ = $α + $β + 1;
+
+        return $αβ / ($⟮α ＋ β⟯² * $⟮α ＋ β ＋ 1⟯);
     }
 }

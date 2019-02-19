@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("pol",["Class"],[["Polynomial",,[[,,,,0,"File:Polynomial.php:Polynomial","PHPClass:Polynomial"]]]]);

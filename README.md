@@ -425,6 +425,7 @@ $CM    = $A->cofactorMatrix();
 $B     = $A->meanDeviation();
 $S     = $A->covarianceMatrix();
 $adj⟮A⟯ = $A->adjugate();
+$Mᵢⱼ   = $A->submatrix($mᵢ, $nᵢ, $mⱼ, $nⱼ) // Submatrix of A from row mᵢ, column nᵢ to row mⱼ, column nⱼ
 
 // Matrix operations - return a new Vector
 $AB = $A->vectorMultiply($X₁);
@@ -931,14 +932,17 @@ use MathPHP\Probability\Distribution\Continuous;
 $p = 0.1;
 
 // Beta distribution
-$α    = 1; // shape parameter
-$β    = 1; // shape parameter
-$x    = 2;
-$beta = new Continuous\Beta($α, $β);
-$pdf  = $beta->pdf($x);
-$cdf  = $beta->cdf($x);
-$icdf = $beta->inverse($p);
-$μ    = $beta->mean();
+$α      = 1; // shape parameter
+$β      = 1; // shape parameter
+$x      = 2;
+$beta   = new Continuous\Beta($α, $β);
+$pdf    = $beta->pdf($x);
+$cdf    = $beta->cdf($x);
+$icdf   = $beta->inverse($p);
+$μ      = $beta->mean();
+$median = $beta->median();
+$mode   = $beta->mode();
+$σ²     = $beta->variance();
 
 // Cauchy distribution
 $x₀     = 2; // location parameter
@@ -953,12 +957,15 @@ $median = $cauchy->median();
 $mode   = $cauchy->mode();
 
 // χ²-distribution (Chi-Squared)
-$k   = 2; // degrees of freedom
-$x   = 1;
-$χ²  = new Continuous\ChiSquared($k);
-$pdf = $χ²->pdf($x);
-$cdf = $χ²->cdf($x);
-$μ   = $χ²->mean($x);
+$k      = 2; // degrees of freedom
+$x      = 1;
+$χ²     = new Continuous\ChiSquared($k);
+$pdf    = $χ²->pdf($x);
+$cdf    = $χ²->cdf($x);
+$μ      = $χ²->mean($x);
+$median = $χ²->median();
+$mode   = $χ²->mode();
+$σ²     = $χ²->variance();
 
 // Dirac delta distribution
 $x     = 1;
@@ -976,24 +983,31 @@ $pdf         = $exponential->pdf($x);
 $cdf         = $exponential->cdf($x);
 $icdf        = $exponential->inverse($p);
 $μ           = $exponential->mean();
+$median      = $exponential->median();
+$σ²          = $exponential->variance();
 
 // F-distribution
-$d₁  = 3; // degree of freedom v1
-$d₂  = 4; // degree of freedom v2
-$x   = 2;
-$f   = new Continuous\F($d₁, $d₂);
-$pdf = $f->pdf($x);
-$cdf = $f->cdf($x);
-$μ   = $f->mean();
+$d₁   = 3; // degree of freedom v1
+$d₂   = 4; // degree of freedom v2
+$x    = 2;
+$f    = new Continuous\F($d₁, $d₂);
+$pdf  = $f->pdf($x);
+$cdf  = $f->cdf($x);
+$μ    = $f->mean();
+$mode = $f->mode();
+$σ²   = $f->variance();
 
 // Gamma distribution
-$k     = 2; // shape parameter
-$θ     = 3; // scale parameter
-$x     = 4;
-$gamma = new Continuous\Gamma($k, $θ);
-$pdf   = $gamma->pdf($x);
-$cdf   = $gamma->cdf($x);
-$μ     = $gamma->mean();
+$k      = 2; // shape parameter
+$θ      = 3; // scale parameter
+$x      = 4;
+$gamma  = new Continuous\Gamma($k, $θ);
+$pdf    = $gamma->pdf($x);
+$cdf    = $gamma->cdf($x);
+$μ      = $gamma->mean();
+$median = $gamma->median();
+$mode   = $gamma->mode();
+$σ²     = $gamma->variance();
 
 // Laplace distribution
 $μ       = 1;   // location parameter
@@ -1003,8 +1017,10 @@ $laplace = new Continuous\Laplace($μ, $b);
 $pdf     = $laplace->pdf($x);
 $cdf     = $laplace->cdf($x);
 $icdf    = $laplace->inverse($p);
-$mean    = $laplace->mean();
+$μ       = $laplace->mean();
 $median  = $laplace->median();
+$mode    = $laplace->mode();
+$σ²      = $laplace->variance();
 
 // Logistic distribution
 $μ        = 2;   // location parameter
@@ -1014,8 +1030,10 @@ $logistic = new Continuous\Logistic($μ, $s);
 $pdf      = $logistic->pdf($x);
 $cdf      = $logistic->cdf($x);
 $icdf     = $logistic->inverse($p);
-$mean     = $logistic->mean();
+$μ        = $logistic->mean();
 $median   = $logistic->median();
+$mode     = $logistic->mode();
+$σ²       = $logisitic->variance();
 
 // Log-logistic distribution (Fisk distribution)
 $α           = 1; // scale parameter
@@ -1026,6 +1044,9 @@ $pdf         = $logLogistic->pdf($x);
 $cdf         = $logLogistic->cdf($x);
 $icdf        = $logLogistic->inverse($p);
 $μ           = $logLogistic->mean();
+$median      = $logLogistic->median();
+$mode        = $logLogistic->mode();
+$σ²          = $logLogistic->variance();
 
 // Log-normal distribution
 $μ         = 6;   // scale parameter
@@ -1037,6 +1058,8 @@ $cdf       = $logNormal->cdf($x);
 $icdf      = $logNormal->inverse($p);
 $μ         = $logNormal->mean();
 $median    = $logNormal->median();
+$mode      = $logNormal->mode();
+$σ²        = $logNormal->variance();
 
 // Noncentral T distribution
 $ν            = 50; // degrees of freedom
@@ -1045,7 +1068,7 @@ $x            = 8;
 $noncenetralT = new Continuous\NoncentralT($ν, $μ);
 $pdf          = $noncenetralT->pdf($x);
 $cdf          = $noncenetralT->cdf($x);
-$mean         = $noncenetralT->mean();
+$μ            = $noncenetralT->mean();
 
 // Normal distribution
 $σ      = 1;
@@ -1055,8 +1078,10 @@ $normal = new Continuous\Normal($μ, $σ);
 $pdf    = $normal->pdf($x);
 $cdf    = $normal->cdf($x);
 $icdf   = $normal->inverse($p);
-$mean   = $normal->mean();
+$μ      = $normal->mean();
 $median = $normal->median();
+$mode   = $normal->mode();
+$σ²     = $normal->variance();
 
 // Pareto distribution
 $a      = 1; // shape parameter
@@ -1068,6 +1093,8 @@ $cdf    = $pareto->cdf($x);
 $icdf   = $pareto->inverse($p);
 $μ      = $pareto->mean();
 $median = $pareto->median();
+$mode   = $pareto->mode();
+$σ²     = $pareto->variance();
 
 // Standard normal distribution
 $z              = 2;
@@ -1077,6 +1104,8 @@ $cdf            = $standardNormal->cdf($z);
 $icdf           = $standardNormal->inverse($p);
 $μ              = $standardNormal->mean();
 $median         = $standardNormal->median();
+$mode           = $standardNormal->mode();
+$σ²             = $standardNormal->variance();
 
 // Student's t-distribution
 $ν        = 3;   // degrees of freedom
@@ -1088,6 +1117,8 @@ $cdf      = $studentT->cdf($x);
 $t        = $studentT->inverse2Tails($p);  // t such that the area greater than t and the area beneath -t is p
 $μ        = $studentT->mean();
 $median   = $studentT->median();
+$mode     = $studentT->mode();
+$σ²       = $studentT->variance();
 
 // Uniform distribution
 $a       = 1; // lower boundary of the distribution
@@ -1096,7 +1127,10 @@ $x       = 2;
 $uniform = new Continuous\Uniform($a, $b);
 $pdf     = $uniform->pdf($x);
 $cdf     = $uniform->cdf($x);
-$μ       = $uniform->mean(b);
+$μ       = $uniform->mean();
+$median  = $uniform->median();
+$mode    = $uniform->mode();
+$σ²      = $uniform->variance();
 
 // Weibull distribution
 $k       = 1; // shape parameter
@@ -1107,6 +1141,8 @@ $pdf     = $weibull->pdf($x);
 $cdf     = $weibull->cdf($x);
 $icdf    = $weibull->inverse($p);
 $μ       = $weibull->mean();
+$median  = $weibull->median();
+$mode    = $weibull->mode();
 
 // Other CDFs - All continuous distributions - Replace {$distribution} with desired distribution.
 $between = $distribution->between($x₁, $x₂);  // Probability of being between two points, x₁ and x₂
@@ -1127,6 +1163,10 @@ $k         = 0;
 $bernoulli = new Discrete\Bernoulli($p);
 $pmf       = $bernoulli->pmf($k);
 $cdf       = $bernoulli->cdf($k);
+$μ         = $bernoulli->mean();
+$median    = $bernoulli->median();
+$mode      = $bernoulli->mode();
+$σ²        = $bernoulli->variance();
 
 // Binomial distribution
 $n        = 2;   // number of events
@@ -1135,6 +1175,8 @@ $r        = 1;   // number of successful events
 $binomial = new Discrete\Binomial($n, $p);
 $pmf      = $binomial->pmf($r);
 $cdf      = $binomial->cdf($r);
+$μ        = $binomial->mean();
+$σ²       = $binomial->variance();
 
 // Categorical distribution
 $k             = 3;                                    // number of categories
@@ -1149,6 +1191,10 @@ $k         = 2;   // number of trials
 $geometric = new Discrete\Geometric($p);
 $pmf       = $geometric->pmf($k);
 $cdf       = $geometric->cdf($k);
+$μ         = $geometric->mean();
+$median    = $geometric->median();
+$mode      = $geometric->mode();
+$σ²        = $geometric->variance();
 
 // Hypergeometric distribution
 $N        = 50; // population size
@@ -1159,26 +1205,30 @@ $hypergeo = new Discrete\Hypergeometric($N, $K, $n);
 $pmf      = $hypergeo->pmf($k);
 $cdf      = $hypergeo->cdf($k);
 $μ        = $hypergeo->mean();
-
-// Multinomial distribution
-$frequencies   = [7, 2, 3];
-$probabilities = [0.40, 0.35, 0.25];
-$multinomial   = new Discrete\Multinomial($probabilities);
-$pmf           = $multinomial->pmf($frequencies);
+$mode     = $hypergeo->mode();
+$σ²       = $hypergeo->variance();
 
 // Negative binomial distribution (Pascal)
-$r                = 1;   // number of successful events
+$r                = 1;   // number of failures until the experiment is stopped
 $P                = 0.5; // probability of success on an individual trial
-$x                = 2;   // number of trials required to produce r successes
+$x                = 2;   // number of successes
 $negativeBinomial = new Discrete\NegativeBinomial($r, $p);
 $pmf              = $negativeBinomial->pmf($x);
+$cdf              = $negativeBinomial->cdf($x);
+$μ                = $negativeBinomial->mean();
+$mode             = $negativeBinomial->mode();
+$σ²               = $negativeBinomial->variance();
 
 // Pascal distribution (Negative binomial)
-$r      = 1;   // number of successful events
+$r      = 1;   // number of failures until the experiment is stopped
 $P      = 0.5; // probability of success on an individual trial
-$x      = 2;   // number of trials required to produce r successes
+$x      = 2;   // number of successes
 $pascal = new Discrete\Pascal($r, $p);
 $pmf    = $pascal->pmf($x);
+$cdf    = $pascal->cdf($x);
+$μ      = $pascal->mean();
+$mode   = $pascal->mode();
+$σ²     = $pascal->variance();
 
 // Poisson distribution
 $λ       = 2; // average number of successful events per interval
@@ -1186,6 +1236,10 @@ $k       = 3; // events in the interval
 $poisson = new Discrete\Poisson($λ);
 $pmf     = $poisson->pmf($k);
 $cdf     = $poisson->cdf($k);
+$μ       = $poisson->mean();
+$median  = $poisson->median();
+$mode    = $poisson->mode();
+$σ²      = $poisson->variance();
 
 // Shifted geometric distribution (probability to get one success)
 $p                = 0.5; // success probability
@@ -1193,6 +1247,10 @@ $k                = 2;   // number of trials
 $shiftedGeometric = new Discrete\ShiftedGeometric($p);
 $pmf              = $shiftedGeometric->pmf($k);
 $cdf              = $shiftedGeometric->cdf($k);
+$μ                = $shiftedGeometric->mean();
+$median           = $shiftedGeometric->median();
+$mode             = $shiftedGeometric->mode();
+$σ²               = $shiftedGeometric->variance();
 
 // Uniform distribution
 $a       = 1; // lower boundary of the distribution
@@ -1202,6 +1260,8 @@ $uniform = new Discrete\Uniform($a, $b);
 $pmf     = $uniform->pmf();
 $cdf     = $uniform->cdf($k);
 $μ       = $uniform->mean();
+$median  = $uniform->median();
+$σ²      = $uniform->variance();
 ```
 
 ### Probability - Multivariate Distributions
@@ -1223,6 +1283,12 @@ $∑      = MatrixFactory::create([
 $X      = [0.7, 1.4];
 $normal = new Multivariate\Normal($μ, $∑);
 $pdf    = $normal->pdf($X);
+
+// Multinomial distribution
+$frequencies   = [7, 2, 3];
+$probabilities = [0.40, 0.35, 0.25];
+$multinomial   = new Multivariate\Multinomial($probabilities);
+$pmf           = $multinomial->pmf($frequencies);
 ```
 
 ### Probability - Distribution Tables
@@ -1793,7 +1859,22 @@ $q = [0.1, 0.4, 0.5];
 
 // Distances
 $DB⟮p、q⟯ = Distance::bhattacharyyaDistance($p, $q);
-$H⟮p、q⟯  = Distance::hellingerDistance($p, $q)
+$H⟮p、q⟯  = Distance::hellingerDistance($p, $q);
+
+// Mahalanobis distance
+$x    = new Matrix([[6], [5]]);
+$data = new Matrix([
+    [4, 4, 5, 2, 3, 6, 9, 7, 4, 5],
+    [3, 7, 5, 7, 9, 5, 6, 2, 2, 7],
+]);
+$otherData = new Matrix([
+    [4, 4, 5, 2, 3, 6, 9, 7, 4, 5],
+    [3, 7, 5, 7, 9, 5, 6, 2, 2, 7],
+]);
+$y = new Matrix([[2], [2]]);
+$D = Distance::Mahalanobis($x, $data);          // Mahalanobis distance from x to the centroid of the data.
+$D = Distance::Mahalanobis($x, $data, $y);      // Mahalanobis distance between $x and $y using the data.
+$D = Distance::Mahalanobis($data, $otherData);  // Mahalanobis distance between the centroids of two sets of data.
 
 // Divergences
 $Dkl⟮P‖Q⟯ = Distance::kullbackLeiblerDivergence($p, $q);

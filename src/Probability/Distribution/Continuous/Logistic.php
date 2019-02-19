@@ -95,7 +95,31 @@ class Logistic extends Continuous
         $ℯ＾⁻⁽x⁻μ⁾／s = exp(-($x - $μ) / $s);
         return 1 / (1 + $ℯ＾⁻⁽x⁻μ⁾／s);
     }
-    
+
+    /**
+     * Inverse CDF (quantile function)
+     *
+     *                     /   p   \
+     * Q(p;μ,s) = μ + s ln|  -----  |
+     *                     \ 1 - p /
+     *
+     * @param float $p
+     *
+     * @return float
+     */
+    public function inverse(float $p): float
+    {
+        Support::checkLimits(['p' => '[0,1]'], ['p' => $p]);
+        $μ = $this->μ;
+        $s = $this->s;
+
+        if ($p == 1) {
+            return \INF;
+        }
+
+        return $μ + $s * log($p / (1 - $p));
+    }
+
     /**
      * Mean of the distribution
      *
@@ -119,28 +143,33 @@ class Logistic extends Continuous
     {
         return $this->μ;
     }
-    
+
     /**
-     * Inverse CDF (quantile function)
+     * Mode of the distribution
      *
-     *                     /   p   \
-     * Q(p;μ,s) = μ + s ln|  -----  |
-     *                     \ 1 - p /
+     * mode = μ
      *
-     * @param float $p
+     * @return float μ
+     */
+    public function mode(): float
+    {
+        return $this->μ;
+    }
+
+    /**
+     * Variance of the distribution
+     *
+     *          s²π²
+     * var[X] = ----
+     *           3
      *
      * @return float
      */
-    public function inverse(float $p): float
+    public function variance(): float
     {
-        Support::checkLimits(['p' => '[0,1]'], ['p' => $p]);
-        $μ = $this->μ;
-        $s = $this->s;
+        $s² = $this->s**2;
+        $π² = \M_PI**2;
 
-        if ($p == 1) {
-            return \INF;
-        }
-
-        return $μ + $s * log($p / (1 - $p));
+        return ($s² * $π²) / 3;
     }
 }

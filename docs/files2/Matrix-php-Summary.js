@@ -1,0 +1,1 @@
+NDFramePage.OnPageTitleLoaded("File2:Matrix.php","Matrix.php");NDSummary.OnSummaryLoaded("File2:Matrix.php",[["PHP","PHP"]],[["Classes","Class"],["Functions","Function"],["Groups","Group"]],[[28,0,0,"Matrix","Matrix"],[29,0,2,"Functions","Matrix.Functions"],[30,0,1,"__construct","Matrix.__construct"],[31,0,1,"getMatrix","Matrix.getMatrix"]]);

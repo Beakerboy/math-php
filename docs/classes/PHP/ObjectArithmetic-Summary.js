@@ -1,0 +1,1 @@
+NDFramePage.OnPageTitleLoaded("PHPClass:ObjectArithmetic","ObjectArithmetic");NDSummary.OnSummaryLoaded("PHPClass:ObjectArithmetic",[["PHP","PHP"]],[["Functions","Function"],["Groups","Group"],["Interfaces","Interface"]],[[43,0,2,"ObjectArithmetic"],[44,0,1,"Functions","Functions"],[45,0,0,"add","add"],[46,0,0,"subtract","subtract"],[47,0,0,"multiply","multiply"]]);

@@ -78,7 +78,7 @@ class LaplaceTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @testCase mean is always $μ
+     * @testCase mean is always μ
      */
     public function testMean()
     {
@@ -97,7 +97,7 @@ class LaplaceTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @testCase median is always $μ
+     * @testCase median is always μ
      */
     public function testMedian()
     {
@@ -113,6 +113,59 @@ class LaplaceTest extends \PHPUnit\Framework\TestCase
                 $this->assertEquals($μ, $median);
             }
         }
+    }
+
+    /**
+     * @testCase mode is always μ
+     */
+    public function testMode()
+    {
+        foreach (range(-5, 5) as $μ) {
+            foreach (range(1, 3) as $b) {
+                // Given
+                $laplace = new Laplace($μ, $b);
+
+                // When
+                $mode = $laplace->mode();
+
+                // Then
+                $this->assertEquals($μ, $mode);
+            }
+        }
+    }
+
+    /**
+     * @testCase     variance
+     * @dataProvider dataProviderForVariance
+     * @param        float $μ
+     * @param        float $b
+     * @param        float $expected
+     */
+    public function testVariance(float $μ, float $b, float $expected)
+    {
+        // Given
+        $laplace = new Laplace($μ, $b);
+
+        // When
+        $variance = $laplace->variance();
+
+        // Then
+        $this->assertEquals($expected, $variance, '', 0.000001);
+    }
+
+    /**
+     * @return array [μ, b, variance]
+     */
+    public function dataProviderForVariance(): array
+    {
+        return [
+            [1, 1, 2],
+            [2, 1, 2],
+            [3, 1, 2],
+            [1, 2, 8],
+            [2, 2, 8],
+            [4, 3, 18],
+        ];
     }
 
     /**

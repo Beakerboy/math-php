@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("ari",["Class"],[["Arithmetic",,[[,,,,0,"File:Arithmetic.php:Arithmetic","PHPClass:Arithmetic"]]]]);

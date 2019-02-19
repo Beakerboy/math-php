@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("obj",["Interface","Class"],[["ObjectArithmetic",,[[,,,,0,"File3:ObjectArithmetic.php:ObjectArithmetic","PHPClass:ObjectArithmetic"]]],["ObjectSquareMatrix",,[[,,,,1,"File2:ObjectSquareMatrix.php:ObjectSquareMatrix","PHPClass:ObjectSquareMatrix"]]]]);

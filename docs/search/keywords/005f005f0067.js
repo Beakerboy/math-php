@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("__g",["Function"],[["__get",,[["Complex",,,,0,"File3:Complex.php:Complex.__get","PHPClass:Complex:__get"]]]]);

@@ -7,6 +7,7 @@ use MathPHP\Number\ObjectArithmetic;
 use MathPHP\Functions\Map;
 
 /**
+ * Class: Polynomial
  * A convenience class for one-dimension polynomials.
  *
  * This class is used to encompass typical methods and features that you can extend
@@ -57,6 +58,7 @@ class Polynomial implements ObjectArithmetic
     const SYMBOLS = ['⁰', '¹', '²', '³', '⁴', '⁵', '⁶', '⁷', '⁸', '⁹'];
 
     /**
+     * Constructor: __construct
      * When a polynomial is instantiated, set the coefficients and degree of
      * that polynomial as its object parameters.
      *
@@ -85,6 +87,7 @@ class Polynomial implements ObjectArithmetic
     }
 
     /**
+     * Function: __ToString
      * When a polynomial is to be treated as a string, return it in a readable format.
      * Example: $polynomial = new Polynomial([1, -8, 12, 3]);
      *          echo $polynomial;
@@ -147,6 +150,7 @@ class Polynomial implements ObjectArithmetic
     }
 
     /**
+     * Function: __invoke
      * When a polynomial is being evaluated at a point x₀, build a callback
      * function and return the value of the callback function at x₀
      * Example: $polynomial = new Polynomial([1, -8, 12, 3]);
@@ -182,6 +186,7 @@ class Polynomial implements ObjectArithmetic
     }
 
     /**
+     * Function: checkNumericOrPolynomial
      * Check that our input is either a number or a Polynomial
      * Convert any numbers to Polynomial objects
      *
@@ -200,6 +205,7 @@ class Polynomial implements ObjectArithmetic
         }
     }
     /**
+     * Function: getDegree
      * Getter method for the degree of a polynomial
      *
      * @return int The degree of a polynomial object
@@ -210,6 +216,7 @@ class Polynomial implements ObjectArithmetic
     }
 
     /**
+     * Function: getCoefficients
      * Getter method for the coefficients of a polynomial
      *
      * @return array The coefficients array of a polynomial object
@@ -220,6 +227,7 @@ class Polynomial implements ObjectArithmetic
     }
 
     /**
+     * Function: getVariable
      * Getter method for the dependent variable of a polynomial
      *
      * @return string The dependent variable of a polynomial object
@@ -230,6 +238,7 @@ class Polynomial implements ObjectArithmetic
     }
 
     /**
+     * Function: setVariable
      * Setter method for the dependent variable of a polynomial
      *
      * @param string $variable The new dependent variable of a polynomial object
@@ -240,6 +249,7 @@ class Polynomial implements ObjectArithmetic
     }
 
     /**
+     * Function: differentiate
      * Calculate the derivative of a polynomial and return it as a new polynomial
      * Example: $polynomial = new Polynomial([1, -8, 12, 3]); // x³ - 8x² + 12x + 3
      *          $derivative = $polynomial->differentiate();   // 3x² - 16x + 12
@@ -262,6 +272,7 @@ class Polynomial implements ObjectArithmetic
     }
 
     /**
+     * Function: integrate
      * Calculate the indefinite integral of a polynomial and return it as a new polynomial
      * Example: $polynomial = new Polynomial([3, -16, 12]); // 3x² - 16x + 12
      *          $integral = $polynomial->integrate();       // x³ - 8x² + 12x
@@ -284,6 +295,7 @@ class Polynomial implements ObjectArithmetic
     }
 
     /**
+     * Frunction: add
      * Return a new polynomial that is the sum of the current polynomial and an
      * input polynomial
      * Example: $polynomial = new Polynomial([3, -16, 12]); // 3x² - 16x + 12
@@ -320,6 +332,7 @@ class Polynomial implements ObjectArithmetic
     }
 
     /**
+     * Function: subtract
      * Return a new polynomial that is the difference of the current polynomial and an
      * input polynomial
      * Example: $polynomial = new Polynomial([3, -16, 12]);        // 3x² - 16x + 12
@@ -341,6 +354,7 @@ class Polynomial implements ObjectArithmetic
     }
 
     /**
+     * Function: multiply
      * Return a new polynomial that is the product of the current polynomial and an
      * input polynomial
      * Example: $polynomial = new Polynomial([2, -16]);          // 2x - 16
@@ -384,6 +398,7 @@ class Polynomial implements ObjectArithmetic
     }
 
     /**
+     * Function: negate
      * Return a new polynomial that is the negated version.
      *
      * @return Polynomial that is negated
@@ -396,6 +411,7 @@ class Polynomial implements ObjectArithmetic
     }
 
     /**
+     * Function: roots
      * Calculate the roots of a polynomial
      *
      * Closed form solutions only exist if the degree is less than 5

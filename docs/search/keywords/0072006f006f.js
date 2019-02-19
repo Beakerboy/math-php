@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("roo",["Function"],[["roots",,[["Polynomial",,,,0,"File:Polynomial.php:Polynomial.roots","PHPClass:Polynomial:roots"]]]]);
