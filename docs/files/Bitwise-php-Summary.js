@@ -1,1 +1,1 @@
-NDFramePage.OnPageTitleLoaded("File:Bitwise.php","Bitwise.php");NDSummary.OnSummaryLoaded("File:Bitwise.php",[["PHP","PHP"]],[["Functions","Function"],["Groups","Group"]],[[4,0,1,"Functions","Functions"],[5,0,0,"add","add"]]);
+NDFramePage.OnPageTitleLoaded("File:Bitwise.php","Bitwise.php");NDSummary.OnSummaryLoaded("File:Bitwise.php",[["PHP","PHP"]],[["Functions","Function"],["Groups","Group"]],[[4,0,1,"Functions","Functions"],[23,0,0,"add","add"]]);

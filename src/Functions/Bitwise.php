@@ -41,10 +41,12 @@ class Bitwise
      *         $a = 1001, $b = 1010, return [true, '0011] because \PHP_INT_MIN = 1000,
      *         Giving $a - 1000 = 0001, $b - 1000 = 0010.
      *
-     * @param int $a
-     * @param int $b
+     * Parameters:
+     * int $a - First bit sequence
+     * int $b - Second bit sequence
      *
-     * @return array
+     * Returns:
+     * array
      *         'overflow' is true if the result is larger than the bits in an int
      *         'value' is the result of the addition ignoring any overflow.
      */
