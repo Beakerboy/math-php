@@ -11,6 +11,7 @@ It is actively under development with development (0.y.z) releases.
 [![Build Status](https://travis-ci.org/markrogoyski/math-php.svg?branch=master)](https://travis-ci.org/markrogoyski/math-php)
 [![License](https://poser.pugx.org/markrogoyski/math-php/license)](https://packagist.org/packages/markrogoyski/math-php)
 [![Documentation](https://codedocs.xyz/Beakerboy/math-php.svg)](https://codedocs.xyz/Beakerboy/math-php/)
+
 Features
 --------
  * [Algebra](#algebra)
