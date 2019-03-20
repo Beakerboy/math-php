@@ -3388,8 +3388,41 @@ class Matrix implements \ArrayAccess, \JsonSerializable
         $skip_last = $this->isSquare() ? 1 : 0;
         $FullI = MatrixFactory::identity($m);
         for ($i = 0; $i < $n - $skip_last; $i++) {
+            // Remove the leftmost $i columns and upper $i rows
             $A = $HA[$i - 1]->submatrix($i, $i, $m - 1, $n - 1);
-            
+            $innerH = $A->householderMatrix();
+            $H[$i] = $FullI->insert($innerH, $i, $i);
+            $HA[$i] = $H[$i]->multiply($HA[$i - 1]);
+        }
+        $R = $HA[$n - 1 - $skip_last];
+        $Q = $H[0];
+        foreach ($H as $key => $value) {
+            if ($key > 0) {
+                $Q = $Q->multiply($value);
+            }
+        }
+        return [
+            'Q' => $Q->submatrix(0, 0, $m - 1, $n - 1),
+            'R' => $R->submatrix(0, 0, min($m, $n) - 1, $n - 1),
+        ];
+    }
+
+        /**
+	     * Householder Matrix
+	     *
+	     * u = x - αe   where α = ‖x‖
+	     *
+	     *      u
+	     * v = ---
+	     *     ‖u‖
+	     *
+	     * Q = I - 2vvᵀ
+	     *
+	     * @return Matrix
+	     *
+	     */
+	    private function householderMatrix(): Matrix
+	    {
             //  The leftmost column of A
             $u = $A->submatrix(0, 0, $A->getM() - 1, 0);
             $uᵀu = $u->transpose()->multiply($u);
@@ -3408,21 +3441,8 @@ class Matrix implements \ArrayAccess, \JsonSerializable
             
             $vvᵀ = $v->multiply($v->transpose());
             // We scale $vvᵀ, subtract it from a small Identity, and embed in a large identity
-            $H[$i] = $FullI->insert($I->subtract($vvᵀ->scalarMultiply(2 / $scalar_vᵀv)), $i, $i);
-            $HA[$i] = $H[$i]->multiply($HA[$i - 1]);
+            return $I->subtract($vvᵀ->scalarMultiply(2 / $scalar_vᵀv));
         }
-        $R = $HA[$n - 1 - $skip_last];
-        $Q = $H[0];
-        foreach ($H as $key => $value) {
-            if ($key > 0) {
-                $Q = $Q->multiply($value);
-            }
-        }
-        return [
-            'Q' => $Q->submatrix(0, 0, $m - 1, $n - 1),
-            'R' => $R->submatrix(0, 0, min($m, $n) - 1, $n - 1),
-        ];
-    }
 
     /**************************************************************************
      * SOLVE LINEAR SYSTEM OF EQUATIONS
