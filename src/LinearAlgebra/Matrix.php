@@ -3407,42 +3407,42 @@ class Matrix implements \ArrayAccess, \JsonSerializable
         ];
     }
 
-        /**
-	     * Householder Matrix
-	     *
-	     * u = x - αe   where α = ‖x‖
-	     *
-	     *      u
-	     * v = ---
-	     *     ‖u‖
-	     *
-	     * Q = I - 2vvᵀ
-	     *
-	     * @return Matrix
-	     *
-	     */
-	    private function householderMatrix(): Matrix
-	    {
-            //  The leftmost column of A
-            $u = $this->submatrix(0, 0, $this->getM() - 1, 0);
-            $uᵀu = $u->transpose()->multiply($u);
-            // The square root of the sum of squares
-            $α = sqrt($uᵀu[0][0]);
-            // We use the sign of the top element of u
-            $sgn = Special::sgn($u[0][0]);
-            $I = MatrixFactory::identity($this->getM());
-            // Get the first column of I
-            $e = $I->submatrix(0, 0, $this->getM() - 1, 0);
-            $v = $e->scalarMultiply($α * $sgn)->add($u);
-            
-            // The sum of squares of v
-            $vᵀv = $v->transpose()->multiply($v);
-            $scalar_vᵀv = $vᵀv[0][0];
-            
-            $vvᵀ = $v->multiply($v->transpose());
-            // We scale $vvᵀ, subtract it from a small Identity, and embed in a large identity
-            return $I->subtract($vvᵀ->scalarMultiply(2 / $scalar_vᵀv));
-        }
+    /**
+     * Householder Matrix
+     *
+     * u = x - αe   where α = ‖x‖
+     *
+     *      u
+     * v = ---
+     *     ‖u‖
+     *
+     * Q = I - 2vvᵀ
+     *
+     * @return Matrix
+     *
+     */
+    private function householderMatrix(): Matrix
+    {
+        //  The leftmost column of A
+        $u = $this->submatrix(0, 0, $this->getM() - 1, 0);
+        $uᵀu = $u->transpose()->multiply($u);
+	// The square root of the sum of squares
+        $α = sqrt($uᵀu[0][0]);
+        // We use the sign of the top element of u
+        $sgn = Special::sgn($u[0][0]);
+        $I = MatrixFactory::identity($this->getM());
+        // Get the first column of I
+        $e = $I->submatrix(0, 0, $this->getM() - 1, 0);
+        $v = $e->scalarMultiply($α * $sgn)->add($u);
+
+        // The sum of squares of v
+        $vᵀv = $v->transpose()->multiply($v);
+        $scalar_vᵀv = $vᵀv[0][0];
+
+        $vvᵀ = $v->multiply($v->transpose());
+        // We scale $vvᵀ, subtract it from a small Identity, and embed in a large identity
+        return $I->subtract($vvᵀ->scalarMultiply(2 / $scalar_vᵀv));
+    }
 
     /**************************************************************************
      * SOLVE LINEAR SYSTEM OF EQUATIONS
