@@ -3432,7 +3432,7 @@ class Matrix implements \ArrayAccess, \JsonSerializable
             $sgn = Special::sgn($u[0][0]);
             $I = MatrixFactory::identity($this->getM());
             // Get the first column of I
-            $e = $I->submatrix(0, 0, $rhis->getM() - 1, 0);
+            $e = $I->submatrix(0, 0, $this->getM() - 1, 0);
             $v = $e->scalarMultiply($α * $sgn)->add($u);
             
             // The sum of squares of v
