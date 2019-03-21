@@ -3426,7 +3426,7 @@ class Matrix implements \ArrayAccess, \JsonSerializable
         //  The leftmost column of A
         $u = $this->submatrix(0, 0, $this->getM() - 1, 0);
         $uᵀu = $u->transpose()->multiply($u);
-	// The square root of the sum of squares
+        // The square root of the sum of squares
         $α = sqrt($uᵀu[0][0]);
         // We use the sign of the top element of u
         $sgn = Special::sgn($u[0][0]);
