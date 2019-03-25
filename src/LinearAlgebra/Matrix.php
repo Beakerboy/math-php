@@ -3412,7 +3412,7 @@ class Matrix implements \ArrayAccess, \JsonSerializable
         }
         $R = $HA;
         return [
-            'Q' => $Q->submatrix(0, 0, $m - 1, $n - 1),
+            'Q' => $Q->submatrix(0, 0, $m - 1, min($m, $n) - 1),
             'R' => $R->submatrix(0, 0, min($m, $n) - 1, $n - 1),
         ];
     }
