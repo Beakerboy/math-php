@@ -3386,12 +3386,13 @@ class Matrix implements \ArrayAccess, \JsonSerializable
         $m = $this->m;  // rows
         $HA = $this;
 
-        // If the source matrix is square, the final householder matrix will be
-        // the identity matrix with a -1 in the bottom corner. The effect of this
-        // final transformation would only change signs on existing matricies. Both
-        // R and Q will already be in approprite forms in the next to the last step.
-        // We can skip the last transformation without affecting the validity of the
-        // results. Results indicate other software behaves similarly.
+        // If the source matrix is square or wider than it is tall, the final
+        // householder matrix will be the identity matrix with a -1 in the bottom
+        // corner. The effect of this final transformation would only change signs
+        // on existing matricies. Both R and Q will already be in approprite forms
+        // in the next to the last step. We can skip the last transformation without
+        // affecting the validity of the results. Results indicate other software
+        // behaves similarly.
         //
         // This is because on a 1x1 matrix uuᵀ = uᵀu, so I - [[2]] = [[-1]]
         $skip_last = $n >= $m ? 1 : 0;
