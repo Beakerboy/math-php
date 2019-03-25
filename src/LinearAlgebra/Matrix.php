@@ -3394,7 +3394,7 @@ class Matrix implements \ArrayAccess, \JsonSerializable
         // results. Results indicate other software behaves similarly.
         //
         // This is because on a 1x1 matrix uuᵀ = uᵀu, so I - [[2]] = [[-1]]
-        $skip_last = $this->isSquare() ? 1 : 0;
+        $skip_last = $n >= $m ? 1 : 0;
         $FullI = MatrixFactory::identity($m);
         $Q = $FullI;
         for ($i = 0; $i < $n - $skip_last; $i++) {
