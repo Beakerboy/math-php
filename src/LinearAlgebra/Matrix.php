@@ -3395,10 +3395,10 @@ class Matrix implements \ArrayAccess, \JsonSerializable
         // behaves similarly.
         //
         // This is because on a 1x1 matrix uuᵀ = uᵀu, so I - [[2]] = [[-1]]
-        $skip_last = $n >= $m ? 1 : 0;
+        $numReflections = min($m - 1, $n);
         $FullI = MatrixFactory::identity($m);
         $Q = $FullI;
-        for ($i = 0; $i < $n - $skip_last; $i++) {
+        for ($i = 0; $i < $numReflections; $i++) {
             // Remove the leftmost $i columns and upper $i rows
             $A = $HA->submatrix($i, $i, $m - 1, $n - 1);
             
