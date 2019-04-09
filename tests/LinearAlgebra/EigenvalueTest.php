@@ -211,4 +211,31 @@ class EigenvalueTest extends \PHPUnit\Framework\TestCase
             ],
         ];
     }
+
+    /**
+     * @testCase     JKMethod throws exception if number of iterations is exceeded
+     * @dataProvider dataProviderForJkIterationFailure
+     * @param        array $A
+     * @param        array $S
+     */
+    public function testJkIterationFail(array $A, array $S)
+    {
+        $A = MatrixFactory::create($A);
+        $this->expectException(Exception\BadDataException::class);
+        Eigenvalue::JkMethod($A, 1);
+    }
+    public function dataProviderForJkIterationFailure(): array
+    {
+        return [
+            [
+                [
+                    [4, -30, 60, -35],
+                    [-30, 300, -675, 420],
+                    [60, -675, 1620, -1050],
+                    [-35, 420, -1050, 700],
+                ],
+                [2585.2538, 37.10149, 1.47805, .166642],
+            ],
+        ];
+    }
 }
