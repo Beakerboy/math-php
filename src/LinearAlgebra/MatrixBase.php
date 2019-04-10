@@ -29,6 +29,7 @@ abstract class MatrixBase implements \ArrayAccess, \JsonSerializable
      *  - getN
      *  - getRow
      *  - getColumn
+     *  - get
      **************************************************************************/
     /**
      * Get matrix
