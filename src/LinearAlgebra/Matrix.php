@@ -7,9 +7,9 @@ use MathPHP\Functions\Support;
 use MathPHP\LinearAlgebra\MatrixBase;
 
 /**
- * m x n Matrix
+ * m x n Matrix of real numbers
  */
-class Matrix extends MatrixBase implements \ArrayAccess, \JsonSerializable
+class Matrix extends MatrixBase
 {
     /** @var Matrix Row echelon form */
     protected $ref;
