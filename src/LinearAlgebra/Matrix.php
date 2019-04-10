@@ -1,24 +1,16 @@
 <?php
 namespace MathPHP\LinearAlgebra;
 
+use MathPHP\Exception;
 use MathPHP\Functions\Map;
 use MathPHP\Functions\Support;
-use MathPHP\Exception;
+use MathPHP\LinearAlgebra\MatrixBase;
 
 /**
  * m x n Matrix
  */
-class Matrix implements \ArrayAccess, \JsonSerializable
+class Matrix extends MatrixBase implements \ArrayAccess, \JsonSerializable
 {
-    /** @var int Number of rows */
-    protected $m;
-
-    /** @var int Number of columns */
-    protected $n;
-
-    /** @var array Matrix array of arrays */
-    protected $A;
-
     /** @var Matrix Row echelon form */
     protected $ref;
 
