@@ -11,7 +11,7 @@ use MathPHP\Exception;
  * regardless of the type of data that they contain.
  *
  */
-abstract class MatrixBase implements \ArrayAccess, \JsonSerializable
+trait MatrixBase
 {
     /** @var int Number of rows */
     protected $m;
@@ -156,10 +156,4 @@ abstract class MatrixBase implements \ArrayAccess, \JsonSerializable
         return $this->A;
     }
 
-    /**
-     * Get the type of objects that are stored in the matrix
-     *
-     * @return string The class of the objects
-     */
-    abstract public function getObjectType(): string;
 }
