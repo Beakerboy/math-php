@@ -10,7 +10,7 @@ use MathPHP\Exception;
  * regardless of the type of data that they contain.
  *
  */
-abstract class SquareMatrixBase extends Matrixbase
+trait SquareMatrixBase
 {
     /** @var number Determinant */
     protected $det;
