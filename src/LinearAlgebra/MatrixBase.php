@@ -162,6 +162,5 @@ abstract class MatrixBase implements \ArrayAccess, \JsonSerializable
      * @return string The class of the objects
      */
     abstract public function getObjectType(): string
-    {
-    }
+
 }
