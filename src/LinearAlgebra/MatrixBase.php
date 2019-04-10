@@ -1,7 +1,7 @@
 <?php
 
 namespace MathPHP\LinearAlgebra;
-**
+/**
  * m x n Matrix
  */
 abstract class MatrixBase implements \ArrayAccess, \JsonSerializable
@@ -14,5 +14,4 @@ abstract class MatrixBase implements \ArrayAccess, \JsonSerializable
 
     /** @var array Matrix array of arrays */
     protected $A;
-
 }
