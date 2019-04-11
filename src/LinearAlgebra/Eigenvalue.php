@@ -120,13 +120,9 @@ class Eigenvalue
         $num_zero = 0;
         $iterationCount = 0;
         $ε = 1E-16;
-        $Ematrix = [];
         while ($num_zero < $m * ($m - 1) / 2 && $iterationCount < $iter) {
             for ($i = 0; $i < $m - 1; $i++) {
                 for ($j = $i + 1; $j < $m; $j++) {
-                    $num = 0;
-                    $den = 0;
-
                     $x = $A->getColumn($i);
                     $y = $A->getColumn($j);
                     $num = 2 * array_sum(Multi::multiply($x, $y));
