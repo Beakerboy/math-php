@@ -885,8 +885,11 @@ class Matrix extends MatrixBase implements MatrixInterface
      * @throws Exception\IncorrectTypeException
      * @throws Exception\MathException
      */
-    public function add(Matrix $B): Matrix
+    public function add($B): Matrix
     {
+        if (!$B instanceof Matrix) {
+            throw new Exception\IncorrectTypeException('Can only do matrix subtraction with a Matrix');
+        }
         if ($B->getM() !== $this->m) {
             throw new Exception\MatrixException('Matrices have different number of rows');
         }
@@ -956,8 +959,11 @@ class Matrix extends MatrixBase implements MatrixInterface
      * @throws Exception\MatrixException if matrices have a different number of rows or columns
      * @throws Exception\IncorrectTypeException
      */
-    public function subtract(Matrix $B): Matrix
+    public function subtract($B): Matrix
     {
+       if (!$B instanceof Matrix) {
+            throw new Exception\IncorrectTypeException('Can only do matrix subtraction with a Matrix');
+        }
         if ($B->getM() !== $this->m) {
             throw new Exception\MatrixException('Matrices have different number of rows');
         }
