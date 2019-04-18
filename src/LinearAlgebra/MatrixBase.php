@@ -158,12 +158,12 @@ abstract class MatrixBase implements \ArrayAccess, \JsonSerializable
      * If A is an m × n matrix then Aᵀ is an n × m matrix.
      * https://en.wikipedia.org/wiki/Transpose
      *
-     * @return Matrix
+     * @return MatrixInterface
      *
      * @throws Exception\MatrixException
      * @throws Exception\IncorrectTypeException
      */
-    public function transpose()
+    public function transpose(): MatrixInterface
     {
         $Aᵀ = [];
         for ($i = 0; $i < $this->n; $i++) {
@@ -192,7 +192,7 @@ abstract class MatrixBase implements \ArrayAccess, \JsonSerializable
      * @throws Exception\MatrixException if row to interchange does not exist
      * @throws Exception\IncorrectTypeException
      */
-    public function rowInterchange(int $mᵢ, int $mⱼ): Matrix
+    public function rowInterchange(int $mᵢ, int $mⱼ): MatrixInterface
     {
         if ($mᵢ >= $this->m || $mⱼ >= $this->m) {
             throw new Exception\MatrixException('Row to interchange does not exist');
