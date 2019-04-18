@@ -1,9 +1,9 @@
 <?php
 namespace MathPHP\LinearAlgebra;
 
-use MathPHP\Number\ObjectArithmatic;
+use MathPHP\Number\ObjectArithmetic;
 
-interface MatrixInterface extends ObjectArithmatic
+interface MatrixInterface extends ObjectArithmetic
 {
     /**
      * What type of data does the matrix contain
