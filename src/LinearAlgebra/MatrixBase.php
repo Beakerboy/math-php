@@ -370,7 +370,7 @@ abstract class MatrixBase implements \ArrayAccess, \JsonSerializable
         }
 
         return MatrixFactory::create($R);
-    }    
+    }
 
     /**
      * Augment a matrix on the left
@@ -573,7 +573,7 @@ abstract class MatrixBase implements \ArrayAccess, \JsonSerializable
         return MatrixFactory::create($A);
     }
     
-    abstract function getObjectType(): string;
+    abstract public function getObjectType(): string;
 
     /**************************************************************************
      * ArrayAccess INTERFACE
