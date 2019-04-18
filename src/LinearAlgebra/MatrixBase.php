@@ -342,6 +342,9 @@ abstract class MatrixBase implements \ArrayAccess, \JsonSerializable
      */
     public function directSum(Matrix $B): Matrix
     {
+        if ($B->getObjectType() !== $this->getObjectType()) {
+            throw new Exception\MatrixException('Matrices must be the same type');
+        }
         $m = $this->m + $B->getM();
         $n = $this->n + $B->getN();
 
@@ -397,6 +400,9 @@ abstract class MatrixBase implements \ArrayAccess, \JsonSerializable
         if ($B->getM() !== $this->m) {
             throw new Exception\MatrixException('Matrices to augment do not have the same number of rows');
         }
+        if ($B->getObjectType() !== $this->getObjectType()) {
+            throw new Exception\MatrixException('Matrices must be the same type');
+        }
 
         $m    = $this->m;
         $A    = $this->A;
@@ -437,6 +443,9 @@ abstract class MatrixBase implements \ArrayAccess, \JsonSerializable
         if ($B->getN() !== $this->n) {
             throw new Exception\MatrixException('Matrices to augment do not have the same number of columns');
         }
+        if ($B->getObjectType() !== $this->getObjectType()) {
+            throw new Exception\MatrixException('Matrices must be the same type');
+        }
 
         $⟮A∣B⟯ = array_merge($this->A, $B->getMatrix());
 
@@ -472,6 +481,9 @@ abstract class MatrixBase implements \ArrayAccess, \JsonSerializable
         if ($B->getN() !== $this->n) {
             throw new Exception\MatrixException('Matrices to augment do not have the same number of columns');
         }
+        if ($B->getObjectType() !== $this->getObjectType()) {
+            throw new Exception\MatrixException('Matrices must be the same type');
+        }
 
         $⟮A∣B⟯ = array_merge($B->getMatrix(), $this->A);
 
@@ -505,6 +517,9 @@ abstract class MatrixBase implements \ArrayAccess, \JsonSerializable
     {
         if ($B->getM() !== $this->m) {
             throw new Exception\MatrixException('Matrices to augment do not have the same number of rows');
+        }
+        if ($B->getObjectType() !== $this->getObjectType()) {
+            throw new Exception\MatrixException('Matrices must be the same type');
         }
 
         $m    = $this->m;
@@ -557,6 +572,8 @@ abstract class MatrixBase implements \ArrayAccess, \JsonSerializable
 
         return MatrixFactory::create($A);
     }
+    
+    abstract function getObjectType(): string;
 
     /**************************************************************************
      * ArrayAccess INTERFACE
