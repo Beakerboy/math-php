@@ -224,7 +224,7 @@ abstract class MatrixBase implements \ArrayAccess, \JsonSerializable
      * @throws Exception\MatrixException if column to exclude does not exist
      * @throws Exception\IncorrectTypeException
      */
-    public function columnExclude(int $nᵢ): Matrix
+    public function columnExclude(int $nᵢ): MatrixInterface
     {
         if ($nᵢ >= $this->n || $nᵢ < 0) {
             throw new Exception\MatrixException('Column to exclude does not exist');
@@ -257,7 +257,7 @@ abstract class MatrixBase implements \ArrayAccess, \JsonSerializable
      * @throws Exception\MatrixException if row to exclude does not exist
      * @throws Exception\IncorrectTypeException
      */
-    public function rowExclude(int $mᵢ): Matrix
+    public function rowExclude(int $mᵢ): MatrixInterface
     {
         if ($mᵢ >= $this->m || $mᵢ < 0) {
             throw new Exception\MatrixException('Row to exclude does not exist');
@@ -293,7 +293,7 @@ abstract class MatrixBase implements \ArrayAccess, \JsonSerializable
      * @throws Exception\MatrixException if column to interchange does not exist
      * @throws Exception\IncorrectTypeException
      */
-    public function columnInterchange(int $nᵢ, int $nⱼ): Matrix
+    public function columnInterchange(int $nᵢ, int $nⱼ): MatrixInterface
     {
         if ($nᵢ >= $this->n || $nⱼ >= $this->n) {
             throw new Exception\MatrixException('Column to interchange does not exist');
@@ -340,7 +340,7 @@ abstract class MatrixBase implements \ArrayAccess, \JsonSerializable
      *
      * @throws Exception\IncorrectTypeException
      */
-    public function directSum(Matrix $B): Matrix
+    public function directSum(MatrixInterface $B): MatrixInterface
     {
         if ($B->getObjectType() !== $this->getObjectType()) {
             throw new Exception\MatrixException('Matrices must be the same type');
@@ -395,7 +395,7 @@ abstract class MatrixBase implements \ArrayAccess, \JsonSerializable
      * @throws Exception\MatrixException if matrices do not have the same number of rows
      * @throws Exception\IncorrectTypeException
      */
-    public function augmentLeft(Matrix $B): Matrix
+    public function augmentLeft(MatrixInterface $B): MatrixInterface
     {
         if ($B->getM() !== $this->m) {
             throw new Exception\MatrixException('Matrices to augment do not have the same number of rows');
@@ -438,7 +438,7 @@ abstract class MatrixBase implements \ArrayAccess, \JsonSerializable
      * @throws Exception\MatrixException if matrices do not have the same number of columns
      * @throws Exception\IncorrectTypeException
      */
-    public function augmentBelow(Matrix $B): Matrix
+    public function augmentBelow(MatrixInterface $B): MatrixInterface
     {
         if ($B->getN() !== $this->n) {
             throw new Exception\MatrixException('Matrices to augment do not have the same number of columns');
@@ -476,7 +476,7 @@ abstract class MatrixBase implements \ArrayAccess, \JsonSerializable
      * @throws Exception\MathException
      * @throws Exception\MatrixException
      */
-    public function augmentAbove(Matrix $B): Matrix
+    public function augmentAbove(MatrixInterface $B): MatrixInterface
     {
         if ($B->getN() !== $this->n) {
             throw new Exception\MatrixException('Matrices to augment do not have the same number of columns');
@@ -513,7 +513,7 @@ abstract class MatrixBase implements \ArrayAccess, \JsonSerializable
      * @throws Exception\MatrixException if matrices do not have the same number of rows
      * @throws Exception\IncorrectTypeException
      */
-    public function augment(Matrix $B): Matrix
+    public function augment(MatrixInterface $B): MatrixInterface
     {
         if ($B->getM() !== $this->m) {
             throw new Exception\MatrixException('Matrices to augment do not have the same number of rows');
@@ -548,7 +548,7 @@ abstract class MatrixBase implements \ArrayAccess, \JsonSerializable
      *
      * @throws Exception\MatrixException
      */
-    public function submatrix(int $m₁, int $n₁, int $m₂, int $n₂): Matrix
+    public function submatrix(int $m₁, int $n₁, int $m₂, int $n₂): MatrixInterface
     {
         if ($m₁ >= $this->m || $m₁ < 0 || $m₂ >= $this->m || $m₂ < 0) {
             throw new Exception\MatrixException('Specified Matrix row does not exist');
