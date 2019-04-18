@@ -8,7 +8,7 @@ use MathPHP\Exception;
 /**
  * m x n Matrix
  */
-class Matrix extends MatrixBase
+class Matrix extends MatrixBase implements MatrixInterface
 {
     /** @var Matrix Row echelon form */
     protected $ref;
