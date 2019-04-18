@@ -961,7 +961,7 @@ class Matrix extends MatrixBase implements MatrixInterface
      */
     public function subtract($B): Matrix
     {
-       if (!$B instanceof Matrix) {
+        if (!$B instanceof Matrix) {
             throw new Exception\IncorrectTypeException('Can only do matrix subtraction with a Matrix');
         }
         if ($B->getM() !== $this->m) {
