@@ -2802,7 +2802,7 @@ class Matrix implements \ArrayAccess, \JsonSerializable
      *
      * @returns Matrix with new values in the specified row
      */
-    private static function replaceRow(array $array, int $row): Matrix
+    public function replaceRow(array $array, int $row): Matrix
     {
         $A = $matrix->getMatrix();
         $A[$row] = $array;
@@ -2966,7 +2966,7 @@ class Matrix implements \ArrayAccess, \JsonSerializable
      *
      * @returns Matrix with new values in the specified column
      */
-    private static function replaceColumn(array $array, int $column): Matrix
+    public function replaceColumn(array $array, int $column): Matrix
     {
         $A = $matrix->getMatrix();
         $m = $matrix->getM();
