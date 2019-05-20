@@ -2969,7 +2969,7 @@ class Matrix implements \ArrayAccess, \JsonSerializable
     public function replaceColumn(array $array, int $column): Matrix
     {
         $A = $this->A;
-        $m = $matrix->getM();
+        $m = $this->m;
         for ($i = 0; $i < $m; $i++) {
             $A[$i][$column] = $array[$i];
         }
