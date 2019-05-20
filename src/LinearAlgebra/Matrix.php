@@ -2543,6 +2543,7 @@ class Matrix implements \ArrayAccess, \JsonSerializable
      *  - rowSubtract
      *  - rowSubtractScalar
      *  - rowExclude
+     *  - replaceRow
      **************************************************************************/
 
     /**
@@ -2793,12 +2794,28 @@ class Matrix implements \ArrayAccess, \JsonSerializable
         return MatrixFactory::create(array_values($R));
     }
 
+    /**
+     * Replaces a row in a matrix with values from an array
+     *
+     * @param array $array of new values
+     * @param int $row
+     *
+     * @returns Matrix with new values in the specified row
+     */
+    private static function replaceRow(array $array, int $row): Matrix
+    {
+        $A = $matrix->getMatrix();
+        $A[$row] = $array;
+        return MatrixFactory::create($A);
+    }
+
     /**************************************************************************
      * COLUMN OPERATIONS - Return a Matrix
      *  - columnInterchange
      *  - columnMultiply
      *  - columnAdd
      *  - columnExclude
+     *  - replaceColumn
      **************************************************************************/
 
     /**
@@ -2939,6 +2956,24 @@ class Matrix implements \ArrayAccess, \JsonSerializable
         }
 
         return MatrixFactory::create($R);
+    }
+
+    /**
+     * Replaces a column in a matrix with values from an array
+     *
+     * @param array $array of new values
+     * @param int $column
+     *
+     * @returns Matrix with new values in the specified column
+     */
+    private static function replaceColumn(array $array, int $column): Matrix
+    {
+        $A = $matrix->getMatrix();
+        $m = $matrix->getM();
+        for ($i = 0; $i < $m; $i++) {
+            $A[$i][$column] = $array[$i];
+        }
+        return MatrixFactory::create($A);
     }
 
     /**************************************************************************
