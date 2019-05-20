@@ -143,7 +143,7 @@ class EigenvalueTest extends \PHPUnit\Framework\TestCase
     public function testJKMethod(array $A, array $S)
     {
         $A = MatrixFactory::create($A);
-        $this->assertEquals($S, Eigenvalue::JkMethod($A), '', 0.0001);
+        $this->assertEquals($S, $A->eigenvalue(Eigenvalue::JK_METHOD), '', 0.0001);
     }
     public function dataProviderForJKEigenvalues(): array
     {
@@ -226,6 +226,17 @@ class EigenvalueTest extends \PHPUnit\Framework\TestCase
                 ],
             ],
         ];
+    }
+
+    /**
+     * @testCase     eigenvalue throws a MatrixException if the matrix is not the correct size.
+     * @param        array $A
+     */
+    public function testMatrixNotSquare()
+    {
+        $A = MatrixFactory::create([[1, 2, 3, 4]]);
+        $this->expectException(Exception\MatrixException::class);
+        $A->eigenvalues();
     }
 
     /**
