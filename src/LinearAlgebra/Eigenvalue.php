@@ -45,7 +45,7 @@ class Eigenvalue
      *
      * @param Matrix $A
      *
-     * @return array of eigenvalues
+     * @return float[] of eigenvalues
      *
      * @throws Exception\BadDataException if the matrix is not square
      * @throws Exception\BadDataException if the matrix is not 2x2, 3x3, or 4x4
@@ -81,14 +81,15 @@ class Eigenvalue
                     : $zero_poly;
             }
         }
+        /** @var ObjectSquareMatrix $λ */
         $λ = MatrixFactory::create($λ_array);
-        
-        //Subtract Iλ from B
+
+        /** @var ObjectSquareMatrix Subtract Iλ from B */
         $Bminusλ = $B->subtract($λ);
 
-        // The Eigenvalues are the roots of the determinant of this matrix
+        /** @var Polynomial The Eigenvalues are the roots of the determinant of this matrix */
         $det = $Bminusλ->det();
-        
+
         // Calculate the roots of the determinant.
         $eigenvalues = $det->roots();
         return $eigenvalues;
