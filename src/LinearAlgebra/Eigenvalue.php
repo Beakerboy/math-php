@@ -158,8 +158,8 @@ class Eigenvalue
 
                         $transform = MatrixFactory::create($transformArray);
                         $newColumns = $submatrix->multiply($transform);
-                        $A = self::replaceColumn($A, $newColumns->getColumn(0), $i);
-                        $A = self::replaceColumn($A, $newColumns->getColumn(1), $j);
+                        $A = $A->replaceColumn($newColumns->getColumn(0), $i);
+                        $A = $A->replaceColumn($newColumns->getColumn(1), $j);
                     }
                 }
             }
@@ -198,24 +198,5 @@ class Eigenvalue
         $λ = Multi::multiply($sgnλ, $absλ);
         
         return $λ;
-    }
-
-    /**
-     * Replaces a column in a matrix with values from an array
-     *
-     * @param Matrix $matrix
-     * @param array $array of new values
-     * @param int $column
-     *
-     * @returns Matrix with new values in the specified column
-     */
-    private static function replaceColumn(Matrix $matrix, array $array, int $column): Matrix
-    {
-        $A = $matrix->getMatrix();
-        $m = $matrix->getM();
-        for ($i = 0; $i < $m; $i++) {
-            $A[$i][$column] = $array[$i];
-        }
-        return MatrixFactory::create($A);
     }
 }
