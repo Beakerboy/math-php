@@ -264,4 +264,32 @@ class EigenvalueTest extends \PHPUnit\Framework\TestCase
             ],
         ];
     }
+
+    /**
+     * @testCase     Eigenvalues of triangular matricies
+     * @dataProvider dataProviderForTriangularEigenvalues
+     * @param        array $A
+     */
+    public function testTriangularEigenvalues(array $A, array $S)
+    {
+        $A = MatrixFactory::create($A);
+        $this->assertEquals($S, $A->eigenvalues(), '', 0.0001);
+    }
+
+    public function dataProviderForTriangularEigenvalues(): array
+    {
+        return [
+            [
+                [
+                    [1, 1, 0, 0, 0],
+                    [0, 2, 2, 0, 0],
+                    [0, 0, 3, 3, 0],
+                    [0, 0, 0, 4, 6],
+                    [0, 0, 0, 0, 5],
+                ],
+                [1, 2, 3, 4, 5],
+            ],
+        ];
+    }
+    
 }
