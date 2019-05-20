@@ -411,4 +411,66 @@ class MatrixColumnOperationsTest extends \PHPUnit\Framework\TestCase
         // When
         $A->columnExclude(-5);
     }
+    
+    /**
+     * @test         replaceColumn
+     * @dataProvider dataProviderForReplaceColumn
+     * @param        array $A
+     * @param        array $row
+     * @param        int   $n
+     * @param        array $expectedMatrix
+     * @throws       \Exception
+     */
+    public function testReplaceColumn(array $A, array $column, int $n, array $expectedMatrix)
+        // Given
+        $A = MatrixFactory::create($A);
+        $expectedMatrix = MatrixFactory::create($expectedMatrix);
+        // When
+        $R = $A->replaceColumn($column, $n);
+        // Then
+        $this->assertEquals($expectedMatrix, $R);
+    }
+
+    /**
+     * @return array
+     */
+    public function dataProviderForReplaceColumn(): array
+    {
+        return [
+            [
+                [
+                    [1, 2, 3],
+                    [2, 3, 4],
+                    [3, 4, 5],
+                ],
+                [3, 2, 1],
+                1,
+                [
+                    [1, 3, 3],
+                    [2, 2, 4],
+                    [3, 1, 5],
+                ]
+            ],
+        ];
+    }
+
+    /**
+     * @test  replaceColumn on a column that does not exist
+     * @throws \Exception
+     */
+    public function testReplaceColumnExceptionColumnDoesNotExist()
+    {
+        // Given
+        $A = MatrixFactory::create([
+            [1, 2, 3],
+            [2, 3, 4],
+            [4, 5, 6],
+        ]);
+
+        // Then
+        $this->expectException(Exception\MatrixException::class);
+
+        // When
+        $A->replaceColumn([1,2,3], -5);
+    }
 }
