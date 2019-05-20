@@ -3697,6 +3697,9 @@ class Matrix implements \ArrayAccess, \JsonSerializable
         if ($method == Eigenvalue::JK_METHOD || ($method === null && $this->isSymmetric())) {
             return Eigenvalue::JKMethod($this);
         }
+        if ($this->isTriangular()) {
+            return $this->getDiagonalElements();
+        }
         throw new Exception\MatrixException("Eigenvalue cannot be calculated");
     }
 
