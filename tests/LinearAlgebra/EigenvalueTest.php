@@ -298,13 +298,11 @@ class EigenvalueTest extends \PHPUnit\Framework\TestCase
     public function testUnsolvableEigenvalues()
     {
         // matrix larger than 5x5, not triangular, not symmetric
-        $A = [
-                    [1, 1, 0, 0, 0],
-                    [2, 2, 2, 0, 0],
-                    [0, 0, 3, 3, 0],
-                    [0, 0, 0, 4, 6],
-                    [0, 0, 0, 0, 5],
-                ],
+        $A = [[1, 1, 0, 0, 0],
+              [2, 2, 2, 0, 0],
+              [0, 0, 3, 3, 0],
+              [0, 0, 0, 4, 6],
+              [0, 0, 0, 0, 5]];
         $A = MatrixFactory::create($A);
         $this->expectException(Exception\MatrixException::class);
         $A->eigenvalues();
