@@ -755,4 +755,66 @@ class MatrixRowOperationsTest extends \PHPUnit\Framework\TestCase
         // When
         $A->rowExclude(-5);
     }
+
+    /**
+     * @test         replaceRow
+     * @dataProvider dataProviderForReplaceRow
+     * @param        array $A
+     * @param        array $row
+     * @param        int   $m
+     * @param        array $expectedMatrix
+     * @throws       \Exception
+     */
+    public function testReplaceRow(array $A, array $row, int $m, array $expectedMatrix)
+        // Given
+        $A = MatrixFactory::create($A);
+        $expectedMatrix = MatrixFactory::create($expectedMatrix);
+        // When
+        $R = $A->replaceRow($row, $m);
+        // Then
+        $this->assertEquals($expectedMatrix, $R);
+    }
+
+    /**
+     * @return array
+     */
+    public function dataProviderForReplaceRow(): array
+    {
+        return [
+            [
+                [
+                    [1, 2, 3],
+                    [2, 3, 4],
+                    [3, 4, 5],
+                ],
+                [3, 2, 1],
+                1,
+                [
+                    [1, 2, 3],
+                    [3, 2, 1],
+                    [3, 4, 5],
+                ]
+            ],
+        ];
+    }
+
+    /**
+     * @test  replaceRow on a row that does not exist
+     * @throws \Exception
+     */
+    public function testReplaceRowExceptionRowDoesNotExist()
+    {
+        // Given
+        $A = MatrixFactory::create([
+            [1, 2, 3],
+            [2, 3, 4],
+            [4, 5, 6],
+        ]);
+
+        // Then
+        $this->expectException(Exception\MatrixException::class);
+
+        // When
+        $A->replaceRow([1,2,3], -5);
+    }
 }
