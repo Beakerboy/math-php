@@ -2804,7 +2804,7 @@ class Matrix implements \ArrayAccess, \JsonSerializable
      */
     public function replaceRow(array $array, int $row): Matrix
     {
-        $A = $matrix->getMatrix();
+        $A = $this->A;
         $A[$row] = $array;
         return MatrixFactory::create($A);
     }
@@ -2968,7 +2968,7 @@ class Matrix implements \ArrayAccess, \JsonSerializable
      */
     public function replaceColumn(array $array, int $column): Matrix
     {
-        $A = $matrix->getMatrix();
+        $A = $this->A;
         $m = $matrix->getM();
         for ($i = 0; $i < $m; $i++) {
             $A[$i][$column] = $array[$i];
