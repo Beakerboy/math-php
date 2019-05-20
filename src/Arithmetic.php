@@ -11,7 +11,7 @@ class Arithmetic
     public static function root(float $x, int $n): float
     {
         // Use the the PHP pow function if it is an even root or if $x is positive
-        if ($x >= 0 || $n % 2 = 0) {
+        if ($x >= 0 || $n % 2 === 0) {
             return pow($x, 1 / $n);
         }
 
