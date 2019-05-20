@@ -422,6 +422,7 @@ class MatrixColumnOperationsTest extends \PHPUnit\Framework\TestCase
      * @throws       \Exception
      */
     public function testReplaceColumn(array $A, array $column, int $n, array $expectedMatrix)
+    {
         // Given
         $A = MatrixFactory::create($A);
         $expectedMatrix = MatrixFactory::create($expectedMatrix);
