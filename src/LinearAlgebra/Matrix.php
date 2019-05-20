@@ -3697,7 +3697,6 @@ class Matrix implements \ArrayAccess, \JsonSerializable
         if ($method == Eigenvalue::JK_METHOD || ($method === null && $this->isSymmetric())) {
             return Eigenvalue::JKMethod($this);
         }
-        return Eigenvalue::$method($this);
     }
 
     /**
@@ -3727,7 +3726,6 @@ class Matrix implements \ArrayAccess, \JsonSerializable
         if ($method == Eigenvalue::JK_METHOD || ($method === null && $this->isSymmetric())) {
             return Eigenvector::eigenvectors($this, Eigenvalue::JKMethod($this));
         }
-        return Eigenvector::eigenvectors($this, Eigenvalue::$method($this));
     }
 
     /**************************************************************************
