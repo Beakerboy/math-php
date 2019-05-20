@@ -2800,10 +2800,13 @@ class Matrix implements \ArrayAccess, \JsonSerializable
      * @param array $array of new values
      * @param int $row
      *
-     * @returns Matrix with new values in the specified row
+     * @return Matrix with new values in the specified row
      */
     public function replaceRow(array $array, int $row): Matrix
     {
+        if ($row >= $this->m || $row < 0) {
+            throw new Exception\MatrixException('Row to replace does not exist');
+        }
         $A = $this->A;
         $A[$row] = $array;
         return MatrixFactory::create($A);
@@ -2968,6 +2971,9 @@ class Matrix implements \ArrayAccess, \JsonSerializable
      */
     public function replaceColumn(array $array, int $column): Matrix
     {
+        if ($column >= $this->n || $column < 0) {
+            throw new Exception\MatrixException('Column to replace does not exist');
+        }
         $A = $this->A;
         $m = $this->m;
         for ($i = 0; $i < $m; $i++) {
