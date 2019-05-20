@@ -3683,7 +3683,7 @@ class Matrix implements \ArrayAccess, \JsonSerializable
      *
      * @throws Exception\MatrixException if method is not a valid eigenvalue method
      */
-    public function eigenvalues(string $method = Eigenvalue::CLOSED_FORM_POLYNOMIAL_ROOT_METHOD): array
+    public function eigenvalues(string $method = null): array
     {
         if (!Eigenvalue::isAvailableMethod($method)) {
             throw new Exception\MatrixException("$method is not a valid eigenvalue method");
@@ -3691,10 +3691,10 @@ class Matrix implements \ArrayAccess, \JsonSerializable
         if (!$this->isSquare()) {
             throw new Exception\MatrixException('Eigenvalues can only be calculated on square matrices');
         }
-        if ($method == Eigenvalue::CLOSED_FORM_POLYNOMIAL_ROOT_METHOD || $this->m < 5) {
+        if ($method == Eigenvalue::CLOSED_FORM_POLYNOMIAL_ROOT_METHOD || ($method === null && $this->m < 5)) {
             return Eigenvalue(Eigenvalue::CLOSED_FORM_POLYNOMIAL_ROOT_METHOD);
         }
-        if ($method == Eigenvalue::JK_METHOD || $this->isSymmetric()) {
+        if ($method == Eigenvalue::JK_METHOD || ($method === null && $this->isSymmetric())) {
             return Eigenvalue(Eigenvalue::JK_METHOD);
         }
         return Eigenvalue::$method($this);
@@ -3713,7 +3713,7 @@ class Matrix implements \ArrayAccess, \JsonSerializable
      * @throws Exception\MatrixException if method is not a valid eigenvalue method
      * @throws Exception\BadDataException
      */
-    public function eigenvectors(string $method = Eigenvalue::CLOSED_FORM_POLYNOMIAL_ROOT_METHOD): Matrix
+    public function eigenvectors(string $method = null): Matrix
     {
         if (!Eigenvalue::isAvailableMethod($method)) {
             throw new Exception\MatrixException("$method is not a valid eigenvalue method");
@@ -3721,10 +3721,10 @@ class Matrix implements \ArrayAccess, \JsonSerializable
         if (!$this->isSquare()) {
             throw new Exception\MatrixException('Eigenvectors can only be calculated on square matrices');
         }
-        if ($method == Eigenvalue::CLOSED_FORM_POLYNOMIAL_ROOT_METHOD || $this->m < 5) {
+        if ($method == Eigenvalue::CLOSED_FORM_POLYNOMIAL_ROOT_METHOD || ($method === null && $this->m < 5)) {
             return Eigenvector::eigenvectors($this, Eigenvalue::$method($this));
         }
-        if ($method == Eigenvalue::JK_METHOD || $this->isSymmetric()) {
+        if ($method == Eigenvalue::JK_METHOD || ($method === null && $this->isSymmetric())) {
             return Eigenvector::eigenvectors($this, Eigenvalue::$method($this));
         }
         return Eigenvector::eigenvectors($this, Eigenvalue::$method($this));
