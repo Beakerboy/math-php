@@ -221,4 +221,15 @@ class EigenvectorTest extends \PHPUnit\Framework\TestCase
         $this->expectException(Exception\MatrixException::class);
         $A->eigenvectors($invalidMethod);
     }
+
+    /**
+     * @testCase     eigenvalue throws a MatrixException if the matrix is not the correct size.
+     * @param        array $A
+     */
+    public function testMatrixNotSquare()
+    {
+        $A = MatrixFactory::create([[1, 2, 3, 4]]);
+        $this->expectException(Exception\MatrixException::class);
+        $A->eigenvectors();
+    }
 }
