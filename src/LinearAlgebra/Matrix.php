@@ -3685,7 +3685,7 @@ class Matrix implements \ArrayAccess, \JsonSerializable
      */
     public function eigenvalues(string $method = null): array
     {
-        if (!Eigenvalue::isAvailableMethod($method)) {
+        if ($method !== null && !Eigenvalue::isAvailableMethod($method)) {
             throw new Exception\MatrixException("$method is not a valid eigenvalue method");
         }
         if (!$this->isSquare()) {
@@ -3697,6 +3697,7 @@ class Matrix implements \ArrayAccess, \JsonSerializable
         if ($method == Eigenvalue::JK_METHOD || ($method === null && $this->isSymmetric())) {
             return Eigenvalue::JKMethod($this);
         }
+        throw new Exception\MatrixException("Eigenvalue cannot be calculated");
     }
 
     /**
@@ -3714,7 +3715,7 @@ class Matrix implements \ArrayAccess, \JsonSerializable
      */
     public function eigenvectors(string $method = null): Matrix
     {
-        if (!Eigenvalue::isAvailableMethod($method)) {
+        if ($method !== null && !Eigenvalue::isAvailableMethod($method)) {
             throw new Exception\MatrixException("$method is not a valid eigenvalue method");
         }
         if (!$this->isSquare()) {
@@ -3726,6 +3727,7 @@ class Matrix implements \ArrayAccess, \JsonSerializable
         if ($method == Eigenvalue::JK_METHOD || ($method === null && $this->isSymmetric())) {
             return Eigenvector::eigenvectors($this, Eigenvalue::JKMethod($this));
         }
+        throw new Exception\MatrixException("Eigenvector cannot be calculated");
     }
 
     /**************************************************************************
