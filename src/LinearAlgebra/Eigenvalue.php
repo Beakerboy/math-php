@@ -129,7 +129,7 @@ class Eigenvalue
                     $num = 2 * array_sum(Multi::multiply($x, $y));
                     $den = array_sum(Multi::subtract(Single::square($x), Single::square($y)));
 
-                    if (abs($num) > $ε || abs($den) > $ε) {
+                    if (abs($num) > $ε || $den > 0) {
                         if (abs($num) <= abs($den)) {
                             $tan2θ = abs($num) / abs($den);
                             $cos2θ = 1 / sqrt(1 + $tan2θ ** 2);
