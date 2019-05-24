@@ -128,7 +128,7 @@ class Eigenvalue
                     $y = $A->getColumn($j);
                     $xy = Multi::multiply($x, $y);
                     $num = 2 * array_sum($xy);
-                    $ε = abs(max($xy)) * 1E-7 * count($xy) * sqrt(2);
+                    $ε = max(Single::abs($xy)) * 1E-7 * count($xy) * sqrt(2);
                     $den = array_sum(Multi::subtract(Single::square($x), Single::square($y)));
 
                     if (abs($num) > $ε || $den < 0) {
