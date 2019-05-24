@@ -120,7 +120,6 @@ class Eigenvalue
 
         $num_zero = 0;
         $iterationCount = 0;
-        //$ε = 1E-14;
         while ($num_zero < $m * ($m - 1) / 2 && $iterationCount < $iter) {
             for ($i = 0; $i < $m - 1; $i++) {
                 for ($j = $i + 1; $j < $m; $j++) {
@@ -128,7 +127,7 @@ class Eigenvalue
                     $y = $A->getColumn($j);
                     $xy = Multi::multiply($x, $y);
                     $num = 2 * array_sum($xy);
-                    $ε = max(Single::abs($xy)) * 1E-7 * count($xy) * sqrt(2);
+                    $ε = max(max(Single::abs($xy)) * 1E-7 * count($xy) * sqrt(2), 1E-14);
                     $den = array_sum(Multi::subtract(Single::square($x), Single::square($y)));
 
                     if (abs($num) > $ε || $den < 0) {
