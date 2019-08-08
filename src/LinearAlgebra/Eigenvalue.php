@@ -137,7 +137,7 @@ class Eigenvalue
             } else {
                 $angle = atan(2 * $D[$i][$j] / ($D[$i][$i] - $D[$j][$j])) / 2;
             }
-            $G = MatrixFactory::givensMatrix($i, $j, $angle, $m);
+            $G = MatrixFactory::givens($i, $j, $angle, $m);
             $D = $G->transpose()->multiply($D)->multiply($G);
             $S = $S->multiply($G);
         }
