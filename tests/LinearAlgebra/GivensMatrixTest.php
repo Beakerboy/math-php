@@ -26,7 +26,7 @@ class GivensMatrixTest extends \PHPUnit\Framework\TestCase
                  [0, -1]]
             ],
             [
-                1, 2, \M_PI / 4, 3, 
+                0, 2, \M_PI / 4, 3, 
                 [[\M_SQRT1_2, 0,  -1 * \M_SQRT1_2],
                  [0,          1,  0],
                  [\M_SQRT1_2, 0, \M_SQRT1_2]],
