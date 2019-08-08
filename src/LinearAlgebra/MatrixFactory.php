@@ -468,7 +468,7 @@ class MatrixFactory
     public static function givens(int $m, int $n, float $angle, int $size) : Matrix
     {
         if ($m >= $size || $n >= $size || $m < 0 || $n < 0) {
-            throw new Exception\OutOfBoundsException("m and n must be within the matrix")
+            throw new Exception\OutOfBoundsException("m and n must be within the matrix");
         }
         $G = Matrixfactory::identity($size)->getMatrix();
         $G[$m][$m] = cos($angle);
