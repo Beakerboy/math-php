@@ -2187,6 +2187,21 @@ class MatrixDecompositionsTest extends \PHPUnit\Framework\TestCase
                     ],
                 ],
             ],
+            [
+                [
+                    [0],
+                    [0],
+                ],
+                [
+                    'Q' => [
+                        [1],
+                        [0],
+                    ],
+                    'R' => [
+                        [0],
+                    ],
+                ],
+            ],
         ];
     }
 }
