@@ -96,6 +96,7 @@ class MatrixFactory
      *  - diagonal
      *  - hilbert
      *  - vandermonde
+     *  - givens
      **************************************************************************/
 
     /**
@@ -445,7 +446,7 @@ class MatrixFactory
     }
 
    /**
-    * Construct a givens matrix
+    * Construct a Givens rotation matrix
     *
     *               [  1 ⋯ 0 ⋯ 0 ⋯ 0 ]
     *               [  ⋮ ⋱ ⋮    ⋮    ⋮  ]
@@ -464,7 +465,7 @@ class MatrixFactory
     *
     * @return Matrix
     */
-    public static function givensMatrix(int $i, int $j, float $angle, int $m) : Matrix
+    public static function givens(int $i, int $j, float $angle, int $m) : Matrix
     {
         $G = Matrixfactory::identity($m)->getMatrix();
         $G[$i][$i] = cos($angle);
