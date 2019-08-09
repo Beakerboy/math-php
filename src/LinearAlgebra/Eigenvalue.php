@@ -118,7 +118,7 @@ class Eigenvalue
         }
         $D = $A;
         $S = MatrixFactory::identity($m);
-        while (!self::isDiagonal($D)) {
+        while (!$D->isDiagonal()) {
             // Find the largest off-diagonal element in $D
             $pivot = ['value' => 0, 'i' => 0, 'j'=> 0];
             for ($i = 0; $i < $m - 1; $i++) {
