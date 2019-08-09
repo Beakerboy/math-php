@@ -10,6 +10,7 @@ use MathPHP\Exception;
 class MatrixFactoryTest extends \PHPUnit\Framework\TestCase
 {
     use \MathPHP\Tests\LinearAlgebra\MatrixDataProvider;
+    use \phpmock\phpunit\PHPMock;
 
     /**
      * @dataProvider dataProviderForDiagonalMatrix
