@@ -3451,7 +3451,9 @@ class Matrix implements \ArrayAccess, \JsonSerializable
         $uᵀ = $u->transpose();
         $uᵀu = $uᵀ->multiply($u)->get(0, 0);
         $uuᵀ = $u->multiply($uᵀ);
-        
+        if ($uᵀu === 0) {
+            return $I;
+        }
         // We scale $uuᵀ and subtract it from the identity matrix
         return $I->subtract($uuᵀ->scalarMultiply(2 / $uᵀu));
     }
