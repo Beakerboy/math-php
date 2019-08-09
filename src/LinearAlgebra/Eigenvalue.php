@@ -135,7 +135,6 @@ class Eigenvalue
         $b = MatrixFactory::random($A->getM(), 1);
         $newμ = 0;
         $μ = -1;
-        $new_abs = -2;
         while (!Support::isEqual($μ, $newμ)) {
             if ($iterations <= 0) {
                 throw new Exception\FunctionFailedToConvergeException("Maximum number of iterations excecuted.");
