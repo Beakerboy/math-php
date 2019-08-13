@@ -125,6 +125,8 @@ trait LeastSquares
 
         $this->reg_Yhat = $X->multiply($β_hat)->getColumn(0);
 
+        $qr = $X->qrDecomposition();
+        $β_hat = $qr['R']->solve($qr['Q']->transpose()->multiply($y));
         return $β_hat;
     }
 
