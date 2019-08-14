@@ -70,16 +70,14 @@ class PCA
             $this->center = new Vector(array_fill(0, $this->data->getN()));
         }
         if ($scale === true) {
-            $Mt = $M->transpose();
             $scalearray = [];
-            for ($i = 0; $i < $Mt->getM(); $i++) {
-                $scalearray[] = Descriptive::standardDeviation($Mt->getRow($i));
+            for ($i = 0; $i < $M->getN(); $i++) {
+                $scalearray[] = Descriptive::standardDeviation($M->getColumn($i));
             }
             $this->scale = new Vector($scalearray);
         } else {
             $this->scale = new Vector(array_fill(1, $this->data->getN()));
         }
-        $this->data = $M;
         $this->data = $this->normalizeData();
         
         // Create the correlation Matrix
@@ -92,7 +90,7 @@ class PCA
     }
 
     /**
-     * Verify that the matrix has the same nuber of columns as the original data
+     * Verify that the matrix has the same number of columns as the original data
      *
      * @param Matrix $A
      *
