@@ -79,7 +79,7 @@ class PCA
             $this->scale = new Vector(array_fill(1, $this->data->getN()));
         }
         // Save the source data to the class
-        $this->M = $M;
+        $this->data = $M;
 
         // Center and scale the data as needed
         $this->data = $this->normalizeData();
