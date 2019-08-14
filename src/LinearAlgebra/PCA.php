@@ -78,9 +78,13 @@ class PCA
         } else {
             $this->scale = new Vector(array_fill(1, $this->data->getN()));
         }
+        // Save the source data to the class
+        $this->M = $M;
+
+        // Center and scale the data as needed
         $this->data = $this->normalizeData();
         
-        // Create the correlation Matrix
+        // Create the correlation / variance-covarience Matrix
         $samples = $M->getM();
         $corrCovMatrix = $this->data->transpose()->multiply($this->data)->scalarDivide($samples - 1);
         
