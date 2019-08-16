@@ -8,6 +8,46 @@ use MathPHP\LinearAlgebra\MatrixFactory;
 
 class LU
 {
+    /** @var Matrix Lower matrix in LUP decomposition */
+    protected $L;
+
+    /** @var Matrix Upper matrix in LUP decomposition */
+    protected $U;
+
+    /** @var Matrix Permutation matrix in LUP decomposition */
+    protected $P;
+
+    private function __construct(Matrix $L, Matrix $U, Matrix $P)
+    {
+        $this->L = $L;
+        $this->U = $U;
+        $this->P = $P;
+    }
+
+    /**
+     *
+     */
+    public function getL(): Matrix
+    {
+        return $this->L;
+    }
+
+    /**
+     *
+     */
+    public function getU(): Matrix
+    {
+        return $this->U;
+    }
+
+    /**
+     *
+     */
+    public function getP(): Matrix
+    {
+        return $this->P;
+    }
+
     /**
      * LU Decomposition (Doolittle decomposition) with pivoting via permutation matrix
      *
@@ -93,12 +133,8 @@ class LU
             }
         }
 
-        // Assemble return array items: [L, U, P]
-        return [
-            'L' => MatrixFactory::create($L),
-            'U' => MatrixFactory::create($U),
-            'P' => $P,
-        ];
+        // return the object
+        return new LU($L, $U, $P);
     }
 
     /**
