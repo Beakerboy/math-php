@@ -1,8 +1,9 @@
 <?php
 
-namespace MathPHP/LinearAlgebra/Decompositions
+namespace MathPHP\LinearAlgebra\Decompositions
 
-use MathPHP/LinearAlgebra/MatrixFactory;
+use MathPHP\Exception;
+use MathPHP\LinearAlgebra\MatrixFactory;
 class LU
 {
     /** @var Matrix Lower matrix in LUP decomposition */
@@ -77,21 +78,21 @@ class LU
      * @throws Exception\OutOfBoundsException
      * @throws Exception\VectorException
      */
-    public function luDecomposition(): array
+    public static function decompose(Matrix $A): array
     {
-        if (!$this->isSquare()) {
+        if (!$A->isSquare()) {
             throw new Exception\MatrixException('LU decomposition only works on square matrices');
         }
 
-        $n = $this->n;
+        $n = $A->getN();
 
         // Initialize L as diagonal ones matrix, and U as zero matrix
         $L = MatrixFactory::diagonal(array_fill(0, $n, 1))->getMatrix();
         $U = MatrixFactory::zero($n, $n)->getMatrix();
 
         // Create permutation matrix P and pivoted PA
-        $P  = $this->pivotize();
-        $PA = $P->multiply($this);
+        $P  = self::pivotize($A);
+        $PA = $P->multiply($A);
 
         // Fill out L and U
         for ($i = 0; $i < $n; $i++) {
@@ -152,11 +153,10 @@ class LU
      * @throws Exception\MatrixException
      * @throws Exception\OutOfBoundsException
      */
-    protected function pivotize(): Matrix
+    protected static function pivotize(Matrix $A): Matrix
     {
-        $n = $this->n;
+        $n = $A->getN();
         $P = MatrixFactory::identity($n);
-        $A = $this->A;
 
         // Set initial column max to diagonal element Aᵢᵢ
         for ($i = 0; $i < $n; $i++) {
