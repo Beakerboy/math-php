@@ -3,7 +3,9 @@
 namespace MathPHP\LinearAlgebra\Decompositions;
 
 use MathPHP\Exception;
+use MathPHP\LinearAlgebra\Matrix;
 use MathPHP\LinearAlgebra\MatrixFactory;
+
 class LU
 {
     /** @var Matrix Lower matrix in LUP decomposition */
