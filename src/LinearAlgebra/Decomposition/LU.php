@@ -96,7 +96,7 @@ class LU
      * @throws Exception\OutOfBoundsException
      * @throws Exception\VectorException
      */
-    public static function decompose(Matrix $A): array
+    public static function decompose(Matrix $A): LU
     {
         if (!$A->isSquare()) {
             throw new Exception\MatrixException('LU decomposition only works on square matrices');
