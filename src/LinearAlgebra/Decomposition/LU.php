@@ -134,7 +134,7 @@ class LU
         }
 
         // return the object
-        return new LU($L, $U, $P);
+        return new LU(MatrixFactory::create($L), MatrixFactory::create($U), $P);
     }
 
     /**
