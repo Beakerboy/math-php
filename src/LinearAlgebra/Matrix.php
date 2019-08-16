@@ -3349,7 +3349,7 @@ class Matrix implements \ArrayAccess, \JsonSerializable
      */
     public function luDecomposition(): array
     {
-        $results = Decompositions/LU::decompose($this);
+        $results = Decompositions\LU::decompose($this);
         $this->L = $results['L'];
         $this->U = $results['U'];
         $this->P = $results['P'];
