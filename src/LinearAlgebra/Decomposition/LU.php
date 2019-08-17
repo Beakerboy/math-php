@@ -25,7 +25,9 @@ class LU
     }
 
     /**
+     * Get L
      *
+     * @return Matrix
      */
     public function getL(): Matrix
     {
@@ -33,7 +35,9 @@ class LU
     }
 
     /**
+     * Get U
      *
+     * @return Matrix
      */
     public function getU(): Matrix
     {
@@ -41,7 +45,9 @@ class LU
     }
 
     /**
+     * Get P
      *
+     * @return Matrix
      */
     public function getP(): Matrix
     {
