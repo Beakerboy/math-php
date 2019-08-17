@@ -17,7 +17,7 @@ class ObjectSquareMatrixTest extends \PHPUnit\Framework\TestCase
     public function testMatrixConstructorException(array $A, $exception)
     {
         $this->expectException($exception);
-        $A = new ObjectSquareMatrix($A)
+        $A = new ObjectSquareMatrix($A);
     }
 
     public function dataProviderConstructorException()
