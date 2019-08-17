@@ -63,7 +63,7 @@ class ObjectSquareMatrixTest extends \PHPUnit\Framework\TestCase
      */
     public function testMatrixMultiplyException($A, $B, $exception)
     {
-        $A = MatrixFactory::create($A);
+        $A = new ObjectSquareMatrix($A);
         $this->expectException($exception);
         $C = $A->multiply($B);
     }
@@ -79,8 +79,8 @@ class ObjectSquareMatrixTest extends \PHPUnit\Framework\TestCase
             ],
             [ // Different Types
                 [[new Polynomial(1, 2, 3)]],
-                MatrixFactory::create([[new Complex(1, 2)]]),
-                Exception\MatrixException::class,
+                new ObjectSquareMatrix([[new Complex(1, 2)]]),
+                Exception\IncorrectTypeException::class,
             ],
             [ // Not a Matrix
                 [[new Polynomial(1, 2, 3)]],
