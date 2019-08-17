@@ -1,6 +1,6 @@
 <?php
 
-namespace MathPHP\Tests\LinearAlgebra;
+namespace MathPHP\Tests\Statistics\Multivariate;
 
 use MathPHP\Functions\Map\Multi;
 use MathPHP\LinearAlgebra\MatrixFactory;
@@ -11,6 +11,7 @@ use MathPHP\Tests\Data\SampleData;
 
 class PCATest extends \PHPUnit\Framework\TestCase
 {
+    protected $A;
     protected $pca;
     protected $matrix;
     
