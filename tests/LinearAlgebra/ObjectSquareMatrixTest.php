@@ -25,7 +25,7 @@ class ObjectSquareMatrixTest extends \PHPUnit\Framework\TestCase
         return [
             [
                 [[new \stdClass()]],
-                Exception\MatrixException::class,
+                Exception\IncorrectTypeException::class,
             ],
             [
                 [[new \stdClass(), new Polynomial(1, 2, 3)],
