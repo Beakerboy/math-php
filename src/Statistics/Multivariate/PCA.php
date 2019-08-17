@@ -1,6 +1,6 @@
 <?php
 
-namespace MathPHP\LinearAlgebra;
+namespace MathPHP\Statistics\Multivariate;
 
 use MathPHP\Exception;
 use MathPHP\Functions\Map\Single;
