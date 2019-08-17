@@ -84,7 +84,7 @@ class QR
         $R = $HA;
         return new QR(
             $Q->submatrix(0, 0, $m - 1, min($m, $n) - 1),
-            $R->submatrix(0, 0, min($m, $n) - 1, $n - 1),
+            $R->submatrix(0, 0, min($m, $n) - 1, $n - 1)
         );
     }
 
