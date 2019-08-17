@@ -28,8 +28,8 @@ class ObjectSquareMatrixTest extends \PHPUnit\Framework\TestCase
                 Exception\IncorrectTypeException::class,
             ],
             [
-                [[new \stdClass(), new Polynomial(1, 2, 3)],
-                [new \stdClass(), new Polynomial(1, 2, 3)]],
+                [[new \stdClass(), new Polynomial([1, 2, 3])],
+                [new \stdClass(), new Polynomial([1, 2, 3])]],
                 Exception\IncorrectTypeException::class,
             ],
         ];
@@ -72,18 +72,18 @@ class ObjectSquareMatrixTest extends \PHPUnit\Framework\TestCase
     {
         return[
             [ // Different Sizes
-                [[new Polynomial(1, 2, 3), new Polynomial(1, 2, 3)],
-                [new Polynomial(1, 2, 3), new Polynomial(1, 2, 3)]],
-                MatrixFactory::create([[new Polynomial(1, 2, 3)]]),
+                [[new Polynomial([1, 2, 3]), new Polynomial([1, 2, 3])],
+                [new Polynomial([1, 2, 3]), new Polynomial([1, 2, 3])]],
+                MatrixFactory::create([[new Polynomial([1, 2, 3])]]),
                 Exception\MatrixException::class,
             ],
             [ // Different Types
-                [[new Polynomial(1, 2, 3)]],
+                [[new Polynomial([1, 2, 3])]],
                 new ObjectSquareMatrix([[new Complex(1, 2)]]),
                 Exception\IncorrectTypeException::class,
             ],
             [ // Not a Matrix
-                [[new Polynomial(1, 2, 3)]],
+                [[new Polynomial([1, 2, 3])]],
                 new Complex(1, 2),
                 Exception\IncorrectTypeException::class,
             ],
