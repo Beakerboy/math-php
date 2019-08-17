@@ -54,7 +54,7 @@ class QR
      */
     public static function decompose(Matrix $A): QR
     {
-        $n = $A->getN()  // columns
+        $n = $A->getN();  // columns
         $m = $A->getM();  // rows
         $HA = $A;
         // If the source matrix is square or wider than it is tall, the final
