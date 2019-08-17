@@ -1,6 +1,6 @@
 <?php
 
-namespace MathPHP\LinearAlgebra\Decompositions;
+namespace MathPHP\LinearAlgebra\Decomposition;
 
 use MathPHP\Exception;
 use MathPHP\LinearAlgebra\Matrix;
