@@ -269,7 +269,7 @@ class ObjectSquareMatrixTest extends \PHPUnit\Framework\TestCase
                     [new Polynomial([1, 0]), new Polynomial([0, 0])],
                     [new Polynomial([0, 0]), new Polynomial([1, 0])],
                 ],
-                [new Polynomial([1, 0]), new Polynomial([1, 1])]],
+                [new Polynomial([1, 0]), new Polynomial([1, 1])],
                 [
                     [new Polynomial([1, 0, 0])],
                     [new Polynomial([1, 1, 0])],
