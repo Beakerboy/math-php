@@ -3355,7 +3355,7 @@ class Matrix implements \ArrayAccess, \JsonSerializable
         $this->P = $decomposition->getP();
         return [
             'L' => $this->L,
-            'U' => $this->U, 
+            'U' => $this->U,
             'P' => $this->P,
         ];
     }
