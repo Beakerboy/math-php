@@ -1,7 +1,9 @@
 <?php
-namespace MathPHP\LinearAlgebra;
+namespace MathPHP\Tests\LinearAlgebra;
 
 use MathPHP\Functions\Polynomial;
+use MathPHP\LinearAlgebra\MatrixFactory;
+use MathPHP\LinearAlgebra\ObjectSquareMatrix;
 use MathPHP\LinearAlgebra\Vector;
 use MathPHP\Number\Complex;
 use MathPHP\Exception;
@@ -15,8 +17,7 @@ class ObjectSquareMatrixTest extends \PHPUnit\Framework\TestCase
     public function testMatrixConstructorException(array $A, $exception)
     {
         $this->expectException($exception);
-        $A = MatrixFactory::create($A);
-    }
+        $A = new ObjectSquareMatrix($A)
 
     public function dataProviderConstructorException()
     {
