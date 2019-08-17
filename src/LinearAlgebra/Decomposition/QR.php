@@ -101,7 +101,7 @@ class QR
      * @return Matrix
      *
      */
-    private function householderMatrix(Matrix $A): Matrix
+    private static function householderMatrix(Matrix $A): Matrix
     {
         $m = $A->getM();
         $I = MatrixFactory::identity($m);
