@@ -51,6 +51,15 @@ class ObjectSquareMatrixTest extends \PHPUnit\Framework\TestCase
         $C = $A->add($B);
     }
 
+    public function testMatrixAddNotMatrixException()
+    {
+        $polynomial = new Polynomial([1, 4, 7]);
+        $complex = new Complex(1, 4);
+        $A = MatrixFactory::create([[$polynomial]]);
+        $this->expectException(Exception\IncorrectTypeException::class);
+        $C = $A->add($complex);
+    }
+    
     public function testMatrixMulSizeException()
     {
         $polynomial = new Polynomial([1, 4, 7]);
