@@ -14,6 +14,7 @@ class PCATest extends \PHPUnit\Framework\TestCase
     protected $A;
     protected $pca;
     protected $matrix;
+    protected $signature;
     
     public function setUp()
     {
