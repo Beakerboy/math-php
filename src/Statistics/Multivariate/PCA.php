@@ -215,7 +215,7 @@ class PCA
             $X = $this->data;
         } else {
             $this->checkNewData($new_data);
-            $X = normalizeData($new_data);
+            $X = $this->normalizeData($new_data);
         }
         
         $Xprime = $X->transpose();
@@ -254,7 +254,7 @@ class PCA
             $X = $this->data;
         } else {
             $this->checkNewData($new_data);
-            $X = normalizeData($new_data);
+            $X = $this->normalizeData($new_data);
         }
         $Xprime = $X->transpose();
         $initialized = false;
