@@ -172,6 +172,17 @@ class PCATest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $sign_adjusted->getMatrix(), '', .00001);
     }
 
+    /**
+     * @test The class returns the correct scores
+     *
+     * R code for expected values:
+     * library(mdatools)
+     * data = mtcars[,c(1:7,10,11)]
+     * model = pca(data, center=TRUE, scale=TRUE)
+     * new = matrix(c(1:9), 1, 9)
+     * result = predict(model, new)
+     * print(result$scores)
+     */
     public function testNewDataScores()
     {
         $expected = [[0.1257286, 7.899684, 2.327884, -0.366373, 1.284736, -5.869623, -3.59103, -1.97999, 1.738207]];
