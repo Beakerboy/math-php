@@ -363,7 +363,7 @@ class PCATest extends \PHPUnit\Framework\TestCase
      * result = predict(model, new)
      * print(result$Q)
      */
-    public function testT2WithNewData()
+    public function testQWithNewData()
     {
         $expected = [[123.8985, 61.49351, 56.07446, 55.94023, 54.28968, 19.83721, 6.941721, 3.021362, 6.86309e-29]];
         $newdata = MatrixFactory::create([[1,2,3,4,5,6,7,8,9]]);
