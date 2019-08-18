@@ -178,7 +178,7 @@ class PCATest extends \PHPUnit\Framework\TestCase
         $expected = MatrixFactory::create([[0.1257286, 7.899684, 2.327884, -0.366373, 1.284736, -5.869623, -3.59103, -1.97999, 1.738207]]);
         $sign_adjusted = $expected->multiply($signature);
         $scores = $this->pca->getScores(MatrixFactory::create([[1,2,3,4,5,6,7,8,9]]));
-        $this->assertTrue($sign_adjusted->isEqual($scores));
+        $this->assertEquals($sign_adjusted->getMatrix(), $scores->getMatrix(), '', .00001);
     }
 
     /**
