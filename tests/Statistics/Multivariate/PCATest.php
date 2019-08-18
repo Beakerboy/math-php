@@ -115,6 +115,9 @@ class PCATest extends \PHPUnit\Framework\TestCase
      * data = mtcars[,c(1:7,10,11)]
      * model = pca(data, center=TRUE, scale=TRUE)
      * print(model$calres$scores)
+     * new = matrix(c(1:9), 1, 9)
+     * result = predict(model, new)
+     * print(result$scores)
      */
     public function testScores()
     {
@@ -166,28 +169,14 @@ class PCATest extends \PHPUnit\Framework\TestCase
             },
             $quotiant
         );
-        $this->signature = MatrixFactory::diagonal($signum);
+        $signature = MatrixFactory::diagonal($signum);
         
         // Multiplying a sign change matrix on the right changes column signs.
-        $sign_adjusted = $scores->multiply($this->signature);
+        $sign_adjusted = $scores->multiply($signature);
         $this->assertEquals($expected, $sign_adjusted->getMatrix(), '', .00001);
-    }
 
-    /**
-     * @test The class returns the correct scores
-     *
-     * R code for expected values:
-     * library(mdatools)
-     * data = mtcars[,c(1:7,10,11)]
-     * model = pca(data, center=TRUE, scale=TRUE)
-     * new = matrix(c(1:9), 1, 9)
-     * result = predict(model, new)
-     * print(result$scores)
-     */
-    public function testNewDataScores()
-    {
-        $expected = MatrixFactory::create([[0.1257286, 7.899684, 2.327884, -0.366373, 1.284736, -5.869623, -3.59103, -1.97999, 1.738207]]);;
-        $sign_adjusted = $expected->multiply($this->signature);
+        $expected = MatrixFactory::create([[0.1257286, 7.899684, 2.327884, -0.366373, 1.284736, -5.869623, -3.59103, -1.97999, 1.738207]]);
+        $sign_adjusted = $expected->multiply($signature);
         $scores = $this->pca->getScores(MatrixFactory::create([[1,2,3,4,5,6,7,8,9]]));
         $this->assertTrue($sign_adjusted->isEqual($scores));
     }
