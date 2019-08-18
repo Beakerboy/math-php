@@ -165,11 +165,19 @@ class PCATest extends \PHPUnit\Framework\TestCase
             },
             $quotiant
         );
-        $sign_change = MatrixFactory::diagonal($signum);
+        $this->signature = MatrixFactory::diagonal($signum);
         
         // Multiplying a sign change matrix on the right changes column signs.
-        $sign_adjusted = $scores->multiply($sign_change);
+        $sign_adjusted = $scores->multiply($this->signature);
         $this->assertEquals($expected, $sign_adjusted->getMatrix(), '', .00001);
+    }
+
+    public function testNewDataScores()
+    {
+        $expected = [[0.1257286, 7.899684, 2.327884, -0.366373, 1.284736, -5.869623, -3.59103, -1.97999, 1.738207]];
+        $sign_adjusted = MatrixFactory::create($expected)->multiply($this->signature);
+        $scores = $this->pca->getScores(MatrixFactory::create([[1,2,3,4,5,6,7,8,9]]));
+        $this->assertTrue($sign_adjusted->isEqual($scores));
     }
 
     /**
