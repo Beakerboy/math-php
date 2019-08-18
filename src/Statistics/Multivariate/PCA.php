@@ -7,6 +7,7 @@ use MathPHP\Functions\Map\Single;
 use MathPHP\LinearAlgebra\Eigenvalue;
 use MathPHP\LinearAlgebra\Matrix;
 use MathPHP\LinearAlgebra\MatrixFactory;
+use MathPHP\LinearAlgebra\Vector;
 use MathPHP\Probability\Distribution\Continuous\F;
 use MathPHP\Probability\Distribution\Continuous\StandardNormal;
 use MathPHP\Statistics\Descriptive;
