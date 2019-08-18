@@ -288,6 +288,23 @@ class PCATest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * @test The class returns the correct T² distances
+     *
+     * library(mdatools)
+     * data = mtcars[,c(1:7,10,11)]
+     * model = pca(data, center=TRUE, scale=TRUE)
+     * new = matrix(c(1:9), 1, 9)
+     * result = predict(model, new)
+     * print(result$T2)
+     */
+    public function testT2WithNewData()
+    {
+        $expected = [[0.002794881, 29.97494, 40.72243, 41.2289, 50.24047, 328.5471, 451.289, 518.2879, 654.4443]];
+        $newdata = MatrixFactory::create([[1,2,3,4,5,6,7,8,9]]);
+        $this->assertEquals($expected, $this->pca->getT²Distances($newdata)->getMatrix(), '', .00001);
+    }
+
+    /**
      * @test The class returns the correct Q residuals
      *
      * R code for expected values:
@@ -333,6 +350,23 @@ class PCATest extends \PHPUnit\Framework\TestCase
             [0.737494, 0.7257394, 0.56648268, 0.46860262, 0.45482227, 0.22353991, 0.1268036408, 0.02748662, 2.271057E-30],
         ];
         $this->assertEquals($expected, $this->pca->getQResiduals()->getMatrix(), '', .00001);
+    }
+
+    /**
+     * @test The class returns the correct Q residuals
+     *
+     * library(mdatools)
+     * data = mtcars[,c(1:7,10,11)]
+     * model = pca(data, center=TRUE, scale=TRUE)
+     * new = matrix(c(1:9), 1, 9)
+     * result = predict(model, new)
+     * print(result$Q)
+     */
+    public function testT2WithNewData()
+    {
+        $expected = [[123.8985, 61.49351, 56.07446, 55.94023, 54.28968, 19.83721, 6.941721, 3.021362, 6.86309e-29]];
+        $newdata = MatrixFactory::create([[1,2,3,4,5,6,7,8,9]]);
+        $this->assertEquals($expected, $this->pca->getQResiduals($newdata)->getMatrix(), '', .00001);
     }
 
     /**
