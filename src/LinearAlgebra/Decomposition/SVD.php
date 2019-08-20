@@ -125,32 +125,4 @@ class SVD extends DecompositionBase
                 return false;
         }
     }
-
-    /**
-     * @param mixed $i
-     * @return mixed
-     */
-    public function offsetGet($i)
-    {
-        return $this->$i;
-    }
-
-    /**
-     * @param  mixed $i
-     * @param  mixed $value
-     * @throws Exception\MatrixException
-     */
-    public function offsetSet($i, $value)
-    {
-        throw new Exception\MatrixException('SVD class does not allow setting values');
-    }
-
-    /**
-     * @param  mixed $i
-     * @throws Exception\MatrixException
-     */
-    public function offsetUnset($i)
-    {
-        throw new Exception\MatrixException('SVD class does not allow unsetting values');
-    }
 }
