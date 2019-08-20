@@ -170,7 +170,7 @@ class PCA
      */
     public function getRsq(): array
     {
-        $total_variance = $this->Eval->sum();
+        $total_variance = $this->EVal->sum();
         return $this->EVal->scalarDivide($total_variance)->getVector();
     }
 
