@@ -6,7 +6,7 @@ use MathPHP\LinearAlgebra\Matrix;
 
 abstract class DecompositionBase implements \ArrayAccess
 {
-    abstract public function decompose(Matrix $M);
+    abstract public static function decompose(Matrix $M);
 
     /**************************************************************************
      * ArrayAccess INTERFACE
