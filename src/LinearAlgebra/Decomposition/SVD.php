@@ -19,7 +19,7 @@ class SVD implements \ArrayAccess
     private $U;
 
     /** @var Matrix n x n orthogonal matrix  */
-    private $Vt;
+    private $V;
 
     /** @var Matrix m x n diagonal matrix  */
     private $S;
@@ -28,14 +28,14 @@ class SVD implements \ArrayAccess
      * SVD constructor
      *
      * @param Matrix $U Orthogonal matrix
-     * @param Matrix $S Diagonal matrix
+     * @param Matrix $S Rectangular Diagonal matrix
      * @param Matrix $V Orthogonal matrix
      */
-    private function __construct(Matrix $U, Matrix $S, Matrix $Vt)
+    private function __construct(Matrix $U, Matrix $S, Matrix $V)
     {
         $this->U = $U;
         $this->S = $S;
-        $this->Vt = $Vt;
+        $this->Vt = $V;
     }
 
     /**
@@ -63,9 +63,9 @@ class SVD implements \ArrayAccess
      *
      * @return Matrix
      */
-    public function getVt(): Matrix
+    public function getV(): Matrix
     {
-        return $this->Vt;
+        return $this->V;
     }
 
     public static function decompose(Matrix $M): SVD
@@ -78,21 +78,12 @@ class SVD implements \ArrayAccess
         $U = $MMt->eigenvectors(Eigenvalue::JACOBI_METHOD);
         
         // n x n orthoganol matrix
-        $Vt = $MtM->eigenvectors(Eigenvalue::JACOBI_METHOD)->transpose();
+        $V = $MtM->eigenvectors(Eigenvalue::JACOBI_METHOD)->transpose();
+
+        // A rectangular diagonal matrix
+        $S = $U->transpose()->multiply($M)->multiply($V);
         
-        // determine the smaller of the two square matrices
-        $smallest_matrix = $M->getM() < $M->getN() ? $MMt : $MtM;
-        
-        // Create a zero matrix the same size as the original
-        $zero = Matrixfactory::zero($M->getM(), $M->getN());
-        
-        // Create a square diagonal matrix
-        $square = MatrixFactory::create(Single::sqrt($smallest_matrix->eigenvalues(Eigenvalue::JACOBI_METHOD)));
-        
-        // Embed the square matrix in the zero matrix. The result is like augmenting zero rows or columns onto $square
-        $S = $zero->insert($square, 0, 0);
-        
-        return new SVD($U, $S, $Vt);
+        return new SVD($U, $S, $V);
     }
 
     /**
@@ -109,7 +100,7 @@ class SVD implements \ArrayAccess
         switch ($name) {
             case 'U':
             case 'S':
-            case 'Vt':
+            case 'V':
                 return $this->$name;
             default:
                 throw new Exception\MatrixException("SVD class does not have a gettable property: $name");
@@ -128,7 +119,7 @@ class SVD implements \ArrayAccess
         switch ($i) {
             case 'U':
             case 'S':
-            case 'Vt':
+            case 'V':
                 return true;
             default:
                 return false;
