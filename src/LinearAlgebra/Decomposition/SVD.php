@@ -69,7 +69,7 @@ class SVD implements \ArrayAccess
 
     public static function decompose(Matrix $M): array
     {
-        $Mt = $m->transpose();
+        $Mt = $M->transpose();
         $MMt = $M->multiply($Mt);
         $MtM = $Mt->multiply($M);
         
