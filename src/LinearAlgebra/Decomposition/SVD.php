@@ -13,7 +13,7 @@ use MathPHP\LinearAlgebra\MatrixFactory;
  * The generalization of the eigendecomposition of a square matrix to an m x n matrix
  * https://en.wikipedia.org/wiki/Singular_value_decomposition
  */
-class SVD implements \ArrayAccess
+class SVD extends DecompositionBase
 {
     /** @var Matrix m x m orthogonal matrix  */
     private $U;
