@@ -1,6 +1,7 @@
 <?php
 namespace MathPHP\LinearAlgebra\Decomposition;
 
+use MathPHP\Exception;
 use MathPHP\Functions\Map\Single;
 use MathPHP\LinearAlgebra\Eigenvalue;
 use MathPHP\LinearAlgebra\Matrix;
