@@ -3187,11 +3187,11 @@ class Matrix implements \ArrayAccess, \JsonSerializable
     /**
      * Singular Value Decomposition
      *
-     * A = UΣV
+     * A = USVᵀ
      *
      * U is an orthogonal matrix
-     * Σ is a diagonal matrix
-     * V is an orthogonal matrix
+     * S is a diagonal matrix
+     * Vᵀ is an orthogonal matrix
      *
      * @return Decomposition\SVD
      *
