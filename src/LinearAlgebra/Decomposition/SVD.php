@@ -35,7 +35,7 @@ class SVD implements \ArrayAccess
     {
         $this->U = $U;
         $this->S = $S;
-        $this->Vt = $V;
+        $this->V = $V;
     }
 
     /**
