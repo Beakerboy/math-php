@@ -90,7 +90,7 @@ class SVD implements \ArrayAccess
         $square = MatrixFactory::create(Single::sqrt($smallest_matrix->eigenvalues(Eigenvalue::JACOBI_METHOD)));
         
         // Embed the square matrix in the zero matrix. The result is like adjugating zero rows or columns onto $square
-        $s = $zero->insert($square, 0, 0);
+        $S = $zero->insert($square, 0, 0);
         
         return new SVD($U, $S, $Vt);
     }
