@@ -881,18 +881,16 @@ class MatrixDecompositionsTest extends \PHPUnit\Framework\TestCase
     {
         // Given
         $A = MatrixFactory::create($A);
-        $U = MatrixFactory::create($expected['U']);
         $S = MatrixFactory::create($expected['S']);
-        $Vt = MatrixFactory::create($expected['Vt']);
 
         // When
         $svd = $A->SVD();
         $svdU = $svd->U;
         $svdS = $svd->S;
-        $svdVt = $svd->Vt;
+        $svdVt = $svd->V;
 
         // Then A = USVᵀ
-        $this->assertEquals($A->getMatrix(), $svdU->multiply($svdS)->multiply($svdVt)->getMatrix(), '', 0.00001);
+        $this->assertEquals($A->getMatrix(), $svdU->multiply($svdS)->multiply($svdV->transpose())->getMatrix(), '', 0.00001);
 
         // And S is expected solution to SVD
         $this->assertEquals($S->getMatrix(), $svdS->getMatrix(), '', 0.00001);
