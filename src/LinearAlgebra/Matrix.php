@@ -3184,6 +3184,28 @@ class Matrix implements \ArrayAccess, \JsonSerializable
         return $this->catalog->getCroutDecomposition();
     }
 
+    /**
+     * Singular Value Decomposition
+     *
+     * A = UΣV
+     *
+     * U is an orthogonal matrix
+     * Σ is a diagonal matrix
+     * V is an orthogonal matrix
+     *
+     * @return Decomposition\SVD
+     *
+     * @throws Exception\MathException
+     */
+    public function SVD(): Decomposition\QR
+    {
+        if (!$this->catalog->hasSVD()) {
+            $this->catalog->addSVD(Decomposition\SVD::decompose($this));
+        }
+
+        return $this->catalog->getSVD();
+    }
+
     /**************************************************************************
      * SOLVE LINEAR SYSTEM OF EQUATIONS
      * - solve
