@@ -3197,7 +3197,7 @@ class Matrix implements \ArrayAccess, \JsonSerializable
      *
      * @throws Exception\MathException
      */
-    public function SVD(): Decomposition\QR
+    public function SVD(): Decomposition\SVD
     {
         if (!$this->catalog->hasSVD()) {
             $this->catalog->addSVD(Decomposition\SVD::decompose($this));
