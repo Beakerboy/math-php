@@ -894,10 +894,8 @@ class MatrixDecompositionsTest extends \PHPUnit\Framework\TestCase
         // Then A = USVᵀ
         $this->assertEquals($A->getMatrix(), $svdU->multiply($svdS)->multiply($svdVt)->getMatrix(), '', 0.00001);
 
-        // And U, S, and Vᵀ are expected solution to SVD
-        $this->assertEquals($U->getMatrix(), $svdU->getMatrix(), '', 0.00001);
+        // And S is expected solution to SVD
         $this->assertEquals($S->getMatrix(), $svdS->getMatrix(), '', 0.00001);
-        $this->assertEquals($Vt->getMatrix(), $svdVt->getMatrix(), '', 0.00001);
     }
 
     /**
@@ -913,25 +911,12 @@ class MatrixDecompositionsTest extends \PHPUnit\Framework\TestCase
                     [0, 0, 0, 0, 0],
                     [0, 2, 0, 0, 0],
                 ],
-                [
-                    'U' => [
-                        [0, 0, 1, 0],
-                        [0, 1, 0, 0],
-                        [0, 0, 0, -1],
-                        [1, 0, 0, 0],
-                        ],
+                [ // Technically, the order of the diagonal elements can be in any order
                     'S' => [
-                        [2, 0, 0, 0, 0],
-                        [0, 3, 0, 0, 0],
-                        [0, 0, sqrt(5), 0, 0],
+                        [3, 0, 0, 0, 0],
+                        [0, sqrt(5), 0, 0, 0],
+                        [0, 0, 2, 0, 0],
                         [0, 0, 0, 0, 0],
-                        ],
-                    'Vt' => [
-                        [0, 1, 0, 0, 0],
-                        [0, 0, 1, 0, 0],
-                        [sqrt(.2), 0, 0, 0, sqrt(.8)],
-                        [0, 0, 0, 1, 0],
-                        [-sqrt(.8), 0, 0, 0, sqrt(.2)],
                         ],
                 ],
             ],
