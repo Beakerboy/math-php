@@ -869,4 +869,92 @@ class MatrixDecompositionsTest extends \PHPUnit\Framework\TestCase
             ],
         ];
     }
+
+    /**
+     * @test         SVD returns the expected array of U, S, and V factorized matrices
+     * @dataProvider dataProviderForSVD
+     * @param        array $A
+     * @param        array $expected
+     * @throws       \Exception
+     */
+    public function testSVD(array $A, array $expected)
+    {
+        // Given
+        $A = MatrixFactory::create($A);
+        $U = MatrixFactory::create($expected['U']);
+        $S = MatrixFactory::create($expected['S']);
+        $V = MatrixFactory::create($expected['V']);
+
+        // When
+        $svd = $A->SVD();
+        $svdU = $svd->U;
+        $svdS = $svd->S;
+        $svdV = $svd->V;
+
+        // Then A = USV
+        $this->assertEquals($A->getMatrix(), $svdU->multiply($svdS)->multiply($svdV)->getMatrix(), '', 0.00001);
+
+        // And U, S, and V are expected solution to SVD
+        $this->assertEquals($U->getMatrix(), $svdU->getMatrix(), '', 0.00001);
+        $this->assertEquals($S->getMatrix(), $svdS->getMatrix(), '', 0.00001);
+        $this->assertEquals($V->getMatrix(), $svdV->getMatrix(), '', 0.00001);
+    }
+
+    /**
+     * @return array
+     */
+    public function dataProviderForSVD(): array
+    {
+        return [
+            [
+                [
+                    [1, 0, 0, 0, 2],
+                    [0, 0, 3, 0, 0],
+                    [0, 0, 0, 0, 0],
+                    [0, 2, 0, 0, 0],
+                ],
+                [
+                    'U' => [
+                        [0, 0, 1, 0],
+                        [0, 1, 0, 0],
+                        [0, 0, 0, -1],
+                        [1, 0, 0, 0],
+                        ],
+                    'S' => [
+                        [2, 0, 0, 0, 0],
+                        [0, 3, 0, 0, 0],
+                        [0, 0, sqrt(5), 0, 0],
+                        [0, 0, 0, 0, 0],
+                        ],
+                    'V' => [
+                        [0, 1, 0, 0, 0],
+                        [0, 0, 1, 0, 0],
+                        [sqrt(.2), 0, 0, 0, sqrt(.8)],
+                        [0, 0, 0, 1, 0],
+                        [-sqrt(.8), 0, 0, 0, sqrt(.2)],
+                        ],
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * @test         SVD properties
+     * @dataProvider dataProviderForSVD
+     * @param        array $A
+     * @throws       \Exception
+     */
+    public function testSVDProperties(array $A)
+    {
+        // Given
+        $A = MatrixFactory::create($A);
+        
+        // When
+        $svd = $A->SVD();
+        
+        // Then
+        $this->assertTrue($svd->U->isOrthogonal());
+        $this->assertTrue($svd->S->isDiagonal());
+        $this->assertTrue($svd->V->isOrthogonal());
+    }
 }
