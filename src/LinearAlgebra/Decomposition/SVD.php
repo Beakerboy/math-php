@@ -78,7 +78,7 @@ class SVD implements \ArrayAccess
         $U = $MMt->eigenvectors(Eigenvalue::JACOBI_METHOD);
         
         // n x n orthoganol matrix
-        $V = $MtM->eigenvectors(Eigenvalue::JACOBI_METHOD)->transpose();
+        $V = $MtM->eigenvectors(Eigenvalue::JACOBI_METHOD);
 
         // A rectangular diagonal matrix
         $S = $U->transpose()->multiply($M)->multiply($V);
