@@ -18,7 +18,7 @@ class SVD implements \ArrayAccess
     private $U;
 
     /** @var Matrix n x n orthogonal matrix  */
-    private $V;
+    private $Vt;
 
     /** @var Matrix m x n diagonal matrix  */
     private $S;
@@ -30,11 +30,11 @@ class SVD implements \ArrayAccess
      * @param Matrix $S Diagonal matrix
      * @param Matrix $V Orthogonal matrix
      */
-    private function __construct(Matrix $U, Matrix $S, Matrix $V)
+    private function __construct(Matrix $U, Matrix $S, Matrix $Vt)
     {
         $this->U = $U;
         $this->S = $S;
-        $this->V = $V;
+        $this->Vt = $Vt;
     }
 
     /**
@@ -62,9 +62,9 @@ class SVD implements \ArrayAccess
      *
      * @return Matrix
      */
-    public function getV(): Matrix
+    public function getVt(): Matrix
     {
-        return $this->V;
+        return $this->Vt;
     }
 
     public static function decompose(Matrix $M): SVD
@@ -77,12 +77,12 @@ class SVD implements \ArrayAccess
         $U = $MMt->eigenvectors(Eigenvalue::JACOBI_METHOD);
         
         // n x n orthoganol matrix
-        $V = $MtM->eigenvectors(Eigenvalue::JACOBI_METHOD);
+        $Vt = $MtM->eigenvectors(Eigenvalue::JACOBI_METHOD)->transpose();
         
         // Diagonal matrix
         $S = MatrixFactory::create(Single::sqrt($MMt->eigenvalues(Eigenvalue::JACOBI_METHOD)));
         
-        return new SVD($U, $S, $V);
+        return new SVD($U, $S, $Vt);
     }
 
     /**
@@ -99,7 +99,7 @@ class SVD implements \ArrayAccess
         switch ($name) {
             case 'U':
             case 'S':
-            case 'V':
+            case 'Vt':
                 return $this->$name;
             default:
                 throw new Exception\MatrixException("SVD class does not have a gettable property: $name");
@@ -118,7 +118,7 @@ class SVD implements \ArrayAccess
         switch ($i) {
             case 'U':
             case 'S':
-            case 'V':
+            case 'Vt':
                 return true;
             default:
                 return false;
