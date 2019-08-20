@@ -80,9 +80,17 @@ class SVD implements \ArrayAccess
         // n x n orthoganol matrix
         $Vt = $MtM->eigenvectors(Eigenvalue::JACOBI_METHOD)->transpose();
         
-        // Diagonal matrix
+        // determine the smaller of the two square matrices
         $smallest_matrix = $M->getM() < $M->getN() ? $MMt : $MtM;
-        $S = MatrixFactory::create(Single::sqrt($smallest_matrix->eigenvalues(Eigenvalue::JACOBI_METHOD)));
+        
+        // Create a zero matrix the same size as the original
+        $zero = Matrixfactory::zero($M->getM(), $M->getN());
+        
+        // Create a square diagonal matrix
+        $square = MatrixFactory::create(Single::sqrt($smallest_matrix->eigenvalues(Eigenvalue::JACOBI_METHOD)));
+        
+        // Embed the square matrix in the zero matrix. The result is like adjugating zero rows or columns onto $square
+        $s = $zero->insert($square, 0, 0);
         
         return new SVD($U, $S, $Vt);
     }
