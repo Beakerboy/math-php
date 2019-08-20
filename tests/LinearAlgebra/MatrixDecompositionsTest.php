@@ -871,7 +871,7 @@ class MatrixDecompositionsTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @test         SVD returns the expected array of U, S, and V factorized matrices
+     * @test         SVD returns the expected array of U, S, and Vt factorized matrices
      * @dataProvider dataProviderForSVD
      * @param        array $A
      * @param        array $expected
@@ -883,21 +883,21 @@ class MatrixDecompositionsTest extends \PHPUnit\Framework\TestCase
         $A = MatrixFactory::create($A);
         $U = MatrixFactory::create($expected['U']);
         $S = MatrixFactory::create($expected['S']);
-        $V = MatrixFactory::create($expected['V']);
+        $Vt = MatrixFactory::create($expected['Vt']);
 
         // When
         $svd = $A->SVD();
         $svdU = $svd->U;
         $svdS = $svd->S;
-        $svdV = $svd->V;
+        $svdVt = $svd->Vt;
 
-        // Then A = USV
-        $this->assertEquals($A->getMatrix(), $svdU->multiply($svdS)->multiply($svdV)->getMatrix(), '', 0.00001);
+        // Then A = USVᵀ
+        $this->assertEquals($A->getMatrix(), $svdU->multiply($svdS)->multiply($svdVt)->getMatrix(), '', 0.00001);
 
-        // And U, S, and V are expected solution to SVD
+        // And U, S, and Vᵀ are expected solution to SVD
         $this->assertEquals($U->getMatrix(), $svdU->getMatrix(), '', 0.00001);
         $this->assertEquals($S->getMatrix(), $svdS->getMatrix(), '', 0.00001);
-        $this->assertEquals($V->getMatrix(), $svdV->getMatrix(), '', 0.00001);
+        $this->assertEquals($Vt->getMatrix(), $svdVt->getMatrix(), '', 0.00001);
     }
 
     /**
@@ -926,7 +926,7 @@ class MatrixDecompositionsTest extends \PHPUnit\Framework\TestCase
                         [0, 0, sqrt(5), 0, 0],
                         [0, 0, 0, 0, 0],
                         ],
-                    'V' => [
+                    'Vt' => [
                         [0, 1, 0, 0, 0],
                         [0, 0, 1, 0, 0],
                         [sqrt(.2), 0, 0, 0, sqrt(.8)],
@@ -955,6 +955,6 @@ class MatrixDecompositionsTest extends \PHPUnit\Framework\TestCase
         // Then
         $this->assertTrue($svd->U->isOrthogonal());
         $this->assertTrue($svd->S->isDiagonal());
-        $this->assertTrue($svd->V->isOrthogonal());
+        $this->assertTrue($svd->Vt->isOrthogonal());
     }
 }
