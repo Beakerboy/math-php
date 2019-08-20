@@ -80,7 +80,7 @@ class SVD implements \ArrayAccess
         $V = $MtM->eigenvectors(Eigenvalue::JACOBI_METHOD);
         
         // Diagonal matrix
-        $S = MatrixFacotry::create(Single::sqrt($MMt->eigenvalues(Eigenvalue::JACOBI_METHOD)));
+        $S = MatrixFactory::create(Single::sqrt($MMt->eigenvalues(Eigenvalue::JACOBI_METHOD)));
         
         return new SVD($U, $S, $V);
     }
