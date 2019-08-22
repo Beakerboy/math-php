@@ -927,7 +927,7 @@ class MatrixDecompositionsTest extends \PHPUnit\Framework\TestCase
                 [
                     'S' => [
                         [14.528807, 0, 0],
-                        [0, -4.404176, 0],
+                        [0, 4.404176, 0],
                         [0, 0, 1.875369],
                     ],
                 ],
