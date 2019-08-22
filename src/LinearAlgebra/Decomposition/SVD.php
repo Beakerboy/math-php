@@ -82,7 +82,19 @@ class SVD extends DecompositionBase
 
         // A rectangular diagonal matrix
         $S = $U->transpose()->multiply($M)->multiply($V);
-        
+
+        $diag = $S->getDiagonalElements();
+
+        // If there is a negative singular value, we need to adjust the signs of columns in U
+        if (min($diag) < 0) {
+            $sig = [];
+            foreach ($diag as $value) {
+                $sig[] = $diag >= 0 ? 1 : -1;
+            }
+            $signature = MatrixFactory::diagonal($sig)
+            $U = $u->multiply($siganture);
+            $S = $S->multiply($signature);
+        }
         return new SVD($U, $S, $V);
     }
 
