@@ -89,7 +89,7 @@ class SVD extends DecompositionBase
         if (min($diag) < 0) {
             $sig = [];
             foreach ($diag as $value) {
-                $sig[] = $diag >= 0 ? 1 : -1;
+                $sig[] = $value >= 0 ? 1 : -1;
             }
             $signature = MatrixFactory::diagonal($sig);
             $U = $U->multiply($signature);
