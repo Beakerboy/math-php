@@ -91,8 +91,8 @@ class SVD extends DecompositionBase
             foreach ($diag as $value) {
                 $sig[] = $diag >= 0 ? 1 : -1;
             }
-            $signature = MatrixFactory::diagonal($sig)
-            $U = $u->multiply($siganture);
+            $signature = MatrixFactory::diagonal($sig);
+            $U = $u->multiply($signature);
             $S = $S->multiply($signature);
         }
         return new SVD($U, $S, $V);
