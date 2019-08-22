@@ -87,13 +87,13 @@ class SVD extends DecompositionBase
 
         // If there is a negative singular value, we need to adjust the signs of columns in U
         if (min($diag) < 0) {
-            $sig = [];
-            foreach ($diag as $value) {
-                $sig[] = $value >= 0 ? 1 : -1;
+            $sig = MatrixFactory::identity($U->getN());
+            foreach ($diag as $key => $value) {
+                $sig[$key][$key] = $value >= 0 ? 1 : -1;
             }
-            $signature = MatrixFactory::diagonal($sig);
+            $signature = MatrixFactory::create($sig);
             $U = $U->multiply($signature);
-            $S = $S->multiply($signature);
+            $S = $signature->multiply($S);
         }
         return new SVD($U, $S, $V);
     }
