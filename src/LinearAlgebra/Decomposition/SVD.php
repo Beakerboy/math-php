@@ -78,7 +78,7 @@ class SVD extends DecompositionBase
      *
      * @return Vector
      */
-    public function getV(): Vector
+    public function getD(): Vector
     {
         return $this->D;
     }
