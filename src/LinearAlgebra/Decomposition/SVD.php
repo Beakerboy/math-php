@@ -87,7 +87,7 @@ class SVD extends DecompositionBase
 
         // If there is a negative singular value, we need to adjust the signs of columns in U
         if (min($diag) < 0) {
-            $sig = MatrixFactory::identity($U->getN());
+            $sig = MatrixFactory::identity($U->getN())->getMatrix();
             foreach ($diag as $key => $value) {
                 $sig[$key][$key] = $value >= 0 ? 1 : -1;
             }
