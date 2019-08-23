@@ -472,5 +472,55 @@ class EigenvalueTest extends \PHPUnit\Framework\TestCase
                 ],
             ],
         ];
+
+        /**
+         * @test that a variety of matrix types can have eigenvalues calulated
+         * @dataProvider dataProviderForSymmetricEigenvalues
+         * @dataProvider dataProviderForEigenvalues
+         * @dataProvider dataProviderForTriangularEigenvalues
+         */
+        public function testSmartEigenvalues(array $A, array $S)
+        {
+            // Given
+            $A = MatrixFactory::create($A);
+
+            // When
+            $eigenvalues = $A->eigenvalues();
+
+            // Then
+            $this->assertEquals($S, $eigenvalues, '', 0.0001);
+        }
+    
+        public function dataProviderForTriangularEigenvalues()
+        {
+            return [
+                [
+                    [
+                        [2, 0, 0, 0, 0, 0],
+                        [4, 3, 0, 0, 0, 0],
+                        [8, 2, 3, 0, 0, 0],
+                        [1, 7, 3, 9, 0, 0],
+                        [5, 4, 3, 2, 1, 0],
+                        [1, 6, 2, 9, 3, 6],
+                    ],
+                    [9, 6, 3, 3, 2, 1],
+                ],
+                [
+                    [
+                        [1, 0, 0, 1, 0, 0],
+                        [0, 2, 0, 0, 1, 0],
+                        [0, 0, 3, 0, 0, 1],
+                        [0, 0, 0, 4, 0, 0],
+                        [0, 0, 0, 0, 5, 0],
+                        [0, 0, 0, 0, 0, 6],
+                    ],
+                    [6, 5, 4, 3, 2, 1],
+                ],
+                [
+                    [[6]],
+                    [6],
+                ],   
+            ];
+        }
     }
 }
