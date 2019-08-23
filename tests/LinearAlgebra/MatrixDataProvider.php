@@ -27,6 +27,7 @@ trait MatrixDataProvider
      *  - dataProviderForLowerTriangularMatrix
      *  - dataProviderForDiagonalMatrix
      *  - dataProviderForNotDiagonalMatrix
+     *  - dataProviderForNotRectangularDiagonalMatrix
      *  - dataProviderForRefMatrix
      *  - dataProviderForNotRefMatrix
      *  - dataProviderForRrefMatrix
@@ -3491,7 +3492,7 @@ trait MatrixDataProvider
         ];
     }
 
-    public function dataProviderForNotRectangularDiagonal(): array
+    public function dataProviderForNotRectangularDiagonalMatrix(): array
     {
         return [
             [
