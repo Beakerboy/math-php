@@ -490,7 +490,7 @@ class MatrixPropertiesTest extends \PHPUnit\Framework\TestCase
      * @param        array $D
      * @throws       \Exception
      */
-    public function testIsDiagonal(array $D)
+    public function testIsNotRectangularDiagonal(array $D)
     {
         // Given
         $D = MatrixFactory::create($D);
