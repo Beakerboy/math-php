@@ -3336,9 +3336,6 @@ class Matrix implements \ArrayAccess, \JsonSerializable
      */
     public function eigenvalues(string $method = null): array
     {
-        if ($method !== null && !Eigenvalue::isAvailableMethod($method)) {
-            throw new Exception\MatrixException("$method is not a valid eigenvalue method");
-        }
         if (!$this->isSquare()) {
             throw new Exception\MatrixException('Eigenvalues can only be calculated on square matrices');
         }
@@ -3363,6 +3360,7 @@ class Matrix implements \ArrayAccess, \JsonSerializable
         } elseif (Eigenvalue::isAvailableMethod($method)) {
             return Eigenvalue::$method($this);
         }
+        throw new Exception\MatrixException("$method is not a valid eigenvalue method");
     }
 
     /**
