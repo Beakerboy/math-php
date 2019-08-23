@@ -105,8 +105,8 @@ class Eigenvalue
         // Calculate the roots of the determinant.
         $eigenvalues = $det->roots();
         usort($eigenvalues, function ($a, $b) {
-                    return abs($b) <=> abs($a);
-                });
+            return abs($b) <=> abs($a);
+        });
         return $eigenvalues;
     }
 
