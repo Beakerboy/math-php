@@ -3491,6 +3491,31 @@ trait MatrixDataProvider
         ];
     }
 
+    public function dataProviderForNotRectangularDiagonal(): array
+    {
+        return [
+            [
+                [[1, 1]],
+            ],
+            [
+                [[0, 1]],
+            ],
+            [
+                [
+                    [1, 0, 0],
+                    [0, 1, 1],
+                ],
+            ],
+            [
+                [
+                    [1, 0],
+                    [0, 1],
+                    [0, 2],
+                ],
+            ],
+        ];
+    }
+
     /**
      * All ref matrices in this data provider are not in rref.
      */
