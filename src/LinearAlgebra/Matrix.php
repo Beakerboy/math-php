@@ -3340,9 +3340,6 @@ class Matrix implements \ArrayAccess, \JsonSerializable
             throw new Exception\MatrixException('Eigenvalues can only be calculated on square matrices');
         }
         if ($method === null) {
-            if ($this->m == 1) {
-                return [$this->A[0][0]];
-            }
             if ($this->isTriangular()) {
                 $diagonal = $this->getDiagonalElements();
                 usort($diagonal, function ($a, $b) {
