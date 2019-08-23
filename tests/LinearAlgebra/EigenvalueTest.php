@@ -534,13 +534,13 @@ class EigenvalueTest extends \PHPUnit\Framework\TestCase
         $A = MatrixFactory::create($A);
 
         // Then
-        $this->expectException($Exception\MatrixException::class);
+        $this->expectException(Exception\MatrixException::class);
         
         // When
         $A->eigenvalues();
     }
 
-    public function dataProviderForEigenvalueFailure ()
+    public function dataProviderForEigenvalueFailure()
     {
         return [
             [ // Not Square
