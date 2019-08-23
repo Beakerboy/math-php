@@ -528,7 +528,7 @@ class EigenvalueTest extends \PHPUnit\Framework\TestCase
      * @test that the function fails appropriately
      * @dataProvider dataProviderForEigenvalueFailure
      */
-    public function testSmartEigenvalues(array $A)
+    public function testSmartEigenvalueFailure(array $A)
     {
         // Given
         $A = MatrixFactory::create($A);
