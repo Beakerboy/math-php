@@ -30,7 +30,9 @@ class Eigen extends DecompositionBase
 
     public static function powerIteration(Matrix $A, int $iterations = 1000): array
     {
-        self::checkMatrix($A);
+        if (!$A->isSquare()) {
+            throw new Exception\BadDataException('Matrix must be square');
+        }
         
         $b    = MatrixFactory::random($A->getM(), 1);
         $newμ = 0;
