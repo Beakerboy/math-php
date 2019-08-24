@@ -3,6 +3,7 @@
 namespace MathPHP\LinearAlgebra\Decomposition;
 
 use MathPHP\LinearAlgebra\Matrix;
+use MathPHP\LinearAlgebra\MatrixFactory;
 use MathPHP\LinearAlgebra\Vector;
 
 class Eigen extends DecompositionBase
