@@ -2,6 +2,7 @@
 
 namespace MathPHP\LinearAlgebra\Decomposition;
 
+use MathPHP\Functions\Support;
 use MathPHP\LinearAlgebra\Matrix;
 use MathPHP\LinearAlgebra\MatrixFactory;
 use MathPHP\LinearAlgebra\Vector;
