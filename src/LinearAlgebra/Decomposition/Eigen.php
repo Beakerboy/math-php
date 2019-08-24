@@ -18,7 +18,7 @@ class Eigen extends DecompositionBase
         $eigenvalues = [];
         $vectors = [];
         for ($i = 0; $i < $M->getM(); $i++) {
-            list ($eigenvalue, $eigenvector) = self::powerIteration($A);
+            list ($eigenvalue, $eigenvector) = self::powerIteration($M);
             $eigenvalues[] = $eigenvalue;
             $vectors[] = $eigenvector->transpose()->getMatrix()[0]; // Adding as a new row
             $M = $M->subtract($eigenvector->multiply($eigenvector->transpose())->scalarMultiply($eigenvalue));
