@@ -1081,11 +1081,10 @@ class MatrixDecompositionsTest extends \PHPUnit\Framework\TestCase
         $eigenV = $eigen->getV();
         $diag = MatrixFactory::diagonal($eigenD);
         // Then
-        $this->assertTrue($eigen->getV()->isOrthogonal());
         $this->assertEquals($D, $eigenD->getVector(), '', .00001);
 
         // Then A = VDV⁻¹
-        $this->assertEquals($A->getMatrix(), $eigenV->multiply($diag)->multiply($eigenV->transpose())->getMatrix(), '', 0.00001);
+        $this->assertEquals($A->getMatrix(), $eigenV->multiply($diag)->multiply($eigenV->inverse())->getMatrix(), '', 0.00001);
     }
 
     /**
