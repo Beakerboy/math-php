@@ -1075,7 +1075,7 @@ class MatrixDecompositionsTest extends \PHPUnit\Framework\TestCase
         $A = MatrixFactory::create($A);
         
         // When
-        $eigen = Eigen::decompose($A);
+        $eigen = Decomposition\Eigen::decompose($A);
         
         $eigenD = $eigen->getD();
         $eigenV = $eigen->getV();
