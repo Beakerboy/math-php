@@ -1,6 +1,7 @@
 <?php
 namespace MathPHP\Tests\LinearAlgebra;
 
+use MathPHP\LinearAlgebra\Decomposition;
 use MathPHP\LinearAlgebra\MatrixFactory;
 use MathPHP\Exception;
 
