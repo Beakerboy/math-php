@@ -1080,7 +1080,7 @@ class MatrixDecompositionsTest extends \PHPUnit\Framework\TestCase
         
         $eigenD = $eigen->getD();
         $eigenV = $eigen->getV();
-        $diag = MatrixFactory::diagonal($eigenD);
+        $diag = MatrixFactory::diagonal($eigenD->getVector());
         // Then
         $this->assertEquals($D, $eigenD->getVector(), '', .00001);
 
