@@ -1830,7 +1830,12 @@ class Matrix implements \ArrayAccess, \JsonSerializable
             $this->catalog->addInverse($A⁻¹);
             return $A⁻¹;
         }
-        
+        if ($this->isOrthogonal()) {
+            $A⁻¹ = $this->transpose();
+
+            $this->catalog->addInverse($A⁻¹);
+            return $A⁻¹;
+        }
         // nxn matrix 3x3 or larger
         $R   = $this->augmentIdentity()->rref();
         $A⁻¹ = [];
