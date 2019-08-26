@@ -2,6 +2,7 @@
 
 namespace MathPHP\LinearAlgebra\Decomposition;
 
+use MathPHP\Exception;
 use MathPHP\Functions\Support;
 use MathPHP\LinearAlgebra\Matrix;
 use MathPHP\LinearAlgebra\MatrixFactory;
@@ -43,7 +44,7 @@ class Eigen extends DecompositionBase
         return new Eigen($V, $D);
     }
 
-    public static function powerIteration(Matrix $A, int $iterations = 1000): array
+    public static function powerIteration(Matrix $A, int $iterations = 10000): array
     {
         if (!$A->isSquare()) {
             throw new Exception\BadDataException('Matrix must be square');
