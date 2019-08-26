@@ -1069,7 +1069,7 @@ class MatrixDecompositionsTest extends \PHPUnit\Framework\TestCase
      * @param        array $D
      * @throws       \Exception
      */
-    public function testEigen(array $A, array $D, array $V)
+    public function testEigen(array $A, array $D)
     {
         // Given
         $A = MatrixFactory::create($A);
@@ -1077,9 +1077,15 @@ class MatrixDecompositionsTest extends \PHPUnit\Framework\TestCase
         // When
         $eigen = Eigen::decompose($A);
         
+        $eigenD = $eigen->getD();
+        $eigenV = $eigen->getV();
+        $diag = MatrixFactory::diagonal($eigenD);
         // Then
-        $this->assertEquals($V, $eigen->getV(), '', .00001);
-        $this->assertEquals($D, $eigen->getD(), '', .00001);
+        $this->assertTrue($eigen->getV()->isOrthogonal());
+        $this->assertEquals($D, $eigenD->getVector(), '', .00001);
+
+        // Then A = VDV⁻¹
+        $this->assertEquals($A->getMatrix(), $eigenV->multiply($diag)->multiply($eigenV->transpose())->getMatrix(), '', 0.00001);
     }
 
     /**
@@ -1087,6 +1093,68 @@ class MatrixDecompositionsTest extends \PHPUnit\Framework\TestCase
      */
     public function dataProviderForEigen()
     {
-        
+        return [
+            [
+                [
+                    [0, 1],
+                    [-2, -3],
+                ],
+                [-2, -1],
+            ],
+            [
+                [
+                    [6, -1],
+                    [2, 3],
+                ],
+                [5, 4],
+            ],
+            [
+                [
+                    [1, -2],
+                    [-2, 0],
+                ],
+                [(1 + sqrt(17)) / 2, (1 - sqrt(17)) / 2],
+            ],
+            [
+                [
+                    [-2, -4, 2],
+                    [-2, 1, 2],
+                    [4, 2, 5],
+                ],
+                [6, -5, 3],
+            ],
+            [
+                [
+                    [2, 0, 0],
+                    [1, 2, 1],
+                    [-1, 0, 1],
+                ],
+                [2, 2, 1],
+            ],
+            [
+                [
+                    [1, 2, 1],
+                    [6, -1, 0],
+                    [-1, -2, -1],
+                ],
+                [-4, 3, 0],
+            ],
+            [
+                [
+                    [1, 2, 3],
+                    [4, 5, 6],
+                    [7, 8, 9],
+                ],
+                [(3 * (5 + sqrt(33))) / 2, (-3 * (sqrt(33) - 5)) / 2, 0],
+            ],
+            [
+                [
+                    [8, -6, 2],
+                    [-6, 7, -4],
+                    [2, -4, -3],
+                ],
+                [14.528807, -4.404176, 1.875369],
+            ],
+        ];
     }
 }
