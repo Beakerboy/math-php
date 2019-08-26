@@ -1060,4 +1060,33 @@ class MatrixDecompositionsTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($svd->getS()->isRectangularDiagonal());
         $this->assertTrue($svd->getV()->isOrthogonal());
     }
+
+    /**
+     * @test         Eigen returns the expected V and D
+     * @dataProvider dataProviderForEigen
+     * @param        array $A
+     * @param        array $V
+     * @param        array $D
+     * @throws       \Exception
+     */
+    public function testEigen(array $A, array $D, array $V)
+    {
+        // Given
+        $A = MatrixFactory::create($A);
+        
+        // When
+        $eigen = Eigen::decompose($A);
+        
+        // Then
+        $this->assertEquals($V, $eigen->getV(), '', .00001);
+        $this->assertEquals($D, $eigen->getD(), '', .00001);
+    }
+
+    /**
+     * @return array
+     */
+    public function dataProviderForEigen()
+    {
+        
+    }
 }
