@@ -9,10 +9,23 @@ use MathPHP\LinearAlgebra\Vector;
 
 class Eigen extends DecompositionBase
 {
+    protected $D;
+    protected $V;
+
     public function __construct(Matrix $V, Vector $D)
     {
         $this->V = $V;
         $this->D = $D;
+    }
+
+    public function getD()
+    {
+        return $this->D;
+    }
+
+    public function getV()
+    {
+        return $this->V;
     }
 
     public static function decompose(Matrix $M): Eigen
