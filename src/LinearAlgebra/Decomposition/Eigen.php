@@ -44,7 +44,7 @@ class Eigen extends DecompositionBase
         return new Eigen($V, $D);
     }
 
-    public static function powerIteration(Matrix $A, int $iterations = 10000): array
+    public static function powerIteration(Matrix $A, int $iterations = 100000): array
     {
         if (!$A->isSquare()) {
             throw new Exception\BadDataException('Matrix must be square');
@@ -53,7 +53,7 @@ class Eigen extends DecompositionBase
         $b    = MatrixFactory::random($A->getM(), 1);
         $newμ = 0;
         $μ    = -1;
-        while (!Support::isEqual($μ, $newμ)) {
+        while (!Support::isEqual($μ, $newμ, 1e-15)) {
             if ($iterations <= 0) {
                 throw new Exception\FunctionFailedToConvergeException("Maximum number of iterations exceeded.");
             }
