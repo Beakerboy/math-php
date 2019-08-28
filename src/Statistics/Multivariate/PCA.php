@@ -42,6 +42,7 @@ class PCA
      */
     protected $EVec = null;
     
+    protected $center = true;
     /**
      * Constructor
      *
@@ -54,15 +55,12 @@ class PCA
      */
     public function __construct(Matrix $M, bool $center = true, bool $scale = true)
     {
+        $this->center = $center;
         // Check that there is enough data: at least two columns and rows
         if (!($M->getM() > 1) || !($M->getN() > 1)) {
             throw new Exception\BadDataException('Data matrix must be at least 2x2.');
         }
-        if ($center === true) {
-            $this->center = $M->columnMeans();
-        } else {
-            $this->center = new Vector(array_fill(0, $M->getN(), 0));
-        }
+        $this->center = $M->columnMeans();
         if ($scale === true) {
             $scaleArray = [];
             for ($i = 0; $i < $M->getN(); $i++) {
@@ -126,6 +124,9 @@ class PCA
 
         // $scaled_data = ($X - μ) / σ
         $scaled_data = $X->subtract($center_matrix)->multiply($scale_matrix);
+        if (!$center) {
+            $scaled_data = $X->add($center_matrix);
+        }
         return $scaled_data;
     }
     
