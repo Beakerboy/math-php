@@ -3,6 +3,7 @@ namespace MathPHP\Tests\Functions;
 
 use MathPHP\Functions\Polynomial;
 use MathPHP\Exception;
+use MathPHP\LinearAlgebra\MatrixFactory;
 
 class PolynomialTest extends \PHPUnit\Framework\TestCase
 {
@@ -1223,8 +1224,8 @@ class PolynomialTest extends \PHPUnit\Framework\TestCase
     /**
      * @test         Test that the proper roots are calculated using the companion matrix
      * @dataProvider dataProviderForTestCompanionMatrix
-     * @param array $roots the roots of the polynomial
-     * @param array $companion_matrix the expected companion matrix
+     * @param array  $roots the roots of the polynomial
+     * @param array  $companion_matrix the expected companion matrix
      */
     public function testCompanionMatrix(array $roots, array $expected_matrix)
     {
@@ -1237,7 +1238,7 @@ class PolynomialTest extends \PHPUnit\Framework\TestCase
             $poly = $poly->multiply($factor);
         }
 
-        $companion = MatrixFacotry::companionMatrix($poly);
+        $companion = MatrixFactory::companionMatrix($poly);
         $this->assetEquals($expected_matrix, $companion->getMatrix(), '', .0000001);
 
         $calculated_roots = $companion->eigenvalues();
