@@ -59,7 +59,7 @@ class PCA
         if (!($M->getM() > 1) || !($M->getN() > 1)) {
             throw new Exception\BadDataException('Data matrix must be at least 2x2.');
         }
-        if ($center === true)
+        if ($center === true) {
             $this->center = $M->columnMeans();
         } else {
             $this->center = new Vector(array_fill(0, $M->getN(), 0));
