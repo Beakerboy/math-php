@@ -513,7 +513,7 @@ class MatrixFactory
         return self::create($A);
     }
 
-    public function CompanionMatrix(Polynomial $t): Matrix
+    public static function CompanionMatrix(Polynomial $t): Matrix
     {
         $coefficients = $t->getCoefficients();
         $reversed_coefficients = new Vector(array_reverse($coefficients));
