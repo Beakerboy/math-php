@@ -1219,4 +1219,45 @@ class PolynomialTest extends \PHPUnit\Framework\TestCase
             ],
         ];
     }
+
+    /**
+     * @test         Test that the proper roots are calculated using the companion matrix
+     * @dataProvider dataProviderForTestCompanionMatrix
+     * @param array $roots the roots of the polynomial
+     * @param array $companion_matrix the expected companion matrix
+     */
+    public function testCompanionMatrix(array $roots, array $expected_matrix)
+    {
+        // Initialize a polynomial to 1
+        $poly = new Polynomial([1]);
+
+        // Generate the polynomial with the provided roots
+        foreach ($roots as $root) {
+            $factor = new Polynomial([1, -1 * $root]);
+            $poly = $poly->multiply($factor);
+        }
+
+        $companion = MatrixFacotry::companionMatrix($poly);
+        $this->assetEquals($expected_matrix, $companion->getMatrix(), '', .0000001);
+
+        $calculated_roots = $companion->eigenvalues();
+        $this->assetEquals($roots, $calculated_roots, '', .0000001);
+    }
+
+    public function dataProviderForTestCompanionMatrix()
+    {
+        return [
+            [
+                [6, 5, 4, 3, 2, 1],
+                [
+                    [0, 0, 0, 0, 0, -720],
+                    [1, 0, 0, 0, 0, 1764],
+                    [0, 1, 0, 0, 0, -1624],
+                    [0, 0, 1, 0, 0, -735],
+                    [0, 0, 0, 1, 0, -175],
+                    [0, 0, 0, 0, 1, 21],
+                ],
+            ],
+        ];
+    }
 }
