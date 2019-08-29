@@ -150,7 +150,7 @@ class PCA
         for ($i = 0; $i < $this->data->getN(); $i++) {
             $EV[] = Descriptive::standardDeviation($this->getScores()->getColumn($i)) ** 2;
         }
-        return $EV;
+        return new Vector($EV);
     }
  
     /**
