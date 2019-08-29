@@ -1239,10 +1239,10 @@ class PolynomialTest extends \PHPUnit\Framework\TestCase
         }
 
         $companion = MatrixFactory::companionMatrix($poly);
-        $this->assetEquals($expected_matrix, $companion->getMatrix(), '', .0000001);
+        $this->assertEquals($expected_matrix, $companion->getMatrix(), '', .0000001);
 
         $calculated_roots = $companion->eigenvalues();
-        $this->assetEquals($roots, $calculated_roots, '', .0000001);
+        $this->assertEquals($roots, $calculated_roots, '', .0000001);
     }
 
     public function dataProviderForTestCompanionMatrix()
