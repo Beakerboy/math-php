@@ -4,6 +4,7 @@ namespace MathPHP\Tests\Functions;
 use MathPHP\Functions\Polynomial;
 use MathPHP\Exception;
 use MathPHP\LinearAlgebra\MatrixFactory;
+use MathPHp\LinearAlgebra\Decomposition;
 
 class PolynomialTest extends \PHPUnit\Framework\TestCase
 {
