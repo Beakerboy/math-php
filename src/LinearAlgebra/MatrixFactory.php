@@ -522,7 +522,7 @@ class MatrixFactory
         $column_matrix = Matrixfactory::createFromVectors([$reversed_coefficients])->scalarDivide($coefficients[0])->exclude_row($t->getDegree());
         $zero_row = MatrixFactory::zero(1, $column_matrix->getM());
         $companion = MatrixFactory::identity($column_matrix->getM() - 1)->augmentAbove($zero_row)->augment($column_matrix);
-        return $companion
+        return $companion;
     }
 
     /* ************************************************************************
