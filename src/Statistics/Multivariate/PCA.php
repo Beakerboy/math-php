@@ -41,8 +41,7 @@ class PCA
      * The Eigenvectors of the correlation matrix
      */
     protected $EVec = null;
-    
-    protected $center = true;
+
     /**
      * Constructor
      *
@@ -60,7 +59,11 @@ class PCA
         if (!($M->getM() > 1) || !($M->getN() > 1)) {
             throw new Exception\BadDataException('Data matrix must be at least 2x2.');
         }
-        $this->center = $M->columnMeans();
+        if ($center === true)
+            $this->center = $M->columnMeans();
+        } else {
+            $this->center = new Vector(array_fill(0, $M->getN(), 0));
+        }
         if ($scale === true) {
             $scaleArray = [];
             for ($i = 0; $i < $M->getN(); $i++) {
@@ -124,9 +127,7 @@ class PCA
 
         // $scaled_data = ($X - μ) / σ
         $scaled_data = $X->subtract($center_matrix)->multiply($scale_matrix);
-        if (!$center) {
-            $scaled_data = $X->add($center_matrix);
-        }
+
         return $scaled_data;
     }
     
