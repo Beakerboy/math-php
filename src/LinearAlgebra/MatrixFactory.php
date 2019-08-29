@@ -519,7 +519,7 @@ class MatrixFactory
         $reversed_coefficients = new Vector(array_reverse($coefficients));
 
         // Make a column matrix without the largest factor, after setting it to 1
-        $column_matrix = Matrixfactory::createFromVectors([$reversed_coefficients])->scalarDivide($coefficients[0])->excludeRow($t->getDegree());
+        $column_matrix = Matrixfactory::createFromVectors([$reversed_coefficients])->scalarDivide($coefficients[0])->rowExclude($t->getDegree());
         $zero_row = MatrixFactory::zero(1, $column_matrix->getM());
         $companion = MatrixFactory::identity($column_matrix->getM() - 1)->augmentAbove($zero_row)->augment($column_matrix);
         return $companion;
