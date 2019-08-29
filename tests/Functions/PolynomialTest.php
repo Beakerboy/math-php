@@ -1050,36 +1050,6 @@ class PolynomialTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @test         roots NAN
-     * @dataProvider dataProviderForRootsNAN
-     * @param        array $polynomialA
-     * @throws       \Exception
-     */
-    public function testRootsNAN(array $polynomialA)
-    {
-        // Given
-        $polynomialA = new Polynomial($polynomialA);
-
-        // When
-        $roots = $polynomialA->roots();
-
-        // Then
-        $this->assertNan($roots[0]);
-    }
-
-    /**
-     * @return array
-     */
-    public function dataProviderForRootsNAN(): array
-    {
-        return [
-            [
-                [1, -3, -4, 5, 5, 5],
-            ],
-        ];
-    }
-
-    /**
      * @test   add - IncorrectTypeException if the argument is not numeric or a Polynomial
      * @throws \Exception
      */
@@ -1241,7 +1211,7 @@ class PolynomialTest extends \PHPUnit\Framework\TestCase
         $companion = MatrixFactory::companionMatrix($poly);
         $this->assertEquals($expected_matrix, $companion->getMatrix(), '', .0000001);
 
-        $calculated_roots = $companion->eigenvalues();
+        $calculated_roots = Decomposition\Eigen::decompose($companion)->getD()->getVector();
         $this->assertEquals($roots, $calculated_roots, '', .0000001);
     }
 
