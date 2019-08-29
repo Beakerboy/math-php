@@ -147,8 +147,8 @@ class PCA
     public function getEigenvalues(): Vector
     {
         $EV = [];
-        for ($i = 0; $i < $this->scores->getN(); $i++) {
-            $EV[] = Descriptive::standardDeviation($this->scores->getColumn($i)) ** 2;
+        for ($i = 0; $i < $this->data->getN(); $i++) {
+            $EV[] = Descriptive::standardDeviation($this->getScores->getColumn($i)) ** 2;
         }
         return $EV;
     }
