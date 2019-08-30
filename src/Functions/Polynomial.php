@@ -6,6 +6,7 @@ use MathPHP\Exception;
 use MathPHP\Functions\Map;
 use MathPHP\Number\ObjectArithmetic;
 use MathPHP\LinearAlgebra\Decomposition;
+use MathPHp\LinearAlgebra\MatrixFactory;
 
 /**
  * A convenience class for one-dimension polynomials.
