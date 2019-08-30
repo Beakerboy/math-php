@@ -60,7 +60,7 @@ class Eigen extends DecompositionBase
             $μ    = $newμ;
             $Ab   = $A->multiply($b);
             $b    = $Ab->scalarDivide($Ab->frobeniusNorm());
-            $newμ = $b->transpose()->multiply($A)->multiply($b)->get(0, 0) / $b->transpose()->multiply($b)->get(0, 0);
+            $newμ = $b->transpose()->multiply($A)->multiply($b)->get(0, 0);
             $iterations--;
         }
         return [$newμ, $b];
