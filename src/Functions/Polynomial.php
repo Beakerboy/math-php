@@ -3,8 +3,9 @@ namespace MathPHP\Functions;
 
 use MathPHP\Algebra;
 use MathPHP\Exception;
-use MathPHP\Number\ObjectArithmetic;
 use MathPHP\Functions\Map;
+use MathPHP\Number\ObjectArithmetic;
+use MathPHP\LinearAlgebra\Decomposition;
 
 /**
  * A convenience class for one-dimension polynomials.
