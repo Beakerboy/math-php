@@ -423,7 +423,7 @@ class Polynomial implements ObjectArithmetic
             case 4:
                 return Algebra::quartic(...$this->coefficients);
             default:
-                return [\NAN];
+                return Decomposition\Eigen::decompose(MatrixFactory::companionMatrix($this))->getD()->getVector();
         }
     }
 }
