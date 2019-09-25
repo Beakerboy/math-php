@@ -143,6 +143,24 @@ class ArbitraryInteger implements ObjectArithmetic
         return $int;
     }
 
+    /**
+     * Convert ArbitraryInteger to a float
+     *
+     * @return float
+     */
+    public function toFloat(): float
+    {
+        $number = str_split(strrev($this->base256));
+        $place_value = 1;
+        $float = ord($number[0]);
+        unset($number[0]);
+        foreach ($number as $digit) {
+            $place_value *= 256;
+            $float += ord($digit) * $place_value;
+        }
+        return floatval($float);
+    }
+
     private static function prepareParameter($number): ArbitraryInteger
     {
         if (!is_object($number)) {
