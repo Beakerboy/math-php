@@ -51,6 +51,9 @@ class ArbitraryInteger implements ObjectArithmetic
             }
             $this->base256 = $string;
         } elseif (is_string($number)) {
+            if ($number == '') {
+                throw new Exception\BadParameterException("String cannot be empty.");
+            }
             if ($base === null && $offset !== null && strlen($offset) > 1) {
                 $base = strlen($offset);
             }
@@ -69,19 +72,16 @@ class ArbitraryInteger implements ObjectArithmetic
                 } else {
                     $base = 10;
                 }
-            }
-            // Check that all elements are greater than the offset, and are members of the alphabet.
-            
+            }            
             // Can we avoid measuring the length?
             // This would allow very-very long numbers, with more than MaxInt number of chars.
             $length = strlen($number);
-            if ($number == '') {
-                throw new Exception\BadParameterException("String cannot be empty.");
-            }
+            
             // Set to default offset and ascii alphabet
             if ($offset === null) {
                 $offset = self::getDefaultAlphabet($base);
             }
+            // Check that all elements are greater than the offset, and are members of the alphabet.
             // Remove the offset.
             if ($offset !== chr(0)) {
                 // I'm duplicating the for loop instead of placing the if within the for
