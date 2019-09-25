@@ -29,7 +29,7 @@ class ArbitraryIntegerTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-     /**
+    /**
      * @dataProvider dataProviderForIntToInt
      */
     public function testIntToInt(int $int)
@@ -45,6 +45,26 @@ class ArbitraryIntegerTest extends \PHPUnit\Framework\TestCase
             [200],
             [123456],
             [PHP_INT_MAX],
+        ];
+    }
+
+    
+    /**
+     * @dataProvider dataProviderForStringToFloat
+     */
+    public function testIntToFloat(string $int, float $float)
+    {
+        $obj = new ArbitraryInteger($int);
+
+        $this->assertSame($float, $obj->toFloat));
+    }
+
+    public function dataProviderForStringToFloat()
+    {
+        return [
+            ['200', 200.0],
+            ['123456', 123456.0],
+            ['9223372036854775808', 9.223372036854775808E18],
         ];
     }
 
