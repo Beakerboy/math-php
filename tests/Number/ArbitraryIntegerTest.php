@@ -175,7 +175,11 @@ class ArbitraryIntegerTest extends \PHPUnit\Framework\TestCase
     {
         return [
             // float
-            [3.14]
+            [3.14],
+            // array
+            [
+                ['123', '456']
+            ],
             // bool
             [true],
             // object
