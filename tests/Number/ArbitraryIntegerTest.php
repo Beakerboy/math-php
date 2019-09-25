@@ -68,6 +68,25 @@ class ArbitraryIntegerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * @dataProvider dataProviderForToBase
+     */
+    public function testToBase(string $number, int $base, string $alphabet, string $expected)
+    {
+        $obj = new ArbitraryInteger($number);
+
+        $this->assertSame($expected, $obj->toBase($base, $alphabet));
+    }
+
+    public function dataProviderForToBase()
+    {
+        return [
+            ['200', 10, null, '200'],
+            ['123456', 10, 'ABCDEFGHIJ', 'ABCDEF'],
+            ['123456', null, ArbitraryInteger::RFC3548_BASE64_FILE_SAFE, 'dI'],
+        ];
+    }
+
+    /**
      * @test         Constructor determines number base from the alphabet
      * @dataProvider dataProviderForTestGetBaseFromAlphabet
      */
