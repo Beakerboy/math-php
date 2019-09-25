@@ -82,7 +82,7 @@ class ArbitraryIntegerTest extends \PHPUnit\Framework\TestCase
         return [
             ['200', 10, null, '200'],
             ['123456', 10, 'ABCDEFGHIJ', 'ABCDEF'],
-            ['123456', null, ArbitraryInteger::RFC3548_BASE64_FILE_SAFE, 'dI'],
+            ['123456', 64, ArbitraryInteger::RFC3548_BASE64_FILE_SAFE, 'dI'],
         ];
     }
 
