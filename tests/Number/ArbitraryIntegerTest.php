@@ -89,7 +89,7 @@ class ArbitraryIntegerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @test         Intdiv calculates the correct whole and remainder 
+     * @test         Intdiv calculates the correct whole and remainder
      * @dataProvider dataProviderForIntDiv
      * @param        string $dividend
      * @param        int $divisor
