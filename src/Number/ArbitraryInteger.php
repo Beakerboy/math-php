@@ -7,6 +7,9 @@ use MathPHP\Exception;
 /**
  * Arbitrary Length Integer
  *
+ * An object to manipulate positive integers of arbitrary size.
+ * The object should be able to store values from 0 up to 256 ^ (PHP_MAX_INT + 1) - 1
+ *
  * http://www.faqs.org/rfcs/rfc3548.html
  */
 class ArbitraryInteger implements ObjectArithmetic
