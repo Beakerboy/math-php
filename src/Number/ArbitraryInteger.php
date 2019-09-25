@@ -72,7 +72,7 @@ class ArbitraryInteger implements ObjectArithmetic
                 } else {
                     $base = 10;
                 }
-            }            
+            }
             // Can we avoid measuring the length?
             // This would allow very-very long numbers, with more than MaxInt number of chars.
             $length = strlen($number);
