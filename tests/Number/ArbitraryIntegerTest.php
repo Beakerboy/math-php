@@ -73,7 +73,7 @@ class ArbitraryIntegerTest extends \PHPUnit\Framework\TestCase
      */
     public function testGetBaseFromAlphabet(string $int, string $alphabet, string $expected)
     {
-        $obj = new ArbitraryInteger($int, null, $base_58);
+        $obj = new ArbitraryInteger($int, null, $alphabet);
         $this->assertSame($expected, (string) $obj);
     }
 
