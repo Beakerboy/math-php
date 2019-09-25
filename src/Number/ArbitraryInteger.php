@@ -2,6 +2,8 @@
 
 namespace MathPHP\Number;
 
+use MathPHP\Exception;
+
 /**
  * Arbitrary Length Integer
  *
@@ -74,7 +76,7 @@ class ArbitraryInteger implements ObjectArithmetic
             // This would allow very-very long numbers, with more than MaxInt number of chars.
             $length = strlen($number);
             if ($number == '') {
-                throw new \Exception();
+                throw new Exception\BadParameterException("String cannot be empty.");
             }
             // Set to default offset and ascii alphabet
             if ($offset === null) {
@@ -112,14 +114,14 @@ class ArbitraryInteger implements ObjectArithmetic
                 }
                 $this->base256 = $base256->getBinary();
             } elseif ($base > 256) {
-                throw new \Exception();
+                throw new Exception\BadParameterException("Number base cannot be greater than 256.");
             } else {
                 $this->base256 = $number;
                 // need to drop any leading zeroes.
             }
         } else {
             // Not an int, and not a string
-            throw new \Exception();
+            throw new Exception\IncorrectTypeException("Number can only be an int or a string: type '" . gettype($number) . "' provided");
         }
     }
 
@@ -204,7 +206,7 @@ class ArbitraryInteger implements ObjectArithmetic
     public function toBase(int $base, $alphabet = null): string
     {
         if ($base > 256) {
-            throw new \Exception();
+            throw new Exception\BadParameterException("Number base cannot be greater than 256.");
         }
         if ($alphabet === null) {
             $alphabet = self::getDefaultAlphabet($base);
@@ -282,7 +284,7 @@ class ArbitraryInteger implements ObjectArithmetic
     {
         $number = self::prepareParameter($number);
         if ($this->lessThan($number)) {
-            throw new \Exception();
+            throw new Exception\BadParameterException('Negative numbers are not supported.');
         }
         $number = $number->getBinary();
         $carry = 0;
