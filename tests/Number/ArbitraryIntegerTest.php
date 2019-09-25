@@ -70,7 +70,7 @@ class ArbitraryIntegerTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider dataProviderForToBase
      */
-    public function testToBase(string $number, int $base, string $alphabet, string $expected)
+    public function testToBase(string $number, int $base, $alphabet, string $expected)
     {
         $obj = new ArbitraryInteger($number);
 
