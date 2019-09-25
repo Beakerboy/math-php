@@ -296,7 +296,12 @@ class ArbitraryInteger implements ObjectArithmetic
     }
 
     /**
+     * Subtraction
      *
+     * Calculate the difference between two numbers
+     *
+     * @param ArbitraryInteger|int $number
+     * @return ArbitraryInteger
      */
     public function subtract($number): ArbitraryInteger
     {
