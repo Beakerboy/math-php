@@ -56,7 +56,7 @@ class ArbitraryIntegerTest extends \PHPUnit\Framework\TestCase
     {
         $obj = new ArbitraryInteger($int);
 
-        $this->assertSame($float, $obj->toFloat));
+        $this->assertSame($float, $obj->toFloat());
     }
 
     public function dataProviderForStringToFloat()
