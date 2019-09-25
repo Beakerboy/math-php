@@ -179,7 +179,7 @@ class ArbitraryIntegerTest extends \PHPUnit\Framework\TestCase
             // bool
             [true],
             // object
-            [new stdClass()],
+            [new \stdClass()],
         ];
     }
 
