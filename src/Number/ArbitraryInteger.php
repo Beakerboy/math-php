@@ -416,13 +416,9 @@ class ArbitraryInteger implements ObjectArithmetic
                 $chr_obj = new ArbitraryInteger(substr($base_256, $i, 1), 256);
                 // Convert chr into int
                 $chr = $chr_obj->toInteger();
-                fwrite(STDERR, "nibble value: " . $chr . "\n");
-                fwrite(STDERR, "divisor value: " . $divisor . "\n");
                 // Calculate $int and $mod
                 $int_chr = intdiv($chr + $carry * 256, $divisor);
-                fwrite(STDERR, "int value: " . $int_chr . "\n");
                 $carry = ($chr + $carry * 256) % $divisor;
-                fwrite(STDERR, "carry value: " . $carry . "\n\n");
                 if ($int !== '' || $int_chr !== 0) {
                     $int .= chr($int_chr);
                 }
@@ -467,7 +463,6 @@ class ArbitraryInteger implements ObjectArithmetic
         $lastX = $X;
         $converge = false;
         while (!$converge) {
-            fwrite(STDERR, "Dividing " . $this . " by " . $X . "\n");
             list($NX, $mod) = $this->intdiv($X);
             list($X, $mod) = $X->add($NX)->intdiv(2);
             if ($X->equals($lastX) || $X->equals($lastX->add(1))) {
