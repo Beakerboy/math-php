@@ -11,7 +11,6 @@ class BaseEncoderDecoder
 {
     public function toBase(string $number, int $fromBase, int $toBase, string $fromAlphabet, string $toAlphabet): string
     {
-    
     }
 
     public function createArbitraryInteger(): ArbitraryInteger
