@@ -547,6 +547,21 @@ class ArbitraryInteger implements ObjectArithmetic
     }
 
     /**
+     * Greater Than
+     *
+     * Test if one ArbitraryInteger is less than another
+     *
+     * @param $int
+     *
+     * @return bool
+     */
+    public function greaterThan($int): bool
+    {
+        $int = self::prepareParameter($int);
+        return $int->lessThan($this);
+    }
+
+    /**
      * Less Than
      *
      * Test if one ArbitraryInteger is less than another
