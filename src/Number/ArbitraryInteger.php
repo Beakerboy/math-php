@@ -386,7 +386,7 @@ class ArbitraryInteger implements ObjectArithmetic
                 $inner_product = chr($carry) . $inner_product;
             }
             $inner_product = $inner_product . str_repeat(chr(0), $i - 1);
-            $inner_obj = new ArbitraryInteger($inner_product, 256);
+            $inner_obj = self::fromBinary($inner_product, $this->positive);
             $product = $product->add($inner_obj);
         }
         return $product;
@@ -429,7 +429,7 @@ class ArbitraryInteger implements ObjectArithmetic
             $int = '';
             for ($i = 0; $i < $len; $i++) {
                 // Grab same number of chars from $this
-                $chr_obj = new ArbitraryInteger(substr($base_256, $i, 1), 256);
+                $chr_obj = self::fromBinary(substr($base_256, $i, 1), $this->positive);
                 // Convert chr into int
                 $chr = $chr_obj->toInteger();
                 // Calculate $int and $mod
@@ -439,7 +439,7 @@ class ArbitraryInteger implements ObjectArithmetic
                     $int .= chr($int_chr);
                 }
             }
-            $int = new ArbitraryInteger($int, 256);
+            $int = self::fromBinary((string) $int, $this->positive);
             $mod = new ArbitraryInteger($carry);
         } else {
             $int = new ArbitraryInteger(0);
