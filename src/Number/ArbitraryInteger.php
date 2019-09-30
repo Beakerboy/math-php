@@ -399,12 +399,12 @@ class ArbitraryInteger implements ObjectArithmetic
             return [new ArbitraryInteger(0), $this];
         }
         $two_fifty_six = new ArbitraryInteger(256);
-        // A 32-bit system can safely use 3 bytes
-        // A 64 bit system can safely use 7 bytes
-        $safe_bytes = new ArbitraryInteger(2 ** ((PHP_INT_SIZE - 1) * 8));
+
+        // If the divisor is less than Int_max / 256 then
+        // the native php intdiv and mod functions can be used.
+        $safe_bytes = new ArbitraryInteger(PHP_INT_MAX / 256);
         $divisor = self::prepareParameter($divisor);
         if ($divisor->lessThan($safe_bytes)) {
-            // Find number of chars in $divisor
             $divisor = $divisor->toInteger();
             $base_256 = $this->base256;
             $len = strlen($base_256);
