@@ -16,6 +16,7 @@ class ArbitraryInteger implements ObjectArithmetic
 {
     /** @var string number in binary format */
     protected $base256;
+    protected $positive;
 
     /** string alphabet of base 16 numbers */
     const RFC3548_BASE16 = '0123456789ABCDEF';
@@ -43,6 +44,7 @@ class ArbitraryInteger implements ObjectArithmetic
      */
     public function __construct($number, $base = null, $offset = null)
     {
+        $this->positive = true;
         if (is_int($number)) {
             // Should we check that $base is 10 or null and $offset makes sense?
             $int_part = intdiv($number, 256);
@@ -126,6 +128,13 @@ class ArbitraryInteger implements ObjectArithmetic
             // Not an int, and not a string
             throw new Exception\IncorrectTypeException("Number can only be an int or a string: type '" . gettype($number) . "' provided");
         }
+    }
+
+    public static function fromBinary(string $value, bool $positive): ArbitraryInteger
+    {
+        $result = new ArbitaryInteger(0);
+        $result->setVariables($value, $positive);
+        return $result;
     }
 
     /**
@@ -257,6 +266,13 @@ class ArbitraryInteger implements ObjectArithmetic
         return $result;
     }
 
+    protected function setVariables(string $value, bool $positive)
+    {
+        // Strip leading chr(0) entries.
+        $this->base256 = $value;
+        $this->positive = $positive;
+    }
+
     /**************************************************************************
      * BINARY FUNCTIONS
      **************************************************************************/
@@ -295,7 +311,7 @@ class ArbitraryInteger implements ObjectArithmetic
         if ($carry > 0) {
             $result = chr($carry) . $result;
         }
-        return new ArbitraryInteger($result, 256);
+        return self::fromBinary($result, true);
     }
 
     /**
@@ -332,7 +348,7 @@ class ArbitraryInteger implements ObjectArithmetic
             
             $result = chr($difference) . $result;
         }
-        return new ArbitraryInteger($result, 256);
+        return self::fromBinary($result, true);
     }
 
     /**
@@ -433,7 +449,7 @@ class ArbitraryInteger implements ObjectArithmetic
             $mod = new ArbitraryInteger(0);
             // Pop a char of the left of $base256 onto the right of $mod
             for ($i = 0; $i < $length; $i++) {
-                $new_char = new ArbitraryInteger($base256[$i], 256);
+                $new_char = self::fromBinary($base256[$i], true);
                 // $mod .= $new_char
                 $mod = $mod->leftShift(8)->add($new_char);
                 $new_int = new ArbitraryInteger(0);
@@ -459,7 +475,7 @@ class ArbitraryInteger implements ObjectArithmetic
     {
         $length = strlen($this->base256);
         // Start close to the value, at a number around half the digits.
-        $X = new ArbitraryInteger(substr($this->base256, 0, intdiv($length, 2) + 1), 256);
+        $X = self::fromBinary(substr($this->base256, 0, intdiv($length, 2) + 1), true);
         $lastX = $X;
         $converge = false;
         while (!$converge) {
@@ -522,7 +538,7 @@ class ArbitraryInteger implements ObjectArithmetic
         // Pad $bytes of 0x00 on the right.
         $shifted_string = $shifted_string . str_repeat(chr(0), $bytes->toInteger());
 
-        return new ArbitraryInteger($shifted_string, 256);
+        return self::fromBinary($shifted_string, $true);
     }
 
     /**************************************************************************
