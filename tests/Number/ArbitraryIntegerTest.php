@@ -181,6 +181,31 @@ class ArbitraryIntegerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * @test         isqrt calculates the correct value
+     * @dataProvider dataProviderForIsqrt
+     * @param        string $number
+     * @param        string $expected
+     */
+    public function testIsqrt(string $number, string $expected)
+    {
+        $obj = new ArbitraryInteger($number);
+        $this->assertEquals($expected, (string) $obj->isqrt());
+    }
+
+    public function dataProviderForIsqrt()
+    {
+        return [
+            ['8', '2'],
+            ['9', '3'],
+            ['10', '3'],
+            ['123456789101112', '11111111'],
+            ['152399025', '12345'],
+            ['152399026', '12345'],
+            ['152399024', '12344'],
+        ];
+    }
+
+    /**
      * @dataProvider dataProviderForAckermann
      */
     public function testAckermann(int $m, int $n, string $expected)
