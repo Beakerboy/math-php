@@ -109,25 +109,48 @@ class ArbitraryIntegerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @test         Intdiv calculates the correct whole and remainder
-     * @dataProvider dataProviderForIntDiv
+     * @dataProvider dataProviderForIntDivSmallDivisor
      * @param        string $dividend
      * @param        int $divisor
      * @param        string $int
      * @param        string $mod
      */
-    public function testIntDiv(string $dividend, int $divisor, string $int, string $mod)
+    public function testIntDivSmallDivisor(string $dividend, int $divisor, string $int, string $mod)
     {
         $obj = new ArbitraryInteger($dividend);
         list($result_int, $result_mod) =  $obj->intdiv($divisor);
         $this->assertEquals([$int, $mod], [(string) $result_int, (string) $result_mod]);
     }
 
-    public function dataProviderForIntDiv()
+    public function dataProviderForIntDivSmallDivisor()
     {
         return [
             ['2134567896543378631213', 2, '1067283948271689315606', '1'],
             ['2134567896543378631213', 100, '21345678965433786312', '13'],
             ['301', 300, '1', '1'],
+        ];
+    }
+
+    /**
+     * @test         Intdiv calculates the correct whole and remainder
+     * @dataProvider dataProviderForIntDivLargeDivisor
+     * @param        string $dividend
+     * @param        int $divisor
+     * @param        string $int
+     * @param        string $mod
+     */
+    public function testIntDivLargeDivisor(string $dividend, string $divisor, string $int, string $mod)
+    {
+        $obj = new ArbitraryInteger($dividend);
+        $divisor = new ArbitraryInteger($divisor);
+        list($result_int, $result_mod) =  $obj->intdiv($divisor);
+        $this->assertEquals([$int, $mod], [(string) $result_int, (string) $result_mod]);
+    }
+    public function dataProviderForIntDivLargeDivisor()
+    {
+        return [
+            ['2134567896543378631213', '1067283948271689315606', '2', '1'],
+            ['2134567896543378631213', '21345678965433786312', '100', '13'],
         ];
     }
 
