@@ -17,6 +17,4 @@ class BaseEncoderDecoder
     public function createArbitraryInteger(): ArbitraryInteger
     {
     }
-
-    
 }
