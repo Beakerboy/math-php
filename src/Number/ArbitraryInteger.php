@@ -132,7 +132,7 @@ class ArbitraryInteger implements ObjectArithmetic
 
     public static function fromBinary(string $value, bool $positive): ArbitraryInteger
     {
-        $result = new ArbitaryInteger(0);
+        $result = new ArbitraryInteger(0);
         $result->setVariables($value, $positive);
         return $result;
     }
