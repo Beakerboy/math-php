@@ -538,7 +538,7 @@ class ArbitraryInteger implements ObjectArithmetic
         // Pad $bytes of 0x00 on the right.
         $shifted_string = $shifted_string . str_repeat(chr(0), $bytes->toInteger());
 
-        return self::fromBinary($shifted_string, $true);
+        return self::fromBinary($shifted_string, true);
     }
 
     /**************************************************************************
