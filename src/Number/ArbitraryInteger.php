@@ -131,7 +131,7 @@ class ArbitraryInteger implements ObjectArithmetic
             $place_value *= 256;
             $int += ord($digit) * $place_value;
         }
-        return $int;
+        return $int * ($this->positive ? 1 : -1);
     }
 
     /**
@@ -149,7 +149,7 @@ class ArbitraryInteger implements ObjectArithmetic
             $place_value *= 256;
             $float += ord($digit) * $place_value;
         }
-        return floatval($float);
+        return floatval($float) * ($this->positive ? 1 : -1);
     }
 
     private static function prepareParameter($number): ArbitraryInteger
