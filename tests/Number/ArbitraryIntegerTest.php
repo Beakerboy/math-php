@@ -68,25 +68,6 @@ class ArbitraryIntegerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @dataProvider dataProviderForToBase
-     */
-    public function testToBase(string $number, int $base, $alphabet, string $expected)
-    {
-        $obj = new ArbitraryInteger($number);
-
-        $this->assertSame($expected, $obj->toBase($base, $alphabet));
-    }
-
-    public function dataProviderForToBase()
-    {
-        return [
-            ['200', 10, null, '200'],
-            ['123456', 10, 'ABCDEFGHIJ', 'BCDEFG'],
-            ['123456', 64, ArbitraryInteger::RFC3548_BASE64_FILE_SAFE, 'eJA'],
-        ];
-    }
-
-    /**
      * @test         Intdiv calculates the correct whole and remainder
      * @dataProvider dataProviderForIntDivSmallDivisor
      * @param        string $dividend
