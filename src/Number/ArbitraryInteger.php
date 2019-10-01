@@ -386,7 +386,7 @@ class ArbitraryInteger implements ObjectArithmetic
     {
         $result = new ArbitraryInteger(0);
         $base256 = $this->base256;
-        $result->setVariables($base256, $base256 == chr(0) ? true : !$positive);
+        $result->setVariables($base256, $base256 == chr(0) ? true : !$this->positive);
         return $result;
     }
 
