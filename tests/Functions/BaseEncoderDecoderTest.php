@@ -1,6 +1,6 @@
 <?php
 
-namespace MathPHP\Tests\Functions
+namespace MathPHP\Tests\Functions;
 
 use MathPHP\Functions\BaseEncoderDecoder;
 
