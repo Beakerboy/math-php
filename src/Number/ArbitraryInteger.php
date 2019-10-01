@@ -51,7 +51,9 @@ class ArbitraryInteger implements ObjectArithmetic
             $offset = '0';
             $number = strtolower($number);
             if ($number[0] == '0') {
-                if ($number[1] == 'x') {
+                if ($number == '0') {
+                    $base = 10;
+                } elseif ($number[1] == 'x') {
                     $base = 16;
                     $number = substr($number, 2);
                     $offset = '0123456789abcdef';
