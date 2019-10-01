@@ -139,7 +139,47 @@ class ArbitraryIntegerTest extends \PHPUnit\Framework\TestCase
             ],
         ];
     }
-    
+
+    /**
+     * @test         abs() returns the proper result
+     * @dataProvider dataProviderForAbs
+     * @param        string $int
+     * @param        string $expected
+     */
+    public function testAbs(string $int, string $expected)
+    {
+        $abs = new ArbitraryInteger($int);
+        $this->assertEquals($expected, (string) $abs->abs());
+    }
+
+    public function dataProviderForAbs()
+    {
+        return [
+            ['-12345678910', '12345678910'],
+        ];
+    }
+
+    /**
+     * @test         negate() returns the proper result
+     * @dataProvider dataProviderForNegate
+     * @param        string $int
+     * @param        string $expected
+     */
+    public function testNegate(string $int, string $expected)
+    {
+        $neg = new ArbitraryInteger($int);
+        $this->assertEquals($expected, (string) $neg->negate());
+    }
+
+    public function dataProviderForNegate()
+    {
+        return [
+            ['-123456789101112', '123456789101112'],
+            ['123456789101112', '-123456789101112'],
+            ['0', '0'],
+        ];
+    }
+
     /**
      * @test         fact() returns the proper result
      * @dataProvider dataProviderForFact
