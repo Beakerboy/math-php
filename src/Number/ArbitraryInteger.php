@@ -61,7 +61,7 @@ class ArbitraryInteger implements ObjectArithmetic
                 throw new Exception\BadParameterException("String cannot be empty.");
             }
             $offset = '0';
-            $number = strtolower($string);
+            $number = strtolower($number);
             if ($number[0] == '0') {
                 if ($number[1] == 'x') {
                     $base = 16;
