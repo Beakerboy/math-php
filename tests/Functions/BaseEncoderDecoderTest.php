@@ -21,6 +21,6 @@ class BaseEncoderDecoderTest extends \PHPUnit\Framework\TestCase
         // Then
         $this->expectException(Exception\BadParameterException::class);
         // When
-        $string =  BaseEncoderDecoder::toBase($base);
+        $string =  BaseEncoderDecoder::toBase($int, $base);
     }
 }
