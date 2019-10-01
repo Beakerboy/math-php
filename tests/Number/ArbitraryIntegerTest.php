@@ -263,39 +263,6 @@ class ArbitraryIntegerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @test     Constructor throws an exception when base>256
-     * @throws   \Exception
-     */
-    public function testInvalidBaseException()
-    {
-        // Given
-        $base = 300;
-
-        // Then
-        $this->expectException(Exception\BadParameterException::class);
-
-        // When
-        $int =  new ArbitraryInteger('123456', $base);
-    }
-
-    /**
-     * @test     Constructor throws an exception when base>256
-     * @throws   \Exception
-     */
-    public function testInvalidToBaseException()
-    {
-        // Given
-        $base = 300;
-        $int =  new ArbitraryInteger('123456');
-
-        // Then
-        $this->expectException(Exception\BadParameterException::class);
-
-        // When
-        $string =  $int->toBase($base);
-    }
-
-    /**
      * @test     Subtract throws exception if negative result
      * @throws   \Exception
      */
