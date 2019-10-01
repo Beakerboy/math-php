@@ -87,27 +87,6 @@ class ArbitraryIntegerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @test         Constructor determines number base from the alphabet
-     * @dataProvider dataProviderForTestGetBaseFromAlphabet
-     */
-    public function testGetBaseFromAlphabet(string $int, string $alphabet, string $expected)
-    {
-        $obj = new ArbitraryInteger($int, null, $alphabet);
-        $this->assertSame($expected, (string) $obj);
-    }
-
-    public function dataProviderForTestGetBaseFromAlphabet()
-    {
-        return [
-            [
-                '2z',
-                '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz',
-                '115',
-            ],
-        ];
-    }
-
-    /**
      * @test         Intdiv calculates the correct whole and remainder
      * @dataProvider dataProviderForIntDivSmallDivisor
      * @param        string $dividend
