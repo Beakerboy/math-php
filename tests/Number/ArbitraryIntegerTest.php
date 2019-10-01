@@ -26,6 +26,7 @@ class ArbitraryIntegerTest extends \PHPUnit\Framework\TestCase
             ['0b1101', '13'],
             ['0xff', '255'],
             ['0127', '87'],
+            ['-31415', '-31415'],
         ];
     }
 
@@ -45,6 +46,7 @@ class ArbitraryIntegerTest extends \PHPUnit\Framework\TestCase
             [200],
             [123456],
             [PHP_INT_MAX],
+            [-31415],
         ];
     }
 
