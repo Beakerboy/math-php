@@ -8,8 +8,8 @@ use MathPHP\Functions\BaseEncoderDecoder;
 /**
  * Arbitrary Length Integer
  *
- * An object to manipulate positive integers of arbitrary size.
- * The object should be able to store values from 0 up to 256 ^ (PHP_MAX_INT + 1) - 1
+ * An object to manipulate integers of arbitrary size.
+ * The object should be able to store values from 0 up to (256 ** PHP_MAX_INT) - 1
  *
  * http://www.faqs.org/rfcs/rfc3548.html
  */
@@ -162,7 +162,8 @@ class ArbitraryInteger implements ObjectArithmetic
      */
     public function __toString(): string
     {
-        return BaseEncoderDecoder::toBase($this, 10);
+        $sign = $this->positive ? '' : '-';
+        return $sign . BaseEncoderDecoder::toBase($this, 10);
     }
 
     /**
@@ -239,7 +240,7 @@ class ArbitraryInteger implements ObjectArithmetic
     {
         $number = self::prepareParameter($number);
         if ($this->lessThan($number)) {
-            throw new Exception\BadParameterException('Negative numbers are not supported.');
+            return $number->subtract($this)->negate();
         }
         $number = $number->getBinary();
         $carry = 0;
@@ -275,11 +276,7 @@ class ArbitraryInteger implements ObjectArithmetic
      */
     public function multiply($number): ArbitraryInteger
     {
-        // check if string, object, or int
-        // throw exception if appropriate
-        if (!is_object($number)) {
-            $number = new ArbitraryInteger($number);
-        }
+        $number = self::prepareParameter($number);
         $number = $number->getBinary();
         $length = strlen($number);
         $product = new ArbitraryInteger(0);
@@ -307,9 +304,7 @@ class ArbitraryInteger implements ObjectArithmetic
 
     public function pow($exp): ArbitraryInteger
     {
-        if (!is_object($exp)) {
-            $exp = new ArbitraryInteger($exp);
-        }
+        $exp = self::prepareParameter($exp);
         $result = new ArbitraryInteger(1);
         $i = new ArbitraryInteger(0);
         while ($i->lessThan($exp)) {
@@ -379,7 +374,7 @@ class ArbitraryInteger implements ObjectArithmetic
     }
 
     /**************************************************************************
-     * BINARY FUNCTIONS
+     * UNARY FUNCTIONS
      **************************************************************************/
 
     /**
@@ -418,6 +413,19 @@ class ArbitraryInteger implements ObjectArithmetic
             }
         }
         return $lastX;
+    }
+
+    /**
+     * Absolute Value
+     *
+     * @return ArbitraryInteger
+     */
+    public function abs(): ArbitraryInteger
+    {
+        $result = new ArbitraryInteger(0);
+        $base256 = $this->base256
+        $result->setVariables($base256, true);
+        return $result;
     }
 
     /**
@@ -472,14 +480,16 @@ class ArbitraryInteger implements ObjectArithmetic
         }
     }
 
+    /**************************************************************************
+     * BITWISE OPERATIONS
+     **************************************************************************/
+
     /**
-     * currently limited to shifting MaxInt*8 bits
+     * Currently limited to shifting MaxInt*8 bits
      */
     public function leftShift($bits)
     {
-        if (!is_object($bits)) {
-            $bits = new ArbitraryInteger($bits);
-        }
+        $bits = self::prepareParameter($bits);
         $shifted_string = "";
         $length = strlen($this->base256);
         list($bytes, $bits) = $bits->intdiv(8);
@@ -509,7 +519,8 @@ class ArbitraryInteger implements ObjectArithmetic
     /**
      * Test for equality
      *
-     * Two ArbitraryIntegers are equal IFF their $base256 strings are identical.
+     * Two ArbitraryIntegers are equal IFF their $base256 strings
+     * are identical and their signs are identical.
      *
      * @param ArbitraryInteger $int
      *
@@ -517,16 +528,14 @@ class ArbitraryInteger implements ObjectArithmetic
      */
     public function equals($int): bool
     {
-        if (is_int($int)) {
-            $int = new ArbitraryInteger($int);
-        }
-        return $this->base256 == $int->getBinary();
+        $int = self::prepareParameter($int);
+        return $this->base256 == $int->getBinary() && $this->positive == $int->getPositive();
     }
 
     /**
      * Greater Than
      *
-     * Test if one ArbitraryInteger is less than another
+     * Test if one ArbitraryInteger is greater than another
      *
      * @param $int
      *
@@ -554,17 +563,28 @@ class ArbitraryInteger implements ObjectArithmetic
         $int_256 = $int->getBinary();
         $my_len = strlen($base_256);
         $int_len = strlen($int_256);
-
-        // If one number has more digits, it is larger
-        if ($my_len > $int_len) {
-            return false;
-        } elseif ($int_len > $my_len) {
+        $my_positive = $this->positive;
+        $int_positive = $int->getPositive();
+        
+        // Check if signs differ
+        if ($my_positive && !$int_positive) {
             return true;
+        }
+        if ($int_positve && ! $my_positive) {
+            return false;
+        }
+        
+        // If one number has more digits, its absolute value is larger.
+        if ($my_len > $int_len) {
+            return !$my_positive;
+        } elseif ($int_len > $my_len) {
+            return $my_positive;
         } else {
             // Test each digit from most significant to least.
             for ($i = 0; $i < $my_len; $i++) {
                 if ($base_256[$i] !== $int_256[$i]) {
-                    return ord($base_256[$i]) < ord($int_256[$i]);
+                    $test = ord($base_256[$i]) < ord($int_256[$i]);
+                    return $my_positive ? $test : !$test;
                 }
             }
             // Must be equal
