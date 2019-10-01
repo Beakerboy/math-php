@@ -303,21 +303,4 @@ class ArbitraryIntegerTest extends \PHPUnit\Framework\TestCase
             [new \stdClass()],
         ];
     }
-
-    /**
-     * @test     Subtract throws exception if negative result
-     * @throws   \Exception
-     */
-    public function testNegativeResultException()
-    {
-        // Given
-        $int1 =  new ArbitraryInteger('123456');
-        $int2 =  new ArbitraryInteger('123457');
-
-        // Then
-        $this->expectException(Exception\BadParameterException::class);
-
-        // When
-        $difference =  $int1->subtract($int2);
-    }
 }
