@@ -423,7 +423,7 @@ class ArbitraryInteger implements ObjectArithmetic
     public function abs(): ArbitraryInteger
     {
         $result = new ArbitraryInteger(0);
-        $base256 = $this->base256
+        $base256 = $this->base256;
         $result->setVariables($base256, true);
         return $result;
     }
