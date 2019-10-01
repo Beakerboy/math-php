@@ -19,18 +19,6 @@ class ArbitraryInteger implements ObjectArithmetic
     protected $base256;
     protected $positive;
 
-    /** string alphabet of base 16 numbers */
-    const RFC3548_BASE16 = '0123456789ABCDEF';
-
-    /** string alphabet of base 64 numbers */
-    const RFC3548_BASE64 = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
-
-    /** string alphabet of file safe base 64 numbers */
-    const RFC3548_BASE64_FILE_SAFE = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
-
-    /** string alphabet of base 32 numbers */
-    const RFC3548_BASE32 = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
-
     /**
      * Constructor
      *
