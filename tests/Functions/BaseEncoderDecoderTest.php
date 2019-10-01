@@ -3,6 +3,7 @@
 namespace MathPHP\Tests\Functions;
 
 use MathPHP\Functions\BaseEncoderDecoder;
+use MathPHP\Number\ArbitraryInteger;
 
 class BaseEncoderDecoderTest extends \PHPUnit\Framework\TestCase
 {
