@@ -570,7 +570,7 @@ class ArbitraryInteger implements ObjectArithmetic
         if ($my_positive && !$int_positive) {
             return true;
         }
-        if ($int_positve && ! $my_positive) {
+        if ($int_positive && ! $my_positive) {
             return false;
         }
         
