@@ -48,6 +48,10 @@ class ArbitraryInteger implements ObjectArithmetic
             if ($number == '') {
                 throw new Exception\BadParameterException("String cannot be empty.");
             }
+            if ($number[0] == '-') {
+                $this->positive = false;
+                $number = substr($number, 1);
+            }
             $offset = '0';
             $number = strtolower($number);
             if ($number[0] == '0') {
