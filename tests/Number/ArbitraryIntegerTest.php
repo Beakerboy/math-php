@@ -70,6 +70,20 @@ class ArbitraryIntegerTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
+    public function testSubtract(string $int1, string $int2, string $expected)
+    {
+    }
+
+    public function dataProviderForTestSubtract()
+    {
+        return [
+            ['0', '1', '-1'],
+            ['0', '-1', '1'],
+            ['-1', '-2', '1'],
+            ['-2', '-1’, '-1'],
+        ];
+    }
+
     /**
      * @test         Intdiv calculates the correct whole and remainder
      * @dataProvider dataProviderForIntDivSmallDivisor
