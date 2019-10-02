@@ -32,7 +32,7 @@ class BaseEncoderDecoderTest extends \PHPUnit\Framework\TestCase
      */
     public function testCreateArbitrary(string $int, int $base, string $expected)
     {
-        $int = BaseEncoderDecoder::create($int, $base);
+        $int = BaseEncoderDecoder::createArbitraryInteger($int, $base);
         $this->assertEquals($expected, (string) $int);
     }
 
