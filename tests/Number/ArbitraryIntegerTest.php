@@ -257,6 +257,26 @@ class ArbitraryIntegerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * @test Test that greaterThan () works as it should
+     * @dataProvider dataProviderForTestGreaterThan
+     */
+    public function testGreaterThan(string $int1, string $int2, bool $expected)
+    {
+        $int1 = new ArbitraryInteger($int1);
+        $int2 = new ArbitraryInteger($int2);
+        $this->assertEquals($expected, $int1->greaterThan($int2));
+    }
+
+    public function dataProviderForTestGreaterThan()
+    {
+        return [
+            ['0', '-1', true],
+            ['-1', '0', false],
+            ['0', '0', false],
+        ];
+    }
+
+    /**
      * @test     Constructor throws an exception when given an empty string
      * @throws   \Exception
      */
