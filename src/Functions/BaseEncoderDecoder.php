@@ -87,5 +87,72 @@ class BaseEncoderDecoder
 
     public function createArbitraryInteger(): ArbitraryInteger
     {
+        if ($number == '') {
+            throw new Exception\BadParameterException("String cannot be empty.");
+        }
+        if ($base === null && $offset !== null && strlen($offset) > 1) {
+            $base = strlen($offset);
+        }
+        if ($base === null) {
+            if ($number[0] == '0') {
+                if ($number[1] == 'x') {
+                    $base = 16;
+                    $number = substr($number, 2);
+                } elseif ($number[1] == 'b') {
+                    $base = 2;
+                    $number = substr($number, 2);
+                } else {
+                    $base = 8;
+                    $number = substr($number, 1);
+                    }
+            } else {
+                $base = 10;
+            }
+        }
+        // Can we avoid measuring the length?
+        // This would allow very-very long numbers, with more than MaxInt number of chars.
+        $length = strlen($number);
+            
+        // Set to default offset and ascii alphabet
+        if ($offset === null) {
+            $offset = self::getDefaultAlphabet($base);
+        }
+        // Check that all elements are greater than the offset, and are members of the alphabet.
+        // Remove the offset.
+        if ($offset !== chr(0)) {
+            // I'm duplicating the for loop instead of placing the if within the for
+            // to prevent calling the if/else on every pass.
+            if (strlen($offset) ==  1) {
+                // Subtract a constant offset from each character.
+                $offset_num = ord($offset);
+                for ($i = 0; $i < $length; $i++) {
+                    $chr = $number[$i];
+                    $number[$i] = chr(ord($chr) - $offset_num);
+                }
+            } else {
+                // Lookup the offset from the string position
+                for ($i = 0; $i < $length; $i++) {
+                    $chr = $number[$i];
+                    $number[$i] = chr(strpos($offset, $chr));
+                }
+            }
+        }
+        // Convert to base 256
+        $base256 = new ArbitraryInteger(0);
+        if ($base < 256) {
+            $base_obj = new ArbitraryInteger($base);
+            $place_value = new ArbitraryInteger(1);
+            $length = strlen($number);
+            for ($i = 0; $i < $length; $i++) {
+                $chr = ord($number[$i]);
+                $base256 = $base256->multiply($base)->add($chr);
+            }
+            $this->base256 = $base256->getBinary();
+        } elseif ($base > 256) {
+            throw new Exception\BadParameterException("Number base cannot be greater than 256.");
+        } else {
+            $this->base256 = $number;
+            // need to drop any leading zeroes.
+        }
     }
 }
