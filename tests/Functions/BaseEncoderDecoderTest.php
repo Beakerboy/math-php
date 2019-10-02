@@ -27,6 +27,25 @@ class BaseEncoderDecoderTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * @test
+     * @dataProvider dataProviderForTestCreateArbitrary
+     */
+    public function testCreateArbitrary(string $int, int $base, string $expected)
+    {
+        $int = BaseEncoderDecoder::create($int, $base);
+        $this->assertEquals($expected, (string) $int);
+    }
+
+    public function dataProviderForTestCreateArbitrary()
+    {
+        return [
+            ['123', 10, '123'],
+            ['7b', 16, '123'],
+            [chr(123), 256, '123'],
+        ];
+    }
+
+    /**
      * @test     toBase throws an exception when base>256
      * @throws   BadParameterException
      */
