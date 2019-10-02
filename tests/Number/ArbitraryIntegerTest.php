@@ -70,8 +70,15 @@ class ArbitraryIntegerTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
+    /**
+     * @test
+     * @dataProvider dataProviderForTestSubtract
+     */
     public function testSubtract(string $int1, string $int2, string $expected)
     {
+        $int1 = new ArbitraryInteger($int1);
+        $int2 = new ArbitraryInteger($int2);
+        $this->assertEquals($expected, (string) $int1->subtract($int2));
     }
 
     public function dataProviderForTestSubtract()
