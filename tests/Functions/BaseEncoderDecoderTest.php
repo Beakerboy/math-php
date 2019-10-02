@@ -22,6 +22,7 @@ class BaseEncoderDecoderTest extends \PHPUnit\Framework\TestCase
     {
         return [
            ['0xf', 16, 'f'],
+           ['100', 256, chr(100)],
         ];
     }
 
