@@ -104,7 +104,7 @@ class BaseEncoderDecoder
                 } else {
                     $base = 8;
                     $number = substr($number, 1);
-                    }
+                }
             } else {
                 $base = 10;
             }
