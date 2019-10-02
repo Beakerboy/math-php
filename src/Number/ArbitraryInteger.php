@@ -213,8 +213,12 @@ class ArbitraryInteger implements ObjectArithmetic
     {
         // check if string, object, or int
         // throw exception if appropriate
-        if (!is_object($number)) {
-            $number = new ArbitraryInteger($number);
+        $number = self::prepareParameter($number);
+        if (!$number->getPositive()) {
+            return $this->subtract($number->negate());
+        }
+        if (!$this->positive) {
+            return $number->subtract($this->negate());
         }
         $number = $number->getBinary();
         $carry = 0;
