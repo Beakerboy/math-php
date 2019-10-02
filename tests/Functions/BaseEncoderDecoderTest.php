@@ -15,7 +15,7 @@ class BaseEncoderDecoderTest extends \PHPUnit\Framework\TestCase
     public function testToBase(string $int, int $base, string $expected)
     {
         $int = new ArbitraryInteger($int);
-        $this->expectEquals($expected, BaseEncoderDecoder::toBase($int, $base));
+        $this->assertEquals($expected, BaseEncoderDecoder::toBase($int, $base));
     }
 
     public function dataProviderForTestToBase()
