@@ -578,10 +578,10 @@ class ArbitraryInteger implements ObjectArithmetic
         
         // Check if signs differ
         if ($my_positive && !$int_positive) {
-            return true;
-        }
-        if ($int_positive && ! $my_positive) {
             return false;
+        }
+        if ($int_positive && !$my_positive) {
+            return true;
         }
         
         // If one number has more digits, its absolute value is larger.
