@@ -35,6 +35,10 @@ class ArbitraryInteger implements ObjectArithmetic
     {
         $this->positive = true;
         if (is_int($number)) {
+            if ($int < 0) {
+                $this->positive = false;
+                $int = -$int;
+            }
             // Should we check that $base is 10 or null and $offset makes sense?
             $int_part = intdiv($number, 256);
             $string = chr($number % 256);
