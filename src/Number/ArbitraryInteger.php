@@ -253,14 +253,15 @@ class ArbitraryInteger implements ObjectArithmetic
     public function subtract($number): ArbitraryInteger
     {
         $number = self::prepareParameter($number);
-        if ($this->lessThan($number)) {
-            return $number->subtract($this)->negate();
-        }
+        
         if (!$number->getPositive()) {
             return $this->add($number->negate());
         }
         if (!$this->positive) {
             return $this->negate()->add($number)->negate();
+        }
+        if ($this->lessThan($number)) {
+            return $number->subtract($this)->negate();
         }
         $number = $number->getBinary();
         $carry = 0;
