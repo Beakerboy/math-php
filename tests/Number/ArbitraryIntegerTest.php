@@ -72,6 +72,28 @@ class ArbitraryIntegerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @test
+     * @dataProvider dataProviderForTestAddition
+     */
+    public function testAddition(string $int1, string $int2, string $expected)
+    {
+        $int1 = new ArbitraryInteger($int1);
+        $int2 = new ArbitraryInteger($int2);
+        $this->assertEquals($expected, (string) $int1->add($int2));
+    }
+
+    public function dataProviderForTestAddition()
+    {
+        return [
+            ['0', '1', '1'],
+            ['0', '-1', '-1'],
+            ['-1', '0', '-1'],
+            ['-1', '-2', '-3'],
+            ['-2', '-1', '-3'],
+        ];
+    }
+
+    /**
+     * @test
      * @dataProvider dataProviderForTestSubtract
      */
     public function testSubtract(string $int1, string $int2, string $expected)
