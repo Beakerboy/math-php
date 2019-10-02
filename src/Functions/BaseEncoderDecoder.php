@@ -85,7 +85,7 @@ class BaseEncoderDecoder
         return $result;
     }
 
-    public function createArbitraryInteger(): ArbitraryInteger
+    public static function createArbitraryInteger(): ArbitraryInteger
     {
         if ($number == '') {
             throw new Exception\BadParameterException("String cannot be empty.");
