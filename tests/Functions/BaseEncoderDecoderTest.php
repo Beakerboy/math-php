@@ -59,4 +59,36 @@ class BaseEncoderDecoderTest extends \PHPUnit\Framework\TestCase
         // When
         $string =  BaseEncoderDecoder::toBase($int, $base);
     }
+
+    /**
+     * @test     Function throws an exception when given an empty string
+     * @throws   \Exception
+     */
+    public function testEmptyStringException()
+    {
+        // Given
+        $number = "";
+
+        // Then
+        $this->expectException(Exception\BadParameterException::class);
+
+        // When
+        $int =  BaseEncoderDecoder::createArbitraryInteger($number, 10);
+    }
+
+    /**
+     * @test     Function throws an exception when base>256
+     * @throws   \Exception
+     */
+    public function testInvalidBaseException()
+    {
+        // Given
+        $base = 300;
+
+        // Then
+        $this->expectException(Exception\BadParameterException::class);
+
+        // When
+        $int =  BaseEncoderDecoder::createArbitraryInteger('123456', $base);
+    }
 }
