@@ -90,25 +90,6 @@ class BaseEncoderDecoder
         if ($number == '') {
             throw new Exception\BadParameterException("String cannot be empty.");
         }
-        if ($base === null && $offset !== null && strlen($offset) > 1) {
-            $base = strlen($offset);
-        }
-        if ($base === null) {
-            if ($number[0] == '0') {
-                if ($number[1] == 'x') {
-                    $base = 16;
-                    $number = substr($number, 2);
-                } elseif ($number[1] == 'b') {
-                    $base = 2;
-                    $number = substr($number, 2);
-                } else {
-                    $base = 8;
-                    $number = substr($number, 1);
-                }
-            } else {
-                $base = 10;
-            }
-        }
         // Can we avoid measuring the length?
         // This would allow very-very long numbers, with more than MaxInt number of chars.
         $length = strlen($number);
