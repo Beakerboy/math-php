@@ -139,7 +139,7 @@ class BaseEncoderDecoder
         }
         // Convert to base 256
         $base256 = new ArbitraryInteger(0);
-        if ($base < 256) {
+        if ($base <= 256) {
             $base_obj = new ArbitraryInteger($base);
             $place_value = new ArbitraryInteger(1);
             $length = strlen($number);
@@ -147,12 +147,9 @@ class BaseEncoderDecoder
                 $chr = ord($number[$i]);
                 $base256 = $base256->multiply($base)->add($chr);
             }
-            $this->base256 = $base256->getBinary();
-        } elseif ($base > 256) {
-            throw new Exception\BadParameterException("Number base cannot be greater than 256.");
+            return $base256;
         } else {
-            $this->base256 = $number;
-            // need to drop any leading zeroes.
+            throw new Exception\BadParameterException("Number base cannot be greater than 256");
         }
     }
 }
