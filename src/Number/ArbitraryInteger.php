@@ -393,7 +393,7 @@ class ArbitraryInteger implements ObjectArithmetic
     /**
      * Integer Division
      */
-    public function intdiv($divisor): array
+    public function fullIntdiv($divisor): array
     {
         if ($this->lessThan($divisor)) {
             return [new ArbitraryInteger(0), $this];
@@ -447,6 +447,18 @@ class ArbitraryInteger implements ObjectArithmetic
             }
         }
         return [$int, $mod];
+    }
+
+    public function mod($divisor): ArbitraryInteger
+    {
+        list($int, $mod) = $this->fullIntdiv($divisor);
+        return $mod;
+    }
+
+    public function intdiv($divisor): ArbitraryInteger
+    {
+        list($int, $mod) = $this->fullIntdiv($divisor);
+        return $int;
     }
 
     /**
