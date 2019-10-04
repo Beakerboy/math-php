@@ -124,8 +124,10 @@ class ArbitraryIntegerTest extends \PHPUnit\Framework\TestCase
     public function testIntDivSmallDivisor(string $dividend, int $divisor, string $int, string $mod)
     {
         $obj = new ArbitraryInteger($dividend);
-        list($result_int, $result_mod) =  $obj->intdiv($divisor);
-        $this->assertEquals([$int, $mod], [(string) $result_int, (string) $result_mod]);
+        $result_int =  $obj->intdiv($divisor);
+        $result_mod =  $obj->mod($divisor);
+        $this->assertEquals($int, (string) $result_int);
+        $this->assertEquals($mod, (string) $result_mod);
     }
 
     public function dataProviderForIntDivSmallDivisor()
@@ -149,8 +151,10 @@ class ArbitraryIntegerTest extends \PHPUnit\Framework\TestCase
     {
         $obj = new ArbitraryInteger($dividend);
         $divisor = new ArbitraryInteger($divisor);
-        list($result_int, $result_mod) =  $obj->intdiv($divisor);
-        $this->assertEquals([$int, $mod], [(string) $result_int, (string) $result_mod]);
+        $result_int =  $obj->intdiv($divisor);
+        $result_mod =  $obj->mod($divisor);
+        $this->assertEquals($int, (string) $result_int);
+        $this->assertEquals($mod, (string) $result_mod);
     }
     public function dataProviderForIntDivLargeDivisor()
     {
