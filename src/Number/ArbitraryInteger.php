@@ -99,8 +99,6 @@ class ArbitraryInteger implements ObjectArithmetic
             }
             // Convert to base 256
             $base256 = new ArbitraryInteger(0);
-            $base_obj = new ArbitraryInteger($base);
-            $place_value = new ArbitraryInteger(1);
             $length = strlen($number);
             for ($i = 0; $i < $length; $i++) {
                 $chr = ord($number[$i]);
