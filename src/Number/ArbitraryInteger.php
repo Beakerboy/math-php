@@ -226,8 +226,8 @@ class ArbitraryInteger implements ObjectArithmetic
         $lastX = $X;
         $converge = false;
         while (!$converge) {
-            list($NX, $mod) = $this->intdiv($X);
-            list($X, $mod) = $X->add($NX)->intdiv(2);
+            $NX = $this->intdiv($X);
+            $X = $X->add($NX)->intdiv(2);
             if ($X->equals($lastX) || $X->equals($lastX->add(1))) {
                 $converge = true;
             } else {
@@ -492,7 +492,7 @@ class ArbitraryInteger implements ObjectArithmetic
         $bits = self::prepareParameter($bits);
         $shifted_string = "";
         $length = strlen($this->base256);
-        list($bytes, $bits) = $bits->intdiv(8);
+        list($bytes, $bits) = $bits->fullIntdiv(8);
         $bits = $bits->toInteger();
         $carry = 0;
         for ($i = 0; $i < $length; $i++) {
