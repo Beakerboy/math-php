@@ -227,7 +227,9 @@ class Eigenvalue
             // Make sure the same solution is found.
             $newb = $b->getMatrix();
             $newb[1][0] = $newb[1][0] / 2;
-            $b = MatrixFactory::create($newb);
+            $newμ = 0;
+            $μ    = -1;
+            $b    = MatrixFactory::create($newb);
             $rerun++;
             echo $iterations . " ";
             $iterations = $initial_iter;
