@@ -202,6 +202,9 @@ class Eigenvalue
         self::checkMatrix($A);
         $initial_iter = $iterations;
         $b    = MatrixFactory::random($A->getM(), 1);
+        
+        // Scale to a unit vector
+        $b    = $b->scalarDivide($b->frobeniusNorm());
         $newμ = 0;
         $μ    = -1;
         $max_rerun = 2;
