@@ -226,10 +226,14 @@ class Eigenvalue
             // Perturb the eigenvector and run again to
             // Make sure the same solution is found.
             $newb = $b->getMatrix();
-            $newb[1][0] = $newb[1][0] / 2;
+            for ($i = 0; $i < count($newb); $i++) {
+                $newb[$i][0] = $newb[1][0] + rand() / 10;
+            }
+            $b    = MatrixFactory::create($newb);
+            // Scale to a unit vector
+            $b    = $b->scalarDivide($b->frobeniusNorm());
             $newμ = 0;
             $μ    = -1;
-            $b    = MatrixFactory::create($newb);
             $rerun++;
             echo $iterations . " ";
             $iterations = $initial_iter;
