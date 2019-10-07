@@ -229,7 +229,7 @@ class Eigenvalue
             $newb[1][0] = $newb[1][0] / 2;
             $b = MatrixFactory::create($newb);
             $rerun++;
-            echo $iterations ." ";
+            echo $iterations . " ";
             $iterations = $initial_iter;
         }
         echo "EV: " . $max_ev . "\n";
