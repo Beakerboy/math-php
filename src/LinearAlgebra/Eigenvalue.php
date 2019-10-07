@@ -210,6 +210,7 @@ class Eigenvalue
         $max_rerun = 2;
         $rerun = 0;
         $max_ev = 0;
+        echo "\n";
         while ($rerun < $max_rerun) {
             while (!Support::isEqual($μ, $newμ)) {
                 if ($iterations <= 0) {
@@ -228,9 +229,10 @@ class Eigenvalue
             $newb[1][0] = $newb[1][0] / 2;
             $b = MatrixFactory::create($newb);
             $rerun++;
+            echo $iterations ." ";
             $iterations = $initial_iter;
         }
-
+        echo "EV: " . $max_ev . "\n";
         return [$max_ev];
     }
 }
