@@ -219,7 +219,7 @@ class Eigenvalue
                 $μ    = $newμ;
                 $Ab   = $A->multiply($b);
                 $b    = $Ab->scalarDivide($Ab->frobeniusNorm());
-                $newμ = $b->transpose()->multiply($A)->multiply($b)->get(0, 0) / $b->transpose()->multiply($b)->get(0, 0);
+                $newμ = $b->transpose()->multiply($A)->multiply($b)->get(0, 0);
                 $iterations--;
             }
             $max_ev = abs($max_ev) > abs($newμ) ? $max_ev : $newμ;
