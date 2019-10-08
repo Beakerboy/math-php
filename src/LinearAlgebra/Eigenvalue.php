@@ -230,7 +230,10 @@ class Eigenvalue
                 $iterations--;
             }
 
-            $max_ev = abs($max_ev) > abs($newμ) ? $max_ev : $newμ;
+            if (abs($max_ev) < abs($newμ)) {
+                $max_ev = $newμ;
+                $max_b = $b->getMatrix();
+            }
 
             // Perturb the eigenvector and run again to make sure the same solution is found
             $newb = $b->getMatrix();
@@ -246,7 +249,7 @@ class Eigenvalue
             $iterations = $initial_iter;
         }
 
-        return [$max_ev, $newb];
+        return [$max_ev, $max_b];
     }
 
     public static function powerIteration(Matrix $A, int $iterations = 1000): array
@@ -261,6 +264,7 @@ class Eigenvalue
         $vectors = [];
         for ($i = 0; $i < $A->getM(); $i++) {
             list ($eigenvalue, $eigenvector) = self::fullPowerIteration($A, $iterations);
+            $eigenvector = MatrixFactory::create($eigenvector);
             $eigenvalues[] = $eigenvalue;
             $A = $A->subtract($eigenvector->multiply($eigenvector->transpose())->scalarMultiply($eigenvalue));
             echo "\n" . $A . "\n";
