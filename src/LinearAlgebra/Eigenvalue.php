@@ -197,7 +197,7 @@ class Eigenvalue
      * @throws Exception\BadDataException if the matrix is not square
      * @throws Exception\MathException
      */
-    public static function powerIteration(Matrix $A, int $iterations = 1000): array
+    public static function fullPowerIteration(Matrix $A, int $iterations = 1000): array
     {
         self::checkMatrix($A);
 
@@ -246,6 +246,27 @@ class Eigenvalue
             $iterations = $initial_iter;
         }
 
-        return [$max_ev];
+        return [$max_ev, $b];
+    }
+
+    public static function powerIteration(Matrix $A, int $iterations = 1000): array
+    {
+        list($value, $vector) = self::fullPowerIteration($A, $iterations);
+        return [$value];
+    }
+
+    public static function maxPowerIteration(Matrix $A, int $iterations = 1000): array
+    {
+        $eigenvalues = [];
+        $vectors = [];
+        for ($i = 0l $i < $A->getM(); $i++) {
+            list ($eigenvalue, $eigenvector) = self::fullPowerIteration($A, $iterations);
+            $eigenvalues[] = $eigenvalue;
+            $vector = MatrixFactory::columnMatrix($eigenvector);
+            $vectors[] = $eigenvector; // Adding as a new row
+            $A = $A->subtract($vector->multiply($vector->transpose())->scalarMultiply($value));
+        }
+        $eigenvectors = MatrixFactory::create($vectors)->transpose();
+        return $eigenvalues;
     }
 }
