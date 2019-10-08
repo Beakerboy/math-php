@@ -259,7 +259,7 @@ class Eigenvalue
     {
         $eigenvalues = [];
         $vectors = [];
-        for ($i = 0l $i < $A->getM(); $i++) {
+        for ($i = 0; $i < $A->getM(); $i++) {
             list ($eigenvalue, $eigenvector) = self::fullPowerIteration($A, $iterations);
             $eigenvalues[] = $eigenvalue;
             $vector = MatrixFactory::columnMatrix($eigenvector);
