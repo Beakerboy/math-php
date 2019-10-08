@@ -262,11 +262,9 @@ class Eigenvalue
         for ($i = 0; $i < $A->getM(); $i++) {
             list ($eigenvalue, $eigenvector) = self::fullPowerIteration($A, $iterations);
             $eigenvalues[] = $eigenvalue;
-            $vector = MatrixFactory::columnMatrix($eigenvector);
-            $vectors[] = $eigenvector; // Adding as a new row
+            $vector = $eigenvector;
             $A = $A->subtract($vector->multiply($vector->transpose())->scalarMultiply($value));
         }
-        $eigenvectors = MatrixFactory::create($vectors)->transpose();
         return $eigenvalues;
     }
 }
