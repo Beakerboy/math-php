@@ -87,6 +87,28 @@ class EigenvalueTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($S, $eigenvalues, '', 0.0001);
     }
 
+/**
+     * @test         powerIterationMethod returns the expected eigenvalues
+     * @dataProvider dataProviderForEigenvalues
+     * @dataProvider dataProviderForLargeMatrixEigenvalues
+     * @dataProvider dataProviderForSymmetricEigenvalues
+     * @param        array $A
+     * @param        array $S
+     * @param        float $max_abs_eigenvalue maximum absolute eigenvalue
+     * @throws       \Exception
+     */
+    public function testMaxPowerIteration(array $A, array $S, float $max_abs_eigenvalue)
+    {
+        // Given
+        $A = MatrixFactory::create($A);
+
+        // When
+        $eigenvalues = Eigenvalue::maxPowerIteration($A);
+
+        // Then
+        $this->assertEquals($S, $eigenvalues, '', 0.0001);
+    }
+
     /**
      * @test         powerIterationMethod returns the expected eigenvalues
      * @dataProvider dataProviderForEigenvalues
