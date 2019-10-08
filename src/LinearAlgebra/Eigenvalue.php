@@ -246,7 +246,7 @@ class Eigenvalue
             $iterations = $initial_iter;
         }
 
-        return [$max_ev, $new_b];
+        return [$max_ev, $newb];
     }
 
     public static function powerIteration(Matrix $A, int $iterations = 1000): array
