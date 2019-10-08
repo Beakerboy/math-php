@@ -263,6 +263,7 @@ class Eigenvalue
             list ($eigenvalue, $eigenvector) = self::fullPowerIteration($A, $iterations);
             $eigenvalues[] = $eigenvalue;
             $A = $A->subtract($eigenvector->multiply($eigenvector->transpose())->scalarMultiply($eigenvalue));
+            echo "\n" . $A . "\n";
         }
         return $eigenvalues;
     }
