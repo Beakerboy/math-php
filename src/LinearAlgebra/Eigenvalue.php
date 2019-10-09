@@ -260,6 +260,7 @@ class Eigenvalue
 
     public static function maxPowerIteration(Matrix $A, int $iterations = 1000): array
     {
+        $original = $A;
         $eigenvalues = [];
         $vectors = [];
         for ($i = 0; $i < $A->getM() - 1; $i++) {
@@ -270,7 +271,7 @@ class Eigenvalue
             echo "\n" . $A . "\n";
         }
         // The matrix trace equals the sum of the eigenvalues. We can avoid using iteration to find the final value.
-        $eigenvalues[] = $A->trace() - array_sum($eigenvalues);
+        $eigenvalues[] = $original->trace() - array_sum($eigenvalues);
         return $eigenvalues;
     }
 }
