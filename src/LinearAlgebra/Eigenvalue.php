@@ -262,13 +262,15 @@ class Eigenvalue
     {
         $eigenvalues = [];
         $vectors = [];
-        for ($i = 0; $i < $A->getM(); $i++) {
+        for ($i = 0; $i < $A->getM() - 1; $i++) {
             list ($eigenvalue, $eigenvector) = self::fullPowerIteration($A, $iterations);
             $eigenvector = MatrixFactory::create($eigenvector);
             $eigenvalues[] = $eigenvalue;
             $A = $A->subtract($eigenvector->multiply($eigenvector->transpose())->scalarMultiply($eigenvalue));
             echo "\n" . $A . "\n";
         }
+        // The matrix trace equals the sum of the eigenvalues. We can avoid using iteration to find the final value.
+        $eigenvalues[] = $A->trace() - array_sum($eigenvalues);
         return $eigenvalues;
     }
 }
