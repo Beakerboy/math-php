@@ -214,7 +214,7 @@ class Eigenvalue
         $max_ev    = 0;
 
         while ($rerun < $max_rerun) {
-            while (!Support::isEqual($μ, $newμ)) {
+            while (!Support::isEqual($μ, $newμ, 0.0000000000001)) {
                 if ($iterations <= 0) {
                     throw new Exception\FunctionFailedToConvergeException("Maximum number of iterations exceeded.");
                 }
