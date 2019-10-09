@@ -90,6 +90,8 @@ class EigenvalueTest extends \PHPUnit\Framework\TestCase
 /**
      * @test         powerIterationMethod returns the expected eigenvalues
      * @dataProvider dataProviderForEigenvalues
+     * @dataProvider dataProviderForLargeMatrixEigenvalues
+     * @dataProvider dataProviderForSymmetricEigenvalues
      * @param        array $A
      * @param        array $S
      * @param        float $max_abs_eigenvalue maximum absolute eigenvalue
