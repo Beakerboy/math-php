@@ -268,7 +268,6 @@ class Eigenvalue
             $eigenvector = MatrixFactory::create($eigenvector);
             $eigenvalues[] = $eigenvalue;
             $A = $A->subtract($eigenvector->multiply($eigenvector->transpose())->scalarMultiply($eigenvalue));
-            echo "\n" . $A . "\n";
         }
         // The matrix trace equals the sum of the eigenvalues. We can avoid using iteration to find the final value.
         $eigenvalues[] = $original->trace() - array_sum($eigenvalues);
