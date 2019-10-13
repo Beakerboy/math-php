@@ -8,7 +8,7 @@ use MathPHP\LinearAlgebra\Matrix;
 use MathPHP\LinearAlgebra\MatrixFactory;
 use MathPHP\LinearAlgebra\Vector;
 
-class Eigen extends DecompositionBase
+class Eigen extends Decomposition
 {
     protected $D;
     protected $V;
