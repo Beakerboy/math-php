@@ -35,7 +35,7 @@ class Eigen extends Decomposition
         $eigenvalues = [];
         $vectors = [];
         for ($i = 0; $i < $A->getM() - 1; $i++) {
-            list ($eigenvalue, $eigenvector) = self::powerIteration($A, $iterations);
+            list ($eigenvalue, $eigenvector) = self::powerIteration($A);
             $eigenvector = MatrixFactory::create($eigenvector);
             $eigenvalues[] = $eigenvalue;
             $A = $A->subtract($eigenvector->multiply($eigenvector->transpose())->scalarMultiply($eigenvalue));
@@ -49,7 +49,7 @@ class Eigen extends Decomposition
         return new Eigen($V, $D);
     }
 
-    public static function powerIteration(Matrix $A, int $iterations = 100000): array
+    public static function powerIteration(Matrix $A, int $iterations = 1000): array
     {
         self::checkMatrix($A);
         $initial_iter = $iterations;
@@ -63,7 +63,7 @@ class Eigen extends Decomposition
         $rerun     = 0;
         $max_ev    = 0;
         while ($rerun < $max_rerun) {
-            while (!Support::isEqual($μ, $newμ, 0.0000000000001)) {
+            while (!Support::isEqual($μ, $newμ, 0.00000000001)) {
                 if ($iterations <= 0) {
                     throw new Exception\FunctionFailedToConvergeException("Maximum number of iterations exceeded.");
                 }
