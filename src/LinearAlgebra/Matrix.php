@@ -3196,6 +3196,7 @@ class Matrix implements \ArrayAccess, \JsonSerializable
      *  - QR decomposition
      *  - Cholesky decomposition
      *  - Crout decomposition
+     *  - Eigen decomposition
      ********************************************************************************/
 
     /**
@@ -3292,6 +3293,27 @@ class Matrix implements \ArrayAccess, \JsonSerializable
     {
         if (!$this->catalog->hasCroutDecomposition()) {
             $this->catalog->addCroutDecomposition(Decomposition\Crout::decompose($this));
+        }
+
+        return $this->catalog->getCroutDecomposition();
+    }
+
+    /**
+     * Eigen decomposition
+     *
+     * Decomposes a matrix into a matrix (V) and a diagonal matrix (D).
+     *
+     * A = VDV⁻¹
+     *  - V = Matrix of eigenvectors
+     *  - D = diagonal matrix of eigenvalues
+     *
+     * @return Decomposition\Eigen
+     *
+     */
+    public function eigenDecomposition(): Decomposition\Eigen
+    {
+        if (!$this->catalog->hasEigenDecomposition()) {
+            $this->catalog->addEigenDecomposition(Decomposition\Eigen::decompose($this));
         }
 
         return $this->catalog->getCroutDecomposition();
