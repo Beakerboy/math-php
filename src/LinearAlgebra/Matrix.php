@@ -3316,7 +3316,7 @@ class Matrix implements \ArrayAccess, \JsonSerializable
             $this->catalog->addEigenDecomposition(Decomposition\Eigen::decompose($this));
         }
 
-        return $this->catalog->getCroutDecomposition();
+        return $this->catalog->getEigenDecomposition();
     }
 
     /**************************************************************************
