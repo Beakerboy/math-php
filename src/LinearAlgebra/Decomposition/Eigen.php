@@ -29,16 +29,21 @@ class Eigen extends Decomposition
         return $this->V;
     }
 
-    public static function decompose(Matrix $M): Eigen
+    public static function decompose(Matrix $A): Eigen
     {
+        $original = $A;
         $eigenvalues = [];
         $vectors = [];
-        for ($i = 0; $i < $M->getM(); $i++) {
-            list ($eigenvalue, $eigenvector) = self::powerIteration($M);
+        for ($i = 0; $i < $A->getM() - 1; $i++) {
+            list ($eigenvalue, $eigenvector) = self::powerIteration($A, $iterations);
+            $eigenvector = MatrixFactory::create($eigenvector);
             $eigenvalues[] = $eigenvalue;
+            $A = $A->subtract($eigenvector->multiply($eigenvector->transpose())->scalarMultiply($eigenvalue));
             $vectors[] = $eigenvector->transpose()->getMatrix()[0]; // Adding as a new row
-            $M = $M->subtract($eigenvector->multiply($eigenvector->transpose())->scalarMultiply($eigenvalue));
         }
+        // The matrix trace equals the sum of the eigenvalues. We can avoid using iteration to find the final value.
+        
+        $eigenvalues[] = $original->trace() - array_sum($eigenvalues);
         $D = new Vector($eigenvalues);
         $V = MatrixFactory::create($vectors)->transpose();
         return new Eigen($V, $D);
@@ -46,24 +51,48 @@ class Eigen extends Decomposition
 
     public static function powerIteration(Matrix $A, int $iterations = 100000): array
     {
-        if (!$A->isSquare()) {
-            throw new Exception\BadDataException('Matrix must be square');
-        }
-        
-        $b    = MatrixFactory::random($A->getM(), 1);
-        $newμ = 0;
-        $μ    = -1;
-        while (!Support::isEqual($μ, $newμ, 1e-15)) {
-            if ($iterations <= 0) {
-                throw new Exception\FunctionFailedToConvergeException("Maximum number of iterations exceeded.");
+        self::checkMatrix($A);
+        $initial_iter = $iterations;
+        do {
+            $b = MatrixFactory::random($A->getM(), 1);
+        } while ($b->frobeniusNorm() == 0);
+        $b = $b->scalarDivide($b->frobeniusNorm());  // Scale to a unit vector
+        $newμ      = 0;
+        $μ         = -1;
+        $max_rerun = 2;
+        $rerun     = 0;
+        $max_ev    = 0;
+        while ($rerun < $max_rerun) {
+            while (!Support::isEqual($μ, $newμ, 0.0000000000001)) {
+                if ($iterations <= 0) {
+                    throw new Exception\FunctionFailedToConvergeException("Maximum number of iterations exceeded.");
+                }
+                $μ  = $newμ;
+                $Ab = $A->multiply($b);
+                while ($Ab->frobeniusNorm() == 0) {
+                    $Ab = MatrixFactory::random($A->getM(), 1);
+                }
+                $b    = $Ab->scalarDivide($Ab->frobeniusNorm());
+                $newμ = $b->transpose()->multiply($A)->multiply($b)->get(0, 0);
+                $iterations--;
             }
-            $μ    = $newμ;
-            $Ab   = $A->multiply($b);
-            $b    = $Ab->scalarDivide($Ab->frobeniusNorm());
-            $newμ = $b->transpose()->multiply($A)->multiply($b)->get(0, 0);
-            $iterations--;
+            if (abs($max_ev) < abs($newμ)) {
+                $max_ev = $newμ;
+                $max_b = $b->getMatrix();
+            }
+            // Perturb the eigenvector and run again to make sure the same solution is found
+            $newb = $b->getMatrix();
+            for ($i = 0; $i < count($newb); $i++) {
+                $newb[$i][0] = $newb[1][0] + rand() / 10;
+            }
+            $b    = MatrixFactory::create($newb);
+            $b    = $b->scalarDivide($b->frobeniusNorm());  // Scale to a unit vector
+            $newμ = 0;
+            $μ    = -1;
+            $rerun++;
+            $iterations = $initial_iter;
         }
-        return [$newμ, $b];
+        return [$max_ev, $max_b];
     }
 
     /**
