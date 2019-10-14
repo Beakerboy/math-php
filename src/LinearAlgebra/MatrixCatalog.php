@@ -28,6 +28,9 @@ class MatrixCatalog
     /** @var Decomposition\Crout */
     private $crout;
 
+     /** @var Decomposition\Eigen */
+    private $eigen;
+
     /** @var float determinant */
     private $det;
 
@@ -153,6 +156,7 @@ class MatrixCatalog
      *  - QR decomposition
      *  - Cholesky decomposition
      *  - Crout decomposition
+     *  - Eigen decomposition
      **************************************************************************/
 
 
@@ -258,6 +262,32 @@ class MatrixCatalog
     public function getCroutDecomposition(): Decomposition\Crout
     {
         return $this->crout;
+    }
+
+    // EIGEN DECOMPOSITION
+
+    /**
+     * @param Decomposition\Eigen $eigen
+     */
+    public function addEigenDecomposition(Decomposition\Eigen $eigen)
+    {
+        $this->eigen = $eigen;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasEigenDecomposition()
+    {
+        return isset($this->eigen);
+    }
+
+    /**
+     * @return Decomposition\Eigen
+     */
+    public function getEigenDecomposition(): Decomposition\Eigen
+    {
+        return $this->eigen;
     }
 
     /**************************************************************************
