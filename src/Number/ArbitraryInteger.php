@@ -22,14 +22,7 @@ class ArbitraryInteger implements ObjectArithmetic
     /**
      * Constructor
      *
-     * @param mixed $number
-     *   A string or integer
-     * @param int $base
-     *   The number base. If null, the default PHP integer literal rules are used to determine the base.
-     * @param mixed $offset
-     *   The alphabet or offset of a string number.
-     *   $offset can either be a single character or a string.
-     *   If it is a string and more than one character, the number of characters must equal the base
+     * @param string|integer $number
      */
     public function __construct($number)
     {
@@ -111,6 +104,13 @@ class ArbitraryInteger implements ObjectArithmetic
         }
     }
 
+    /**
+     * Construct from binary
+     *
+     * @param  string           $value
+     * @param  bool             $positive
+     * @return ArbitraryInteger
+     */
     public static function fromBinary(string $value, bool $positive): ArbitraryInteger
     {
         $result = new ArbitraryInteger(0);
@@ -154,19 +154,28 @@ class ArbitraryInteger implements ObjectArithmetic
         return floatval($float) * ($this->positive ? 1 : -1);
     }
 
+    /**
+     * Prepare input value for construction
+     *
+     * @param  int|ArbitraryInteger $number
+     * @return ArbitraryInteger
+     */
     private static function prepareParameter($number): ArbitraryInteger
     {
         if (!is_object($number)) {
             return new ArbitraryInteger($number);
         }
-        // else make sure it’s a ArbitraryInteger
-        return $number;
+        if (get_class($number) == ArbitaryInteger::class) {
+            return $number;
+        }
+        throw new \Exception();
     }
     
     /**
      * To String
      *
      * Display the number in base 10
+     * @return string
      */
     public function __toString(): string
     {
@@ -183,11 +192,19 @@ class ArbitraryInteger implements ObjectArithmetic
         return $this->base256;
     }
 
+    /**
+     * is the number positive?
+     * @return bool
+     */
     public function getPositive(): bool
     {
         return $this->positive;
     }
 
+    /**
+     * is the number positive?
+     * @return bool
+     */
     protected function setVariables(string $value, bool $positive)
     {
         // Strip leading chr(0) entries.
@@ -195,6 +212,12 @@ class ArbitraryInteger implements ObjectArithmetic
         $this->positive = $positive;
     }
 
+    /**
+     * Create a random ArbitraryInteger
+     *
+     * @param int $bytes
+     * @return ArbitraryInteger
+     */
     public static function rand(int $bytes): ArbitraryInteger
     {
         if ($bytes <= 0) {
