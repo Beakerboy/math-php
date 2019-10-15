@@ -30,7 +30,8 @@ class Eigen extends Decomposition
     }
 
     public static function decompose(Matrix $A): Eigen
-    {
+    {        
+        self::checkMatrix($A);
         $original = $A;
         $eigenvalues = [];
         $vectors = [];
@@ -45,13 +46,29 @@ class Eigen extends Decomposition
         
         $eigenvalues[] = $original->trace() - array_sum($eigenvalues);
         $D = new Vector($eigenvalues);
+        // if ($duplicate_eigenvalues) {
+        //    throw new Exception\BadDataException('Matrix is not diagonalizable');
+        //}
         $V = MatrixFactory::create($vectors)->transpose();
         return new Eigen($V, $D);
     }
 
+    /**
+     * Verify that the matrix is diagonalizable
+     *
+     * @param Matrix $A
+     *
+     * @throws Exception\BadDataException if the matrix is not diagonalizable
+     */
+    private static function checkMatrix(Matrix $A)
+    {
+        if (!$A->isSquare() || $A->isNilpotent()) {
+            throw new Exception\BadDataException('Matrix is not diagonalizable');
+        }
+    }
+
     public static function powerIteration(Matrix $A, int $iterations = 1000): array
     {
-        self::checkMatrix($A);
         $initial_iter = $iterations;
         do {
             $b = MatrixFactory::random($A->getM(), 1);
