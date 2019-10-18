@@ -32,10 +32,24 @@ class ArbitraryInteger implements ObjectArithmetic
     public function __construct($number)
     {
         $this->positive = true;
+        
+        // In the rare case that the provided $number is an int with the value PHP_INT_MIN
+        // we cannot multiply by -1, since this would be one larger than PHP_INT_MAX.
+        // We could (and maybe should) just cast all ints to strings and allow the string
+        // parser to handle this.
+        $add_one = false;
         if (is_int($number)) {
             if ($number < 0) {
                 $this->positive = false;
-                $number = -$number;
+                if ($number == PHP_INT_MIN) {
+                    // Should we just set
+                    // $this->base256 = new ArbitraryInteger(PHP_INT_MAX)->add(1)->getBinary()
+                    // and then break out of the constructor?
+                    $number = PHP_INT_MAX;
+                    $add_one = true;
+                } else {
+                    $number = -$number;
+                }
             }
             $int_part = intdiv($number, 256);
             $string = chr($number % 256);
@@ -100,6 +114,9 @@ class ArbitraryInteger implements ObjectArithmetic
             for ($i = 0; $i < $length; $i++) {
                 $chr = ord($number[$i]);
                 $base256 = $base256->multiply($base)->add($chr);
+            }
+            if ($add_one) {
+                $base256 = $base256->add(1);
             }
             $this->base256 = $base256->getBinary();
         } else {
