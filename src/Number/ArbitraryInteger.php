@@ -169,10 +169,11 @@ class ArbitraryInteger implements ObjectArithmetic
         if (!is_object($number)) {
             return new ArbitraryInteger($number);
         }
-        if (get_class($number) == ArbitaryInteger::class) {
+        $class = get_class($number);
+        if ($class == ArbitaryInteger::class) {
             return $number;
         }
-        throw new \Exception();
+        throw new Exception\BadParameterException("Class of type $class is not supported.");
     }
     
     /**
