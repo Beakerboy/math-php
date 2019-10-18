@@ -59,6 +59,9 @@ class ArbitraryInteger implements ObjectArithmetic
                 $int_part = intdiv($int_part, 256);
             }
             $this->base256 = $string;
+            if ($add_one) {
+                $this->base256 = $this->add(1)->getBinary();
+            }
         } elseif (is_string($number)) {
             if ($number == '') {
                 throw new Exception\BadParameterException("String cannot be empty.");
@@ -114,9 +117,6 @@ class ArbitraryInteger implements ObjectArithmetic
             for ($i = 0; $i < $length; $i++) {
                 $chr = ord($number[$i]);
                 $base256 = $base256->multiply($base)->add($chr);
-            }
-            if ($add_one) {
-                $base256 = $base256->add(1);
             }
             $this->base256 = $base256->getBinary();
         } else {
