@@ -46,6 +46,7 @@ class ArbitraryIntegerTest extends \PHPUnit\Framework\TestCase
             [200],
             [123456],
             [PHP_INT_MAX],
+            [PHP_INT_MIN],
             [31415],
             [-31415],
         ];
