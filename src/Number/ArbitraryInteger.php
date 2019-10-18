@@ -17,10 +17,15 @@ class ArbitraryInteger implements ObjectArithmetic
 {
     /** @var string number in binary format */
     protected $base256;
+
+    /** @var bool is the number positive or negative */
     protected $positive;
 
     /**
      * Constructor
+     *
+     * If the constructor is given an integer, this value is used for the value of the object.
+     * If a string is given, it must be in one of the standard PHP integer base formats.
      *
      * @param string|integer $number
      */
@@ -32,7 +37,6 @@ class ArbitraryInteger implements ObjectArithmetic
                 $this->positive = false;
                 $number = -$number;
             }
-            // Should we check that $base is 10 or null and $offset makes sense?
             $int_part = intdiv($number, 256);
             $string = chr($number % 256);
 
