@@ -60,7 +60,7 @@ class ArbitraryInteger implements ObjectArithmetic
             }
             $this->base256 = $string;
             if ($add_one) {
-                $this->base256 = $this->add(1)->getBinary();
+                $this->base256 = $this->subtract(1)->getBinary();
             }
         } elseif (is_string($number)) {
             if ($number == '') {
