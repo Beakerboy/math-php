@@ -187,7 +187,7 @@ class ArbitraryInteger implements ObjectArithmetic
             return new ArbitraryInteger($number);
         }
         $class = get_class($number);
-        if ($class == ArbitaryInteger::class) {
+        if ($class == self::class) {
             return $number;
         }
         throw new Exception\BadParameterException("Class of type $class is not supported.");
