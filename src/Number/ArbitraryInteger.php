@@ -32,37 +32,11 @@ class ArbitraryInteger implements ObjectArithmetic
     public function __construct($number)
     {
         $this->positive = true;
-        
-        // In the rare case that the provided $number is an int with the value PHP_INT_MIN
-        // we cannot multiply by -1, since this would be one larger than PHP_INT_MAX.
-        // We could (and maybe should) just cast all ints to strings and allow the string
-        // parser to handle this.
-        $add_one = false;
-        if (is_int($number)) {
-            if ($number < 0) {
-                $this->positive = false;
-                if ($number == PHP_INT_MIN) {
-                    // Should we just set
-                    // $this->base256 = new ArbitraryInteger(PHP_INT_MAX)->add(1)->getBinary()
-                    // and then break out of the constructor?
-                    $number = PHP_INT_MAX;
-                    $add_one = true;
-                } else {
-                    $number = -$number;
-                }
-            }
-            $int_part = intdiv($number, 256);
-            $string = chr($number % 256);
 
-            while ($int_part > 0) {
-                $string = chr($int_part % 256) . $string;
-                $int_part = intdiv($int_part, 256);
-            }
-            $this->base256 = $string;
-            if ($add_one) {
-                $this->base256 = $this->subtract(1)->getBinary();
-            }
-        } elseif (is_string($number)) {
+        if (is_int($number)) {
+            $number = (string) $number;
+        }
+        if (is_string($number)) {
             if ($number == '') {
                 throw new Exception\BadParameterException("String cannot be empty.");
             }
@@ -89,8 +63,6 @@ class ArbitraryInteger implements ObjectArithmetic
             } else {
                 $base = 10;
             }
-            // Can we avoid measuring the length?
-            // This would allow very-very long numbers, with more than MaxInt number of chars.
             $length = strlen($number);
             
             // Check that all elements are greater than the offset, and are members of the alphabet.
@@ -140,6 +112,22 @@ class ArbitraryInteger implements ObjectArithmetic
     }
 
     /**
+     * Directly set the class properties
+     *
+     * @param string $value
+     * @param bool $positive
+     */
+    protected function setVariables(string $value, bool $positive)
+    {
+        $value = ltrim($value, chr(0));
+        if ($value == "") {
+            $value = chr(0);
+        }
+        $this->base256 = $value;
+        $this->positive = $positive;
+    }
+
+    /**
      * Convert ArbitraryInteger to an int
      *
      * @return int
@@ -178,7 +166,7 @@ class ArbitraryInteger implements ObjectArithmetic
     /**
      * Prepare input value for construction
      *
-     * @param  int|ArbitraryInteger $number
+     * @param  int|string|ArbitraryInteger $number
      * @return ArbitraryInteger
      */
     private static function prepareParameter($number): ArbitraryInteger
@@ -224,17 +212,6 @@ class ArbitraryInteger implements ObjectArithmetic
     }
 
     /**
-     * is the number positive?
-     * @return bool
-     */
-    protected function setVariables(string $value, bool $positive)
-    {
-        // Strip leading chr(0) entries.
-        $this->base256 = $value;
-        $this->positive = $positive;
-    }
-
-    /**
      * Create a random ArbitraryInteger
      *
      * @param int $bytes
@@ -259,10 +236,7 @@ class ArbitraryInteger implements ObjectArithmetic
      */
     public function negate(): ArbitraryInteger
     {
-        $result = new ArbitraryInteger(0);
-        $base256 = $this->base256;
-        $result->setVariables($base256, $base256 == chr(0) ? true : !$this->positive);
-        return $result;
+        return self::fromBinary($this->base256, $this->base256 == chr(0) ? true : !$this->positive);
     }
 
     /**
@@ -297,10 +271,7 @@ class ArbitraryInteger implements ObjectArithmetic
      */
     public function abs(): ArbitraryInteger
     {
-        $result = new ArbitraryInteger(0);
-        $base256 = $this->base256;
-        $result->setVariables($base256, true);
-        return $result;
+        return self::fromBinary($this->base256, true);
     }
 
     /**************************************************************************
@@ -310,15 +281,13 @@ class ArbitraryInteger implements ObjectArithmetic
     /**
      * Addition
      *
-     * @param ArbitraryInteger|int $number
+     * @param int|string|ArbitraryInteger $number
      *
      * @return ArbitraryInteger
      *
      */
     public function add($number): ArbitraryInteger
     {
-        // check if string, object, or int
-        // throw exception if appropriate
         $number = self::prepareParameter($number);
         if (!$number->getPositive()) {
             return $this->subtract($number->negate());
@@ -353,7 +322,7 @@ class ArbitraryInteger implements ObjectArithmetic
      *
      * Calculate the difference between two numbers
      *
-     * @param ArbitraryInteger|int $number
+     * @param int|string|ArbitraryInteger $number
      * @return ArbitraryInteger
      */
     public function subtract($number): ArbitraryInteger
@@ -397,7 +366,7 @@ class ArbitraryInteger implements ObjectArithmetic
      * Return the result of multiplying two ArbitraryIntegers, or an ArbitraryInteger and an integer.
      *
      * @todo use Karatsuba algorithm
-     * @param ArbitraryInteger|int $number
+     * @param int|string|ArbitraryInteger $number
      *
      * @return ArbitraryInteger
      *
@@ -434,6 +403,9 @@ class ArbitraryInteger implements ObjectArithmetic
      * Raise an ArbitraryInteger to a power
      *
      * https://en.wikipedia.org/wiki/Exponentiation_by_squaring
+     * @param int|string|ArbitraryInteger $number
+     *
+     * @return ArbitraryInteger
      */
     public function pow($exp): ArbitraryInteger
     {
@@ -453,7 +425,12 @@ class ArbitraryInteger implements ObjectArithmetic
     }
 
     /**
-     * Integer Division
+     * Full Integer Division
+     * returns both the integer result and remainer
+     *
+     * @param int|string|ArbitraryInteger $number
+     *
+     * @return array
      */
     public function fullIntdiv($divisor): array
     {
@@ -511,12 +488,28 @@ class ArbitraryInteger implements ObjectArithmetic
         return [$int, $mod];
     }
 
+    /**
+     * Mod
+     * Returns the remainer from integer division
+     *
+     * @param int|string|ArbitraryInteger $number
+     *
+     * @return ArbitraryInteger
+     */
     public function mod($divisor): ArbitraryInteger
     {
         list($int, $mod) = $this->fullIntdiv($divisor);
         return $mod;
     }
 
+    /**
+     * intdiv
+     * Returns the integer quotient from integer division
+     *
+     * @param int|string|ArbitraryInteger $number
+     *
+     * @return ArbitraryInteger
+     */
     public function intdiv($divisor): ArbitraryInteger
     {
         list($int, $mod) = $this->fullIntdiv($divisor);
@@ -531,7 +524,7 @@ class ArbitraryInteger implements ObjectArithmetic
      * @param int $int
      *
      * @return ArbitraryInteger
-     * @todo Operate on ArbitraryIntegers and not static
+     * @todo should this be static or not? Is it a constructor or an operation?
      */
     public static function fact(int $int): ArbitraryInteger
     {
@@ -549,7 +542,12 @@ class ArbitraryInteger implements ObjectArithmetic
      **************************************************************************/
 
     /**
-     * Currently limited to shifting MaxInt*8 bits
+     * Left Shift
+     *
+     * Shift the bits of $this $bits steps to the left
+     * @param int|string|ArbitraryInteger $number
+     *
+     * @return ArbitraryInteger
      */
     public function leftShift($bits)
     {
@@ -586,7 +584,7 @@ class ArbitraryInteger implements ObjectArithmetic
      * Two ArbitraryIntegers are equal IFF their $base256 strings
      * are identical and their signs are identical.
      *
-     * @param ArbitraryInteger $int
+     * @param int|string|ArbitraryInteger $int
      *
      * @return bool
      */
@@ -601,7 +599,7 @@ class ArbitraryInteger implements ObjectArithmetic
      *
      * Test if one ArbitraryInteger is greater than another
      *
-     * @param $int
+     * @param int|string|ArbitraryInteger $int
      *
      * @return bool
      */
@@ -616,7 +614,7 @@ class ArbitraryInteger implements ObjectArithmetic
      *
      * Test if one ArbitraryInteger is less than another
      *
-     * @param $int
+     * @param int|string|ArbitraryInteger $int
      *
      * @return bool
      */
