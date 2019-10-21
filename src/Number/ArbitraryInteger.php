@@ -48,9 +48,6 @@ class ArbitraryInteger implements ObjectArithmetic
                     $int_part = intdiv($int_part, 256);
                 }
                 $this->base256 = $string;
-                if ($add_one) {
-                    $this->base256 = $this->subtract(1)->getBinary();
-                }
             }
         } elseif (is_string($number)) {
             if ($number == '') {
