@@ -32,71 +32,83 @@ class ArbitraryInteger implements ObjectArithmetic
     public function __construct($number)
     {
         $this->positive = true;
-        if (is_int($number) && $number === 0) {
-            $this->base256 = chr(0);
-        } else {
-            if (is_int($number)) {
-                $number = (string) $number;
-            }
-            if (is_string($number)) {
-                if ($number == '') {
-                    throw new Exception\BadParameterException("String cannot be empty.");
+        
+        if (is_int($number)) {
+            if ($number < 0) {
+                // Since abs(PHP_INT_MIN) is PHP_INT_MAX + 1, we cannot just change the sign.
+                // This is more universal then making a single edge case for PHP_INT_MIN
+                $positive = new ArbitraryInteger(-1 * ($number + 1));
+                $this = $positive->add(1)->negate();
+            } else {
+                $int_part = intdiv($number, 256);
+                $string = chr($number % 256);
+                while ($int_part > 0) {
+                    $string = chr($int_part % 256) . $string;
+                    $int_part = intdiv($int_part, 256);
                 }
-                if ($number[0] == '-') {
-                    $this->positive = false;
+                $this->base256 = $string;
+                if ($add_one) {
+                    $this->base256 = $this->subtract(1)->getBinary();
+                }
+            }
+        } elseif (is_string($number)) {
+            if ($number == '') {
+                throw new Exception\BadParameterException("String cannot be empty.");
+            }
+            if ($number[0] == '-') {
+                $this->positive = false;
+                $number = substr($number, 1);
+            }
+            $offset = '0';
+            $number = strtolower($number);
+            if ($number[0] == '0') {
+                if ($number == '0') {
+                    $base = 10;
+                } elseif ($number[1] == 'x') {
+                    $base = 16;
+                    $number = substr($number, 2);
+                    $offset = '0123456789abcdef';
+                } elseif ($number[1] == 'b') {
+                    $base = 2;
+                    $number = substr($number, 2);
+                } else {
+                    $base = 8;
                     $number = substr($number, 1);
                 }
-                $offset = '0';
-                $number = strtolower($number);
-                if ($number[0] == '0') {
-                    if ($number == '0') {
-                        $base = 10;
-                    } elseif ($number[1] == 'x') {
-                        $base = 16;
-                        $number = substr($number, 2);
-                        $offset = '0123456789abcdef';
-                    } elseif ($number[1] == 'b') {
-                        $base = 2;
-                        $number = substr($number, 2);
-                    } else {
-                        $base = 8;
-                        $number = substr($number, 1);
-                    }
-                } else {
-                    $base = 10;
-                }
-                $length = strlen($number);
-            
-                // Check that all elements are greater than the offset, and are members of the alphabet.
-                // Remove the offset.
-                // I'm duplicating the for loop instead of placing the if within the for
-                // to prevent calling the if/else on every pass.
-                if (strlen($offset) ==  1) {
-                    // Subtract a constant offset from each character.
-                    $offset_num = ord($offset);
-                    for ($i = 0; $i < $length; $i++) {
-                        $chr = $number[$i];
-                        $number[$i] = chr(ord($chr) - $offset_num);
-                    }
-                } else {
-                    // Lookup the offset from the string position
-                    for ($i = 0; $i < $length; $i++) {
-                        $chr = $number[$i];
-                        $number[$i] = chr(strpos($offset, $chr));
-                    }
-                }
-                // Convert to base 256
-                $base256 = new ArbitraryInteger(0);
-                $length = strlen($number);
-                for ($i = 0; $i < $length; $i++) {
-                    $chr = ord($number[$i]);
-                    $base256 = $base256->multiply($base)->add($chr);
-                }
-                $this->base256 = $base256->getBinary();
             } else {
-                // Not an int, and not a string
-                throw new Exception\IncorrectTypeException("Number can only be an int or a string: type '" . gettype($number) . "' provided");
+                $base = 10;
             }
+            $length = strlen($number);
+            
+            // Check that all elements are greater than the offset, and are members of the alphabet.
+            // Remove the offset.
+            // I'm duplicating the for loop instead of placing the if within the for
+            // to prevent calling the if/else on every pass.
+            if (strlen($offset) ==  1) {
+                // Subtract a constant offset from each character.
+                $offset_num = ord($offset);
+                for ($i = 0; $i < $length; $i++) {
+                    $chr = $number[$i];
+                    $number[$i] = chr(ord($chr) - $offset_num);
+                }
+            } else {
+                // Lookup the offset from the string position
+                for ($i = 0; $i < $length; $i++) {
+                    $chr = $number[$i];
+                    $number[$i] = chr(strpos($offset, $chr));
+                }
+            }
+            // Convert to base 256
+            $base256 = new ArbitraryInteger(0);
+            $length = strlen($number);
+            for ($i = 0; $i < $length; $i++) {
+                $chr = ord($number[$i]);
+                $base256 = $base256->multiply($base)->add($chr);
+            }
+            $this->base256 = $base256->getBinary();
+        } else {
+            // Not an int, and not a string
+            throw new Exception\IncorrectTypeException("Number can only be an int or a string: type '" . gettype($number) . "' provided");
         }
     }
 
