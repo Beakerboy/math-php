@@ -191,7 +191,7 @@ class ArbitraryInteger implements ObjectArithmetic
         if ($class == self::class) {
             return $number;
         }
-        throw new Exception\BadParameterException("Class of type $class is not supported.");
+        throw new Exception\IncorrectTypeException("Class of type $class is not supported.");
     }
     
     /**
