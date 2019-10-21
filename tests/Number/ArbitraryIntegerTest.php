@@ -384,11 +384,10 @@ class ArbitraryIntegerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @test         preparePrameter throws an exception when an object is provided
-     * @dataProvider dataproviderForTestIncorrectTypeException
+     * @test         prepareParameter throws an exception when an object is provided
      * @throws       \Exception
      */
-    public function testIncorrectTypeException($number)
+    public function testIncorrectTypeExceptionPrepareParameter()
     {
         // Given
         $number = new ArbitraryInteger(0);
