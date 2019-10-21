@@ -38,7 +38,8 @@ class ArbitraryInteger implements ObjectArithmetic
                 // Since abs(PHP_INT_MIN) is PHP_INT_MAX + 1, we cannot just change the sign.
                 // This is more universal then making a single edge case for PHP_INT_MIN
                 $positive = new ArbitraryInteger(-1 * ($number + 1));
-                $this = $positive->add(1)->negate();
+                $this->base256 = $positive->add(1)->getBinary();
+                $this->positive = false;
             } else {
                 $int_part = intdiv($number, 256);
                 $string = chr($number % 256);
