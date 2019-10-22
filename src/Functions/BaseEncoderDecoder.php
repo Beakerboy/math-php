@@ -99,13 +99,16 @@ class BaseEncoderDecoder
         if ($number == '') {
             throw new Exception\BadParameterException("String cannot be empty.");
         }
-        $length = strlen($number);
-            
+        if ($base > 256) {
+            throw new Exception\BadParameterException("Number base cannot be greater than 256");
+        }
         // Set to default offset and ascii alphabet
         if ($offset === null) {
             $offset = self::getDefaultAlphabet($base);
         }
-        // Check that all elements are greater than the offset, and are members of the alphabet.
+        
+        $length = strlen($number);
+        
         // Remove the offset.
         if ($offset !== chr(0)) {
             // I'm duplicating the for loop instead of placing the if within the for
@@ -115,27 +118,32 @@ class BaseEncoderDecoder
                 $offset_num = ord($offset);
                 for ($i = 0; $i < $length; $i++) {
                     $chr = $number[$i];
+                    $digit = ord($chr) - $offset_num;
+                    // Check that all elements are greater than the offset, and are members of the alphabet.
+                    if ($digit < 0 || $digit >= $base) {
+                        throw new Exception\BadParameterException("Invalid character in string.");
+                    }
                     $number[$i] = chr(ord($chr) - $offset_num);
                 }
             } else {
                 // Lookup the offset from the string position
                 for ($i = 0; $i < $length; $i++) {
                     $chr = $number[$i];
-                    $number[$i] = chr(strpos($offset, $chr));
+                    $pos = strpos($offset, $chr);
+                    if ($pos === false) {
+                        throw new Exception\BadParameterException("Invalid character in string.");
+                    }
+                    $number[$i] = chr($pos);
                 }
             }
         }
         // Convert to base 256
         $base256 = new ArbitraryInteger(0);
-        if ($base <= 256) {
-            $length = strlen($number);
-            for ($i = 0; $i < $length; $i++) {
-                $chr = ord($number[$i]);
-                $base256 = $base256->multiply($base)->add($chr);
-            }
-            return $base256;
-        } else {
-            throw new Exception\BadParameterException("Number base cannot be greater than 256");
+        $length = strlen($number);
+        for ($i = 0; $i < $length; $i++) {
+            $chr = ord($number[$i]);
+            $base256 = $base256->multiply($base)->add($chr);
         }
+        return $base256;
     }
 }
