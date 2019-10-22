@@ -57,7 +57,7 @@ class ArbitraryInteger implements ObjectArithmetic
                 $this->positive = false;
                 $number = substr($number, 1);
             }
-            $base256 = BaseEncoderDecoder::createArbitraryInteger($number)
+            $base256 = BaseEncoderDecoder::createArbitraryInteger($number);
             $this->base256 = $base256->getBinary();
         } else {
             // Not an int, and not a string
