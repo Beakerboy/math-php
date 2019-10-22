@@ -2,6 +2,7 @@
 
 namespace MathPHP\Tests\Functions;
 
+use MathPHP\Exception;
 use MathPHP\Functions\ArbitraryIntegerFunctions;
 
 class ArbitraryIntegerFunctionsTest extends \PHPUnit\Framework\TestCase
