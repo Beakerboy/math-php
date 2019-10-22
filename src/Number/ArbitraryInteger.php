@@ -206,7 +206,7 @@ class ArbitraryInteger implements ObjectArithmetic
         if ($bytes <= 0) {
             throw new Exception\BadParameterException('Cannot produce a random number with zero or negative bytes.');
         }
-        return self::fromBinary(random_bytes($bytes));
+        return self::fromBinary(random_bytes($bytes), mt_rand(0, 1) === 0);
     }
 
     /**************************************************************************
