@@ -85,6 +85,15 @@ class BaseEncoderDecoder
         return $result;
     }
 
+    /**
+     * Create an ArbitraryInteger from a number string in novel number bases and alphabets
+     *
+     * @param string $number
+     * @param int    $base
+     * @param string $offset
+     *
+     * @return ArbitraryInteger
+     */
     public static function createArbitraryInteger(string $number, int $base, string $offset = null): ArbitraryInteger
     {
         if ($number == '') {
