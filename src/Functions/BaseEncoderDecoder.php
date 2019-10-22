@@ -90,8 +90,6 @@ class BaseEncoderDecoder
         if ($number == '') {
             throw new Exception\BadParameterException("String cannot be empty.");
         }
-        // Can we avoid measuring the length?
-        // This would allow very-very long numbers, with more than MaxInt number of chars.
         $length = strlen($number);
             
         // Set to default offset and ascii alphabet
@@ -121,8 +119,6 @@ class BaseEncoderDecoder
         // Convert to base 256
         $base256 = new ArbitraryInteger(0);
         if ($base <= 256) {
-            $base_obj = new ArbitraryInteger($base);
-            $place_value = new ArbitraryInteger(1);
             $length = strlen($number);
             for ($i = 0; $i < $length; $i++) {
                 $chr = ord($number[$i]);
