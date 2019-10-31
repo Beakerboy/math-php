@@ -39,7 +39,7 @@ class ArbitraryInteger
      * @param $n
      * @return ArbitraryInteger
      */
-    public static function ackermann($m, $n): ArbitraryInteger
+    public static function ackermann($m, $n): Integer
     {
         $m = self::prepareParameter($m);
         $n = self::prepareParameter($n);
