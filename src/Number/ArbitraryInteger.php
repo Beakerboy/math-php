@@ -190,7 +190,7 @@ class ArbitraryInteger implements ObjectArithmetic
      * is the number positive?
      * @return bool
      */
-    public function getPositive(): bool
+    public function isPositive(): bool
     {
         return $this->positive;
     }
@@ -273,7 +273,7 @@ class ArbitraryInteger implements ObjectArithmetic
     public function add($number): ArbitraryInteger
     {
         $number = self::prepareParameter($number);
-        if (!$number->getPositive()) {
+        if (!$number->isPositive()) {
             return $this->subtract($number->negate());
         }
         if (!$this->positive) {
@@ -313,7 +313,7 @@ class ArbitraryInteger implements ObjectArithmetic
     {
         $number = self::prepareParameter($number);
         
-        if (!$number->getPositive()) {
+        if (!$number->isPositive()) {
             return $this->add($number->negate());
         }
         if (!$this->positive) {
