@@ -610,7 +610,7 @@ class ArbitraryInteger implements ObjectArithmetic
         $my_len = strlen($base_256);
         $int_len = strlen($int_256);
         $my_positive = $this->positive;
-        $int_positive = $int->getPositive();
+        $int_positive = $int->isPositive();
         
         // Check if signs differ
         if ($my_positive && !$int_positive) {
