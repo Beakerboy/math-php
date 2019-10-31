@@ -3,7 +3,7 @@
 namespace MathPHP\Tests\Functions;
 
 use MathPHP\Exception;
-use MathPHP\Functions\ArbitraryIntegerFunctions;
+use MathPHP\Functions\ArbitraryInteger;
 
 class ArbitraryIntegerTest extends \PHPUnit\Framework\TestCase
 {
@@ -12,7 +12,7 @@ class ArbitraryIntegerTest extends \PHPUnit\Framework\TestCase
      */
     public function testAckermann(int $m, int $n, string $expected)
     {
-        $obj = ArbitraryIntegerFunctions::ackermann($m, $n);
+        $obj = ArbitraryInteger::ackermann($m, $n);
         $this->assertEquals($expected, (string) $obj);
     }
     public function dataProviderForAckermann()
@@ -43,6 +43,6 @@ class ArbitraryIntegerTest extends \PHPUnit\Framework\TestCase
         $this->expectException(Exception\IncorrectTypeException::class);
 
         // When
-        $int =  ArbitraryIntegerFunctions::ackermann($m, $n);
+        $int =  ArbitraryInteger::ackermann($m, $n);
     }
 }
