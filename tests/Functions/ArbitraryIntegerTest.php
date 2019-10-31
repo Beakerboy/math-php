@@ -5,7 +5,7 @@ namespace MathPHP\Tests\Functions;
 use MathPHP\Exception;
 use MathPHP\Functions\ArbitraryIntegerFunctions;
 
-class ArbitraryIntegerFunctionsTest extends \PHPUnit\Framework\TestCase
+class ArbitraryIntegerTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @dataProvider dataProviderForAckermann
