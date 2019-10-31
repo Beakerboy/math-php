@@ -181,7 +181,7 @@ class ArbitraryInteger implements ObjectArithmetic
      * Return the number as a binary string
      * @return string
      */
-    public function getBinary(): string
+    public function toBinary(): string
     {
         return $this->base256;
     }
@@ -279,7 +279,7 @@ class ArbitraryInteger implements ObjectArithmetic
         if (!$this->positive) {
             return $number->subtract($this->negate());
         }
-        $number = $number->getBinary();
+        $number = $number->toBinary();
         $carry = 0;
         $len = strlen($this->base256);
         $num_len = strlen($number);
@@ -358,7 +358,7 @@ class ArbitraryInteger implements ObjectArithmetic
     public function multiply($number): ArbitraryInteger
     {
         $number = self::prepareParameter($number);
-        $number = $number->getBinary();
+        $number = $number->toBinary();
         $length = strlen($number);
         $product = new ArbitraryInteger(0);
         for ($i = 1; $i <= $length; $i++) {
@@ -450,7 +450,7 @@ class ArbitraryInteger implements ObjectArithmetic
             $mod = new ArbitraryInteger($carry);
         } else {
             $int = new ArbitraryInteger(0);
-            $divisor256 = $divisor->getBinary();
+            $divisor256 = $divisor->toBinary();
             $base256 = $this->base256;
             $length = strlen($base256);
             $mod = new ArbitraryInteger(0);
@@ -575,7 +575,7 @@ class ArbitraryInteger implements ObjectArithmetic
     public function equals($int): bool
     {
         $int = self::prepareParameter($int);
-        return $this->base256 == $int->getBinary() && $this->positive == $int->getPositive();
+        return $this->base256 == $int->toBinary() && $this->positive == $int->getPositive();
     }
 
     /**
@@ -606,7 +606,7 @@ class ArbitraryInteger implements ObjectArithmetic
     {
         $int = self::prepareParameter($int);
         $base_256 = $this->base256;
-        $int_256 = $int->getBinary();
+        $int_256 = $int->toBinary();
         $my_len = strlen($base_256);
         $int_len = strlen($int_256);
         $my_positive = $this->positive;
