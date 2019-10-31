@@ -17,7 +17,7 @@ class ArbitraryInteger
      * @param  int|string|ArbitraryInteger $number
      * @return ArbitraryInteger
      */
-    private static function prepareParameter($number): ArbitraryInteger
+    private static function prepareParameter($number): Integer
     {
         if (!is_object($number)) {
             return new Integer($number);
