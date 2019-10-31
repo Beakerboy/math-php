@@ -38,7 +38,7 @@ class ArbitraryInteger implements ObjectArithmetic
                 // Since abs(PHP_INT_MIN) is PHP_INT_MAX + 1, we cannot just change the sign.
                 // This is more universal then making a single edge case for PHP_INT_MIN
                 $positive = new ArbitraryInteger(-1 * ($number + 1));
-                $this->base256 = $positive->add(1)->getBinary();
+                $this->base256 = $positive->add(1)->toBinary();
                 $this->positive = false;
             } else {
                 $int_part = intdiv($number, 256);
@@ -74,7 +74,7 @@ class ArbitraryInteger implements ObjectArithmetic
                 }
             }
             $base256 = BaseEncoderDecoder::createArbitraryInteger($number, $base);
-            $this->base256 = $base256->getBinary();
+            $this->base256 = $base256->toBinary();
         } else {
             // Not an int, and not a string
             throw new Exception\IncorrectTypeException("Number can only be an int or a string: type '" . gettype($number) . "' provided");
@@ -322,7 +322,7 @@ class ArbitraryInteger implements ObjectArithmetic
         if ($this->lessThan($number)) {
             return $number->subtract($this)->negate();
         }
-        $number = $number->getBinary();
+        $number = $number->toBinary();
         $carry = 0;
         $len = strlen($this->base256);
         $num_len = strlen($number);
