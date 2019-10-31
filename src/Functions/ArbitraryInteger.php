@@ -3,12 +3,12 @@
 namespace MathPHP\Functions;
 
 use MathPHP\Exception;
-use MathPHP\Number\ArbitraryInteger;
+use MathPHP\Number\ArbitraryInteger as Integer;
 
 /**
  * Functions that operate with ArbitraryInteger objects
  */
-class ArbitraryIntegerFunctions
+class ArbitraryInteger
 {
     
     /**
@@ -20,10 +20,10 @@ class ArbitraryIntegerFunctions
     private static function prepareParameter($number): ArbitraryInteger
     {
         if (!is_object($number)) {
-            return new ArbitraryInteger($number);
+            return new Integer($number);
         }
         $class = get_class($number);
-        if ($class == ArbitraryInteger::class) {
+        if ($class == Integer::class) {
             return $number;
         }
         throw new Exception\IncorrectTypeException("Class of type $class is not supported.");
@@ -50,7 +50,7 @@ class ArbitraryIntegerFunctions
         } elseif ($m->equals(2)) {
             return $n->leftShift(1)->add(3);
         } elseif ($m->equals(3)) {
-            $one = new ArbitraryInteger(1);
+            $one = new Integer(1);
             // 2^(n+3) - 3
             return $one->leftShift($n->add(3))->subtract(3);
         } elseif ($n->equals(0)) {
