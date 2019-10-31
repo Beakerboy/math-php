@@ -575,7 +575,7 @@ class ArbitraryInteger implements ObjectArithmetic
     public function equals($int): bool
     {
         $int = self::prepareParameter($int);
-        return $this->base256 == $int->toBinary() && $this->positive == $int->getPositive();
+        return $this->base256 == $int->toBinary() && $this->positive == $int->isPositive();
     }
 
     /**
