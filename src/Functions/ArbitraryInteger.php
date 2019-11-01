@@ -59,4 +59,18 @@ class ArbitraryInteger
             return self::ackermann($m->subtract(1), self::ackermann($m, $n->subtract(1)));
         }
     }
+
+    /**
+     * Create a random ArbitraryInteger
+     *
+     * @param int $bytes
+     * @return ArbitraryInteger
+     */
+    public static function rand(int $bytes): Integer
+    {
+        if ($bytes <= 0) {
+            throw new Exception\BadParameterException('Cannot produce a random number with zero or negative bytes.');
+        }
+        return Integer::fromBinary(random_bytes($bytes), mt_rand(0, 1) === 0);
+    }
 }
