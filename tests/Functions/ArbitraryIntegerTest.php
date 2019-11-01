@@ -56,4 +56,20 @@ class ArbitraryIntegerTest extends \PHPUnit\Framework\TestCase
         // When
         $int =  ArbitraryInteger::ackermann($m, $n);
     }
+
+    /**
+     * @test     Rand throws an exception when given an int less than 1
+     * @throws   \Exception
+     */
+    public function testBadRandParameter()
+    {
+        // Given
+        $number = 0;
+
+        // Then
+        $this->expectException(Exception\BadParameterException::class);
+
+        // When
+        $int =  ArbitraryInteger::rand($number);
+    }
 }
