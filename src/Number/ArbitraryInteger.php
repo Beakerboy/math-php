@@ -195,20 +195,6 @@ class ArbitraryInteger implements ObjectArithmetic
         return $this->positive;
     }
 
-    /**
-     * Create a random ArbitraryInteger
-     *
-     * @param int $bytes
-     * @return ArbitraryInteger
-     */
-    public static function rand(int $bytes): ArbitraryInteger
-    {
-        if ($bytes <= 0) {
-            throw new Exception\BadParameterException('Cannot produce a random number with zero or negative bytes.');
-        }
-        return self::fromBinary(random_bytes($bytes), mt_rand(0, 1) === 0);
-    }
-
     /**************************************************************************
      * UNARY FUNCTIONS
      **************************************************************************/
