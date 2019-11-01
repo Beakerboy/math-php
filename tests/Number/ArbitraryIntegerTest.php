@@ -252,7 +252,8 @@ class ArbitraryIntegerTest extends \PHPUnit\Framework\TestCase
      */
     public function testFact($int, $expected)
     {
-        $fact = ArbitraryInteger::fact($int);
+        $int = new ArbitraryInteger($int);
+        $fact = $int->fact();
         $expected_obj = new ArbitraryInteger($expected);
         $this->assertEquals($expected_obj->toBinary(), $fact->toBinary());
         $this->assertTrue($expected_obj->equals($fact));
