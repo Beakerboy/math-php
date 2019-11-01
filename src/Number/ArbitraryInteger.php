@@ -511,7 +511,7 @@ class ArbitraryInteger implements ObjectArithmetic
     {
         $result = new ArbitraryInteger(1);
         $i_obj = new ArbitraryInteger(0);
-        for ($i = 1; !$this->greaterThan($i); $i++) {
+        for ($i = 1; !$this->lessThan($i); $i++) {
             $i_obj = $i_obj->add(1);
             $result = $result->multiply($i_obj);
         }
