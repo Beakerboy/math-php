@@ -505,16 +505,13 @@ class ArbitraryInteger implements ObjectArithmetic
      *
      * Calculate the factorial of an ArbitraryInteger
      *
-     * @param int $int
-     *
      * @return ArbitraryInteger
-     * @todo should this be static or not? Is it a constructor or an operation?
      */
-    public static function fact(int $int): ArbitraryInteger
+    public function fact(): ArbitraryInteger
     {
         $result = new ArbitraryInteger(1);
         $i_obj = new ArbitraryInteger(0);
-        for ($i = 1; $i <= $int; $i++) {
+        for ($i = 1; !$this->greaterThan($i); $i++) {
             $i_obj = $i_obj->add(1);
             $result = $result->multiply($i_obj);
         }
