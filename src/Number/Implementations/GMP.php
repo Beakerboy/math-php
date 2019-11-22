@@ -6,8 +6,9 @@ use MathPHP\Number\ObjectArithmetic;
 
 class GMP implements ObjectArithmetic
 {
-    public function __construct()
+    public function __construct($number)
     {
+        $this->value = gmp_init($number);
     }
 
     public function fact()
@@ -16,6 +17,7 @@ class GMP implements ObjectArithmetic
 
     public function add($number)
     {
+        return new ArbitraryInteger(gmp_add($this->value, $number));
     }
 
     public function subtract($number)
