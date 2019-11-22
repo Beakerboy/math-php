@@ -57,6 +57,7 @@ class ArbitraryInteger implements ObjectArithmetic
     public function pow($number)
     {
         return new ArbitraryInteger($this->object->pow($number));
+    }
 
     public function equals($number)
     {
