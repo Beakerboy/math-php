@@ -20,6 +20,10 @@ class ArbitraryInteger implements ObjectArithmetic
         }
     }
 
+    public static function create($number)
+    {
+        return new ArbitraryInteger($number);
+
     public function __toString()
     {
         return $this->object->__toString();
