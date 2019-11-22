@@ -4,6 +4,7 @@ namespace MathPHP\Number\Implementations;
 
 use MathPHP\Exception;
 use MathPHP\Functions\BaseEncoderDecoder;
+use MathPHP\Number\ObjectArithmetic;
 
 /**
  * Arbitrary Length Integer
