@@ -12,7 +12,10 @@ class ArbitraryInteger implements ObjectArithmetic
         if (is_object($int)) {
             $this->object = $int;
         } else {
-            $this->object = new implementations\NativePHP($int)
+            if (extension_loaded('gmp')) {
+            } else {
+                $this->object = new implementations\NativePHP($int);
+            }
         }
     }
 
