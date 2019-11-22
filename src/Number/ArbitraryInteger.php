@@ -13,8 +13,9 @@ class ArbitraryInteger implements ObjectArithmetic
             $this->object = $int;
         } else {
             if (extension_loaded('gmp')) {
+                $this->object = new Implementations\GMP($int);
             } else {
-                $this->object = new implementations\NativePHP($int);
+                $this->object = new Implementations\NativePHP($int);
             }
         }
     }
