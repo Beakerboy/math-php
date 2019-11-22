@@ -11,6 +11,11 @@ class GMP implements ObjectArithmetic
         $this->value = gmp_init($number);
     }
 
+    public function __toString()
+    {
+        return $this->value;
+    }
+
     public function fact()
     {
     }
