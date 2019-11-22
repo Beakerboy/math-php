@@ -26,6 +26,7 @@ class GMP implements ObjectArithmetic
 
     public function multiply($number)
     {
+        return new ArbitraryIntger(gmp_mul($this->value, $number));
     }
 
     public function intdiv($number)
