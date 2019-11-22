@@ -1,6 +1,6 @@
 <?php
 
-namespace MathPHP\Number;
+namespace MathPHP\Number\Implementations;
 
 use MathPHP\Exception;
 use MathPHP\Functions\BaseEncoderDecoder;
@@ -13,7 +13,7 @@ use MathPHP\Functions\BaseEncoderDecoder;
  *
  * http://www.faqs.org/rfcs/rfc3548.html
  */
-class ArbitraryInteger implements ObjectArithmetic
+class NativePHP implements ObjectArithmetic
 {
     /** @var string number in binary format */
     protected $base256;
