@@ -42,6 +42,9 @@ class Hypergeometric
     public function __construct(array $quantities)
     {
         foreach ($quantities as $K) {
+            if (!is_int($K)) {
+                throw new Exception\BadDataException("Picks must be whole numbers.");
+            }
             Support::checkLimits(self::PARAMETER_LIMITS, ['K' => $K]);
             $this->supportLimits['k'][] = "[0,$K]";
         }
