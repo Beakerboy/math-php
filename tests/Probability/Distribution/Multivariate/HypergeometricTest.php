@@ -37,7 +37,7 @@ class HypergeometricTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @test         pmf
+     * @test         __construct
      * @dataProvider dataProviderForConstructorExceptions
      */
     public function testConstructorException($quantities)
@@ -58,20 +58,18 @@ class HypergeometricTest extends \PHPUnit\Framework\TestCase
             'string' => [
                 [10, '1', 6],
             ],
-            'less than one' => [
-                [0, 1, 6],
-            ]
         ];
     }
 
   /**
-     * @test         __construct 
+     * @test         pmf
      * @dataProvider dataProviderForPmfExceptions
      */
-    public function testPmfException($quantities)
+    public function testPmfException($ks)
     {
         $this->expectException(Exception\BadDataException::class);
         $dist = new Hypergeometric([10, 10, 10]);
+        $prob = $dist->pmf($ks);
     }
 
     /**
@@ -86,16 +84,37 @@ class HypergeometricTest extends \PHPUnit\Framework\TestCase
             'string' => [
                 [10, '1', 6],
             ],
-            'less than zero' => [
-                [-1, 1, 6],
-            ],
-            'too many' => [
-                [11, 1, 6],
-            ],
             'mismatched' => [
                 [-1, 6],
             ],
         ];
     }
 
+    public function testBoundsExceptions($Ks, $ks)
+    {
+        $this->expectException(Exception\OutOfBoundsException::class);
+        $dist = new Hypergeometric($Ks);
+        $prob = $dist->pmf($ks);
+    }
+
+    **
+     * @return array
+     */
+    public function dataProviderForPmfExceptions()
+    {
+        return [
+            'K too small' => [
+                [0, 10, 6],
+                [0, 2, 2]
+            ],
+            'k too small' => [
+                [5, 10, 15],
+                [-1, 2, 2],
+            ],
+            'k too big' => [
+                [5, 10, 15],
+                [6, 2, 2],
+            ],
+        ];
+    }
 }
