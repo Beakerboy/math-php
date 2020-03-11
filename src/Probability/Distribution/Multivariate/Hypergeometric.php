@@ -56,11 +56,14 @@ class Hypergeometric
 
         $n       = array_sum($picks);
         $total   = array_sum($this->quantities);
-        $product = 1;
 
-        foreach ($picks as $i => $pick) {
-            $product *= Combinatorics::combinations($this->quantities[$i], $pick);
-        }
+        $product = array_product(array_map(
+            function (int $quantity, int $pick) {
+                return Combinatorics::combinations($quantity, $pick);
+            },
+            $this->quantities,
+            $picks
+        ));
 
         return $product / Combinatorics::combinations($total, $n);
     }
