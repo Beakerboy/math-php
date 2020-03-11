@@ -25,7 +25,7 @@ class Hypergeometric
     public function __construct(array $quantities)
     {
         foreach ($quantities as $value) {
-            if (!is_int($value)) {
+            if (!is_int($value) || $value < 1) {
                 throw new Exception\BadDataException('Values must be integers.');
             }
             $this->quantities[] = $value;
@@ -48,7 +48,7 @@ class Hypergeometric
             throw new Exception\BadDataException('Number of quantities does not match number of picks.');
         }
         foreach ($picks as $pick) {
-            if (!is_int($pick)) {
+            if (!is_int($pick) || $value < 0) {
                 throw new Exception\BadDataException("Picks must be integers. $pick is not an int.");
             }
         }
