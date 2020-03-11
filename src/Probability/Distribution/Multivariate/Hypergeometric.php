@@ -68,7 +68,7 @@ class Hypergeometric
             if (!is_int($k)) {
                 throw new Exception\BadDataException("Picks must be whole numbers.");
             }
-            Support::checkLimits($this->supportLimits['k'][$i], ['k' => $k]);
+            Support::checkLimits(['k' => $this->supportLimits['k'][$i]], ['k' => $k]);
         }
 
         $n       = array_sum($picks);
