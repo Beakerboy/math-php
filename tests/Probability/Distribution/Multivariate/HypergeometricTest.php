@@ -6,13 +6,32 @@ use MathPHP\Probability\Distribution\Multivariate\Hypergeometric;
 
 class HypergeometricTest extends \PHPUnit\Framework\TestCase
 {
-    public function testHypergeometric()
+    /**
+     * @test.        pmf
+     * @dataProvider dataProviderForTestHypergeometric
+     */
+    public function testHypergeometric(array $quantities, array $picks, $expected)
     {
-        $dist = new Hypergeometric([15, 10, 15]);
-        $this->assertEquals(496125 / 3838380, $dist->pmf([2, 2, 2]));
+        $dist = new Hypergeometric($quantities);
+        $this->assertEquals($expected, $dist->pmf($picks));
     }
 
     /**
+     * @return array
+     */
+    public function dataProviderForTestHypergeometric()
+    {
+        return [
+            [
+                [15, 10, 15],
+                [2, 2, 2],
+                496125 / 3838380,
+            ],
+        ];
+    }
+
+    /**
+     * @test         pmf
      * @dataProvider dataProviderForConstructorExceptions
      */
     public function testConstructorException($quantities)
@@ -21,6 +40,9 @@ class HypergeometricTest extends \PHPUnit\Framework\TestCase
         $dist = new Hypergeometric($quantities);
     }
 
+    /**
+     * @return array
+     */
     public function dataProviderForConstructorExceptions()
     {
         return [
