@@ -57,4 +57,39 @@ class HypergeometricTest extends \PHPUnit\Framework\TestCase
             ]
         ];
     }
+
+  /**
+     * @test         __construct 
+     * @dataProvider dataProviderForPmfExceptions
+     */
+    public function testPmfException($quantities)
+    {
+        $this->expectException(BadDataException::class);
+        $dist = new Hypergeometric([10, 10, 10]);
+    }
+
+    /**
+     * @return array
+     */
+    public function dataProviderForPmfExceptions()
+    {
+        return [
+            'float' => [
+                [.5, 1, 6],
+            ],
+            'string' => [
+                [10, '1', 6],
+            ],
+            'less than zero'=> [
+                [-1, 1, 6],
+            ],
+            'too many'=> [
+                [11, 1, 6],
+            ],
+            'mismatched'=> [
+                [-1, 6],
+            ],
+        ];
+    }
+
 }
