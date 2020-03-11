@@ -24,8 +24,8 @@ class Hypergeometric
      */
     public function __construct(array $quantities)
     {
-        foreach ($quantities as $value) {
-            if (!is_int($value) || $value < 1) {
+        foreach ($quantities as $i => $value) {
+            if (!is_int($value) || $value < 1 || $value > $this->quantities[$i]) {
                 throw new Exception\BadDataException('Values must be integers.');
             }
             $this->quantities[] = $value;
