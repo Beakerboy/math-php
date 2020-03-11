@@ -28,6 +28,11 @@ class HypergeometricTest extends \PHPUnit\Framework\TestCase
                 [2, 2, 2],
                 496125 / 3838380,
             ],
+            [
+                [5, 10, 15],
+                [2, 2, 2],
+                47250 / 593775,
+            ],
         ];
     }
 
