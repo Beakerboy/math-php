@@ -3,6 +3,7 @@
 namespace MathPHP\Tests\Probability\Distribution\Multivariate;
 
 use MathPHP\Probability\Distribution\Multivariate\Hypergeometric;
+use MathPHP\Exception;
 
 class HypergeometricTest extends \PHPUnit\Framework\TestCase
 {
@@ -36,7 +37,7 @@ class HypergeometricTest extends \PHPUnit\Framework\TestCase
      */
     public function testConstructorException($quantities)
     {
-        $this->expectException(BadDataException::class);
+        $this->expectException(Exception\BadDataException::class);
         $dist = new Hypergeometric($quantities);
     }
 
@@ -52,7 +53,7 @@ class HypergeometricTest extends \PHPUnit\Framework\TestCase
             'string' => [
                 [10, '1', 6],
             ],
-            'less than one'=> [
+            'less than one' => [
                 [0, 1, 6],
             ]
         ];
@@ -64,7 +65,7 @@ class HypergeometricTest extends \PHPUnit\Framework\TestCase
      */
     public function testPmfException($quantities)
     {
-        $this->expectException(BadDataException::class);
+        $this->expectException(Exception\BadDataException::class);
         $dist = new Hypergeometric([10, 10, 10]);
     }
 
@@ -80,13 +81,13 @@ class HypergeometricTest extends \PHPUnit\Framework\TestCase
             'string' => [
                 [10, '1', 6],
             ],
-            'less than zero'=> [
+            'less than zero' => [
                 [-1, 1, 6],
             ],
-            'too many'=> [
+            'too many' => [
                 [11, 1, 6],
             ],
-            'mismatched'=> [
+            'mismatched' => [
                 [-1, 6],
             ],
         ];
