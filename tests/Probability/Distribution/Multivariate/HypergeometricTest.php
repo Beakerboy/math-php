@@ -82,7 +82,7 @@ class HypergeometricTest extends \PHPUnit\Framework\TestCase
                 [.5, 1, 6],
             ],
             'string' => [
-                [10, '1', 6],
+                [10, 'k', 6],
             ],
             'mismatched' => [
                 [-1, 6],
