@@ -15,12 +15,19 @@ class Hypergeometric
 {
     /**
      * Distribution parameter bounds limits
-     * K ∈ [1,∞)
+     * Kᵢ ∈ [1,∞)
      * @var array
      */
     const PARAMETER_LIMITS = [
         'K' => '[1,∞)',
     ];
+
+    /**
+     * Distribution parameter bounds limits
+     * kᵢ ∈ [0,Kᵢ]
+     * @var array
+     */
+    $supportLimits = [];
 
     /** @var array */
     protected $quantities;
@@ -36,6 +43,7 @@ class Hypergeometric
     {
         foreach ($quantities as $K) {
             Support::checkLimits(self::PARAMETER_LIMITS, ['K' => $K]);
+            $this->supportLimits['k'][] = "[0,$K]";
         }
         $this->quantities = $quantities;
     }
@@ -55,12 +63,12 @@ class Hypergeometric
         if (count($picks) !== count($this->quantities)) {
             throw new Exception\BadDataException('Number of quantities does not match number of picks.');
         }
-        foreach ($picks as $pick) {
-            if (!is_int($pick) || $pick < 0 || $pick > $this->quantities[$i]) {
-                throw new Exception\BadDataException("Picks must be whole numbers less than the corresponding quantity.");
+        foreach ($picks as $i => $k) {
+            if (!is_int($k)) {
+                throw new Exception\BadDataException("Picks must be whole numbers.");
             }
+            Support::checkLimits($this->supportLimits['k'][$i], ['k' => $k]);
         }
-        $picks = array_values($picks);
 
         $n       = array_sum($picks);
         $total   = array_sum($this->quantities);
