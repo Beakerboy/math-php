@@ -48,7 +48,7 @@ class Hypergeometric
             throw new Exception\BadDataException('Number of quantities does not match number of picks.');
         }
         foreach ($picks as $pick) {
-            if (!is_int($pick) || $value < 0 || $value > $this->quantities[$i]) {
+            if (!is_int($pick) || $pick < 0 || $pick > $this->quantities[$i]) {
                 throw new Exception\BadDataException("Picks must be whole numbers less than the corresponding quantity.");
             }
         }
