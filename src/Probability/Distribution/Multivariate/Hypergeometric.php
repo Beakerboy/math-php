@@ -12,6 +12,15 @@ use MathPHP\Exception;
  */
 class Hypergeometric
 {
+    /**
+     * Distribution parameter bounds limits
+     * K ∈ (1,∞)
+     * @var array
+     */
+    const PARAMETER_LIMITS = [
+        'K' => '(1,∞)',
+    ];
+
     /** @var array */
     protected $quantities;
 
