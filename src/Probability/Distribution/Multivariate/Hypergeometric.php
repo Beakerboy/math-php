@@ -27,7 +27,7 @@ class Hypergeometric
      * kᵢ ∈ [0,Kᵢ]
      * @var array
      */
-    $supportLimits = [];
+    protected $supportLimits = [];
 
     /** @var array */
     protected $quantities;
