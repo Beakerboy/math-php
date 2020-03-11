@@ -90,6 +90,10 @@ class HypergeometricTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
+    /**
+     * @test         pmf, __construct
+     * @dataProvider dataProviderForBoundsExceptions
+     */
     public function testBoundsExceptions($Ks, $ks)
     {
         $this->expectException(Exception\OutOfBoundsException::class);
@@ -100,7 +104,7 @@ class HypergeometricTest extends \PHPUnit\Framework\TestCase
     /**
      * @return array
      */
-    public function dataProviderForPmfExceptions()
+    public function dataProviderForBoundsExceptions()
     {
         return [
             'K too small' => [
