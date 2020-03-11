@@ -8,7 +8,7 @@ use MathPHP\Exception;
 class HypergeometricTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @test.        pmf
+     * @test         pmf
      * @dataProvider dataProviderForTestHypergeometric
      */
     public function testHypergeometric(array $quantities, array $picks, $expected)
@@ -61,7 +61,7 @@ class HypergeometricTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-  /**
+    /**
      * @test         pmf
      * @dataProvider dataProviderForPmfExceptions
      */
@@ -97,7 +97,7 @@ class HypergeometricTest extends \PHPUnit\Framework\TestCase
         $prob = $dist->pmf($ks);
     }
 
-    **
+    /**
      * @return array
      */
     public function dataProviderForPmfExceptions()
