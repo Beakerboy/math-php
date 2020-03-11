@@ -4,6 +4,7 @@ namespace MathPHP\Probability\Distribution\Multivariate;
 
 use MathPHP\Probability\Combinatorics;
 use MathPHP\Exception;
+use MathPHP\Functions\Support;
 
 /**
  * Multivariate Hypergeometric distribution (multivariate)
@@ -14,11 +15,11 @@ class Hypergeometric
 {
     /**
      * Distribution parameter bounds limits
-     * K ∈ (1,∞)
+     * K ∈ [1,∞)
      * @var array
      */
     const PARAMETER_LIMITS = [
-        'K' => '(1,∞)',
+        'K' => '[1,∞)',
     ];
 
     /** @var array */
@@ -33,12 +34,10 @@ class Hypergeometric
      */
     public function __construct(array $quantities)
     {
-        foreach ($quantities as $i => $value) {
-            if (!is_int($value) || $value < 1) {
-                throw new Exception\BadDataException('Values must be positive integers.');
-            }
-            $this->quantities[] = $value;
+        foreach ($quantities as $K) {
+            Support::checkLimits(self::PARAMETER_LIMITS, ['K' => $K]);
         }
+        $this->quantities = $quantities;
     }
 
     /**
