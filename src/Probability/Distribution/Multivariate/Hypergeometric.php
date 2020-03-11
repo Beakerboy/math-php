@@ -33,11 +33,11 @@ class Hypergeometric
     protected $quantities;
 
     /**
-     * Multinomial constructor
+     * Multivariate Hypergeometric constructor
      *
      * @param   array $quantities
      *
-     * @throws Exception\BadDataException if the probabilities do not add up to 1
+     * @throws Exception\BadDataException if the quantities are not positive integers.
      */
     public function __construct(array $quantities)
     {
@@ -55,7 +55,8 @@ class Hypergeometric
      *
      * @return float
      *
-     * @throws Exception\BadDataException if the number of frequencies does not match the number of probabilities
+     * @throws Exception\BadDataException if the number of picks do not match the number of quantities.
+     * @throws Exception\BadDataException if the picks are not whole numbers or greater than the corresponding quantity.
      */
     public function pmf(array $picks): float
     {
