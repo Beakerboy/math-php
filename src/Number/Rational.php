@@ -14,26 +14,26 @@ use MathPHP\Functions\Special;
  * express non-integer values with exact precision, and perform arithmetic without floating point
  * errors.
  */
-class Rational implements ObjectArithmetic
+class ArbitraryRational implements ObjectArithmetic
 {
-    /** @var int Whole part of the number */
+    /** @var ArbitraryInteger Whole part of the number */
     protected $whole;
     
-    /** @var int Numerator part of the fractional part */
+    /** @var ArbitraryInteger Numerator part of the fractional part */
     protected $numerator;
     
-    /** @var int Denominator part of the fractional part */
+    /** @var ArbitraryInteger Denominator part of the fractional part */
     protected $denominator;
     
     /**
      * Constructor
      *
      * @todo  How to handle negative numbers in various positions.
-     * @param int $w whole part
-     * @param int $n numerator part
-     * @param int $d
+     * @param ArbitraryNumber $w whole part
+     * @param ArbitraryInteger $n numerator part
+     * @param ArbitraryInteger $d
      */
-    public function __construct(int $w, int $n, int $d)
+    public function __construct($w, $n, $d)
     {
         list($w, $n, $d)   = self::normalize($w, $n, $d);
         $this->whole       = $w;
@@ -81,7 +81,7 @@ class Rational implements ObjectArithmetic
             $sign = '-';
         }
         if ($this->whole !== 0) {
-            $whole = abs($this->whole);
+            $whole = $this->whole->abs();
         }
         if ($this->numerator !== 0) {
             if ($this->whole !== 0) {
@@ -105,7 +105,7 @@ class Rational implements ObjectArithmetic
     private function numeratorToSuperscript(): string
     {
         return $this->toSuperOrSubscript(
-            abs($this->numerator),
+            $this->numerator->abs(),
             ['⁰', '¹', '²', '³', '⁴', '⁵', '⁶', '⁷', '⁸', '⁹']
         );
     }
@@ -152,7 +152,7 @@ class Rational implements ObjectArithmetic
      */
     public function toFloat(): float
     {
-        $frac = $this->numerator / $this->denominator;
+        $frac = $this->div($this->numerator, $this->denominator);
         $sum  = $this->whole + $frac;
         return $sum;
     }
@@ -168,7 +168,7 @@ class Rational implements ObjectArithmetic
      */
     public function abs(): Rational
     {
-        return new Rational(abs($this->whole), abs($this->numerator), abs($this->denominator));
+        return new static($this->whole->abs(), $this->numerator->abs(), $this->denominator->abs());
     }
 
     /**************************************************************************
@@ -186,7 +186,7 @@ class Rational implements ObjectArithmetic
      */
     public function add($r): Rational
     {
-        if (is_int($r)) {
+        if (is_int($r) || $r instanceof ArbiraryInteger) {
             return $this->addInt($r);
         } elseif ($r instanceof Rational) {
             return $this->addRational($r);
@@ -204,7 +204,7 @@ class Rational implements ObjectArithmetic
      */
     private function addInt(int $int): Rational
     {
-        $w = $this->whole + $int;
+        $w = $this->whole->add($int);
         return new Rational($w, $this->numerator, $this->denominator);
     }
 
@@ -225,13 +225,13 @@ class Rational implements ObjectArithmetic
         $rd = $r->denominator;
         $rw = $r->whole;
 
-        $w += $rw;
+        $w = $w->add($rw);
 
-        $lcm = Algebra::lcm($d, $rd);
-        $n = $n * intdiv($lcm, $d) + $rn * intdiv($lcm, $rd);
+        $lcm = self::lcm($d, $rd);
+        $n = $n * $lcm->intdiv($d) + $rn * $lcm->intdiv($rd);
         $d = $lcm;
 
-        return new Rational($w, $n, $d);
+        return new static($w, $n, $d);
     }
 
     /**
@@ -245,9 +245,10 @@ class Rational implements ObjectArithmetic
      */
     public function subtract($r): Rational
     {
-        if (is_int($r)) {
-            return $this->add(-1 * $r);
-        } elseif ($r instanceof Rational) {
+        if (is_int($r) || $r instanceof ArbitraryInteger) {
+            $r = new static($r, 0, 0);
+        }
+        if ($r instanceof Rational) {
             return $this->add($r->multiply(-1));
         } else {
             throw new Exception\IncorrectTypeException('Argument must be an integer or RationalNumber');
@@ -266,7 +267,7 @@ class Rational implements ObjectArithmetic
      */
     public function multiply($r): Rational
     {
-        if (is_int($r)) {
+        if (is_int($r) || $r instanceof ArbitraryInteger) {
             return $this->multiplyInt($r);
         } elseif ($r instanceof Rational) {
             return $this->multiplyRational($r);
@@ -284,9 +285,9 @@ class Rational implements ObjectArithmetic
      */
     private function multiplyInt(int $int): Rational
     {
-        $w = $this->whole * $int;
-        $n = $this->numerator * $int;
-        return new Rational($w, $n, $this->denominator);
+        $w = $this->whole->multiply($int);
+        $n = $this->numerator->multiply($int);
+        return new static($w, $n, $this->denominator);
     }
 
     /**
@@ -306,9 +307,12 @@ class Rational implements ObjectArithmetic
         $n2 = $r->numerator;
         $d2 = $r->denominator;
 
-        $new_w = $w * $w2;
-        $new_n = $w * $n2 * $d + $w2 * $n * $d2 + $n2 * $n;
-        $new_d = $d * $d2;
+        $new_w = $w->multiply($w2);
+        $new_n = $w->multiply($n2)
+            ->multiply($d)
+            ->add($w2->multiply($n)->multiply($d2))
+            ->add($n2->multiply($n));
+        $new_d = $d->multiply($d2);
 
         return new Rational($new_w, $new_n, $new_d);
     }
