@@ -200,7 +200,7 @@ class PLS
     public function predict(Matrix $X)
     {
         if ($X->getN() !== $this->Xcenter->getN()) {
-            throw new Exception\BadDataException("Data does not have the same number of columns. Expecting {$expecting}, given $given");
+            throw new Exception\BadDataException('Data does not have the correct number of columns.');
         }
         
         // Create a matrix the same dimensions as $new_data, each element is the average of that column in the original data.
