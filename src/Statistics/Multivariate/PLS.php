@@ -98,7 +98,7 @@ class PLS
             } while ($diff > $tol);
             $u = $new_u;
 
-            // Least squares regression on a slope-only model: 𝜷ᵢ = Σ(xᵢyᵢ) / Σ(yᵢ²)
+            // Least squares regression on a slope-only model: 𝜷ᵢ = Σ(xᵢyᵢ) / Σ(xᵢ²)
             $p = $E->transpose()->multiply($t)->scalarDivide($t->frobeniusNorm() ** 2);
             $q = $F->transpose()->multiply($u)->scalarDivide($u->frobeniusNorm() ** 2);
             $d = $u->transpose()->multiply($t)->scalarDivide($t->frobeniusNorm() ** 2)->get(0, 0);
