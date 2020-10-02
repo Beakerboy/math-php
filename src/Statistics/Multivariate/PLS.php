@@ -146,7 +146,7 @@ class PLS
      *
      * Each loading column transforms F to U
      */
-    public function getYLoading()
+    public function getYLoadings()
     {
         return $this->C;
     }
@@ -186,7 +186,7 @@ class PLS
      *
      * Each loading column transforms E into T
      */
-    public function getXLoading()
+    public function getXLoadings()
     {
         return $this->W;
     }
