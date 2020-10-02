@@ -241,11 +241,10 @@ class PLS2ScaleTrueTest extends \PHPUnit\Framework\TestCase
      * @param        array $X
      * @param        array $Y
      */
-    public function testRegression($X, $Y)
+    public function testRegression($X, $expected)
     {
         // Given.
         $input = MatrixFactory::create($X);
-        $expected = MatrixFactory::create($Y);
 
         // When
         $actual = self::$pls->predict($input)->getMatrix();
