@@ -203,8 +203,8 @@ class PLS
             throw new Exception\BadDataException('Data does not have the correct number of columns.');
         }
         
-        // Create a matrix the same dimensions as $new_data, each element is the average of that column in the original data.
-        $ones_column = MatrixFactory::one($Y->getM(), 1);
+        // Create a matrix the same dimensions as $X, each element is the average of that column in the original data.
+        $ones_column = MatrixFactory::one($X->getM(), 1);
         $Ycenter_matrix = $ones_column->multiply(MatrixFactory::create([$this->Ycenter->getVector()]));
 
         // Create a diagonal matrix of column standard deviations.
