@@ -63,7 +63,7 @@ class PLS1ScaleFalseTest extends \PHPUnit\Framework\TestCase
      * R code for expected values:
      *   pls.model$B
      */
-    public function testB()
+    public function testCoefficients()
     {
         // Given
         $expected = [
