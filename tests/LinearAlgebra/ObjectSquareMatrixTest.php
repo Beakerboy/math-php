@@ -469,6 +469,7 @@ class ObjectSquareMatrixTest extends \PHPUnit\Framework\TestCase
         $expected = matrixFactory::create($expected);
         $this->assertEquals($sum, $expected);
     }
+
     public function dataProviderMultiplyVector()
     {
         return [
