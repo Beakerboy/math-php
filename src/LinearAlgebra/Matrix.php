@@ -1871,33 +1871,6 @@ class Matrix extends MatrixBase implements MatrixInterface
     }
 
     /**
-     * Insert
-     * Insert a smaller matrix within a larger matrix starting at a specified position
-     *
-     * @param Matrix $small the smaller matrix to embed
-     * @param int $m Starting row
-     * @param int $n Starting column
-     *
-     * @return Matrix
-     *
-     * @throws Exception\MatrixException
-     */
-    public function insert(Matrix $small, int $m, int $n): Matrix
-    {
-        if ($small->getM() + $m > $this->m || $small->getN() + $n > $this->n) {
-            throw new Exception\MatrixException('Inner matrix exceeds the bounds of the outer matrix');
-        }
-
-        $new_array = $this->A;
-        for ($i = 0; $i < $small->getM(); $i++) {
-            for ($j = 0; $j < $small->getN(); $j++) {
-                $new_array[$i + $m][$j + $n] = $small[$i][$j];
-            }
-        }
-        return MatrixFactory::create($new_array);
-    }
-
-    /**
      * Householder matrix transformation
      *
      * @return Matrix
