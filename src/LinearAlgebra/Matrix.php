@@ -951,7 +951,7 @@ class Matrix extends MatrixBase implements MatrixInterface
      * @throws Exception\IncorrectTypeException
      * @throws Exception\MathException
      */
-    public function add(Matrix $B): Matrix
+    public function add($B): Matrix
     {
         if ($B->getM() !== $this->m) {
             throw new Exception\MatrixException('Matrices have different number of rows');
