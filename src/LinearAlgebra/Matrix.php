@@ -1883,51 +1883,6 @@ class Matrix extends MatrixBase implements MatrixInterface
     }
 
     /**************************************************************************
-     * MATRIX MAPPING
-     *  - map
-     *  - mapRows
-     **************************************************************************/
-
-    /**
-     * Map a function over all elements of the Matrix
-     *
-     * @param  callable $func takes a matrix item as input
-     *
-     * @return Matrix
-     *
-     * @throws Exception\IncorrectTypeException
-     */
-    public function map(callable $func): Matrix
-    {
-        $m = $this->m;
-        $n = $this->n;
-        $R = [];
-
-        for ($i = 0; $i < $m; $i++) {
-            for ($j = 0; $j < $n; $j++) {
-                $R[$i][$j] = $func($this->A[$i][$j]);
-            }
-        }
-
-        return MatrixFactory::create($R);
-    }
-
-    /**
-     * Map a function over the rows of the matrix
-     *
-     * @param callable $func
-     *
-     * @return array|array[] Depends on the function
-     */
-    public function mapRows(callable $func): array
-    {
-        return array_map(
-            $func,
-            $this->A
-        );
-    }
-
-    /**************************************************************************
      * MATRIX VECTOR OPERATIONS - Return a Vector
      *  - vectorMultiply
      *  - rowSums
