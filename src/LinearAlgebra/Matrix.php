@@ -12,6 +12,12 @@ use MathPHP\LinearAlgebra\Reduction;
  */
 class Matrix extends MatrixBase implements MatrixInterface
 {
+    /** @var float Error/zero tolerance */
+    protected $ε;
+
+    // Default error/zero tolerance
+    const ε = 0.00000000001;
+
     // Matrix data direction
     const ROWS    = 'rows';
     const COLUMNS = 'columns';
