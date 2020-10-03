@@ -55,6 +55,37 @@ class Matrix extends MatrixBase implements MatrixInterface
     }
 
     /**************************************************************************
+     * BASIC MATRIX GETTERS
+     *  - getError
+     **************************************************************************/
+
+    /**
+     * Get error / zero tolerance
+     * @return float
+     */
+    public function getError(): float
+    {
+        return $this->ε;
+    }
+
+    /***************************************************************************
+     * SETTERS
+     *  - setError
+     **************************************************************************/
+
+    /**
+     * Set the error/zero tolerance for matrix values
+     *  - Used to determine tolerance for equality
+     *  - Used to determine if a value is zero
+     *
+     * @param float $ε
+     */
+    public function setError(float $ε)
+    {
+        $this->ε = $ε;
+    }
+
+    /**************************************************************************
      * MATRIX PROPERTIES
      *  - isSymmetric
      *  - isSingular
