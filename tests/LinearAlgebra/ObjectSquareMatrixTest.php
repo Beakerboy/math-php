@@ -89,7 +89,8 @@ class ObjectSquareMatrixTest extends \PHPUnit\Framework\TestCase
                 Exception\IncorrectTypeException::class,
             ],
         ];
-  
+    }
+
     /**
      * @test   add exception of unequal sizes
      * @throws \Exception
