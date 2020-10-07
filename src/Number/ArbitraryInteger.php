@@ -507,7 +507,7 @@ class ArbitraryInteger implements ObjectArithmetic
      * @return string
      */
     private static function longMultiplySingleDigit(string $big, string $small) {
-        $big_length = strlen($long);
+        $big_length = strlen($big);
         // Traditional Long Division.
         $carry = 0;
         $product = '';
