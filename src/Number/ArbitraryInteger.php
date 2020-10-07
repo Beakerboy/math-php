@@ -669,6 +669,8 @@ class ArbitraryInteger implements ObjectArithmetic
                 $carry = ($chr << $bits) % 256;
             }
             $shifted_string .= chr($carry);
+        } else {
+            $shifted_string = $this->base256;
         }
         // Pad $bytes of 0x00 on the right.
         $shifted_string = $shifted_string . str_repeat(chr(0), $bytes->toInt());
