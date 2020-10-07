@@ -386,7 +386,7 @@ class ArbitraryInteger implements ObjectArithmetic
         if ($carry > 0) {
             $result = chr($carry) . $result;
         }
-        return $result
+        return $result;
     }
 
     /**
