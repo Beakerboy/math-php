@@ -499,6 +499,7 @@ class ArbitraryInteger implements ObjectArithmetic
         $part1 = $z2 . str_repeat(chr(0), 2 * $m2);
         $part2 = self::str_subtract(self::str_subtract($z1, $z2), $z0) . str_repeat(chr(0), $m2);
         $product = self::str_add(self::str_add($part1, $part2), $z0);
+        return $product;
     }
 
     /**
