@@ -658,17 +658,18 @@ class ArbitraryInteger implements ObjectArithmetic
         $bits               = $bits->toInt();
         $carry              = 0;
 
-        for ($i = 0; $i < $length; $i++) {
-            $chr = ord($this->base256[$i]);
-            // If $shifted string is empty, don’t add 0x00.
-            $new_value = chr($carry + intdiv($chr << $bits, 256));
-            if ($shifted_string !== "" || $new_value !== chr(0)) {
-                $shifted_string .= $new_value;
+        if ($bits > 0){
+            for ($i = 0; $i < $length; $i++) {
+                $chr = ord($this->base256[$i]);
+                // If $shifted string is empty, don’t add 0x00.
+                $new_value = chr($carry + intdiv($chr << $bits, 256));
+                if ($shifted_string !== "" || $new_value !== chr(0)) {
+                    $shifted_string .= $new_value;
+                }
+                $carry = ($chr << $bits) % 256;
             }
-            $carry = ($chr << $bits) % 256;
+            $shifted_string .= chr($carry);
         }
-        $shifted_string .= chr($carry);
-
         // Pad $bytes of 0x00 on the right.
         $shifted_string = $shifted_string . str_repeat(chr(0), $bytes->toInt());
 
