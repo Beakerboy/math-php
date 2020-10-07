@@ -373,7 +373,7 @@ class ArbitraryInteger implements ObjectArithmetic
         $s2_len  = strlen($s2);
         $max_len = max($s1_len, $s2_len);
         $s1      = str_pad($s1, $max_len, chr(0), STR_PAD_LEFT);
-        $s2?     = str_pad($s2, $max_len, chr(0), STR_PAD_LEFT);
+        $s2      = str_pad($s2, $max_len, chr(0), STR_PAD_LEFT);
         $result  = '';
 
         for ($i = 0; $i < $max_len; $i++) {
