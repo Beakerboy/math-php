@@ -695,7 +695,7 @@ class ArbitraryInteger implements ObjectArithmetic
         $bits               = $bits->toInt();
         $carry              = 0;
 
-        if ($bits > 0){
+        if ($bits > 0) {
             for ($i = 0; $i < $length; $i++) {
                 $chr = ord($this->base256[$i]);
                 // If $shifted string is empty, don’t add 0x00.
