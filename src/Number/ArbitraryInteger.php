@@ -367,6 +367,11 @@ class ArbitraryInteger implements ObjectArithmetic
         return self::fromBinary($sum, true);
     }
 
+    /**
+     * Add two base 256 strings.
+     *
+     * @return string
+     */
     private static function str_add($s1, $s2)
     {
         $carry   = 0;
@@ -420,9 +425,11 @@ class ArbitraryInteger implements ObjectArithmetic
     }
 
     /**
-     * Subtract $d2 from $d1
+     * Subtract a base 256 string from another.
+     *
+     * @return string
      */
-    private static function str_subtract($d1, $d2)
+    private static function str_subtract(string $d1, string $d2)
     {
         $carry   = 0;
         $d1_len  = strlen($d1);
@@ -478,6 +485,11 @@ class ArbitraryInteger implements ObjectArithmetic
         return ($this->isPositive ^ $number_obj->isPositive()) ? $product->negate() : $product;
     }
 
+    /**
+     * Multiply two base 256 numbers together.
+     *
+     * @return string
+     */
     private static function karatsuba(string $p1, string $p2)
     {
         $p1_length  = strlen($p1);
@@ -506,7 +518,7 @@ class ArbitraryInteger implements ObjectArithmetic
     }
 
     /**
-     * Multiply a base 256 number by a single digit base 256 number
+     * Multiply a base 256 number by a single digit base 256 number.
      *
      * @return string
      */
