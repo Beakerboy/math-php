@@ -367,7 +367,8 @@ class ArbitraryInteger implements ObjectArithmetic
         return self::fromBinary($sum, true);
     }
 
-    private static function str_add($s1, $s2) {
+    private static function str_add($s1, $s2)
+    {
         $carry   = 0;
         $s1_len  = strlen($s1);
         $s2_len  = strlen($s2);
@@ -421,7 +422,8 @@ class ArbitraryInteger implements ObjectArithmetic
     /**
      * Subtract $d2 from $d1
      */
-    private static function str_subtract($d1, $d2) {
+    private static function str_subtract($d1, $d2)
+    {
         $carry   = 0;
         $d1_len  = strlen($d1);
         $d2_len  = strlen($d2);
@@ -476,7 +478,8 @@ class ArbitraryInteger implements ObjectArithmetic
         return ($this->isPositive ^ $number_obj->isPositive()) ? $product->negate() : $product;
     }
 
-    private static function karatsuba(string $p1, string $p2) {
+    private static function karatsuba(string $p1, string $p2)
+    {
         $p1_length  = strlen($p1);
         if ($p1_length == 1) {
             return self::longMultiplySingleDigit($p2, $p1);
@@ -507,7 +510,8 @@ class ArbitraryInteger implements ObjectArithmetic
      *
      * @return string
      */
-    private static function longMultiplySingleDigit(string $big, string $small) {
+    private static function longMultiplySingleDigit(string $big, string $small)
+    {
         $big_length = strlen($big);
         // Traditional Long Division.
         $carry = 0;
