@@ -110,6 +110,9 @@ class Matrix extends MatrixBase implements MatrixInterface
             return false;
         }
 
+        $m = $this->m;
+        $n = $this->n;
+        $ε = $this->ε;
         // All elements are the same
         for ($i = 0; $i < $m; $i++) {
             for ($j = 0; $j < $n; $j++) {
