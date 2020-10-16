@@ -248,6 +248,10 @@ abstract class MatrixBase implements \ArrayAccess, \JsonSerializable
      */
     public function isEqual(MatrixInterface $B): bool
     {
+        if ($this->getObjectType() !== $B->getObjectType()) {
+            return false;
+        }
+        
         $m = $this->m;
         $n = $this->n;
         $ε = $this->ε;
@@ -256,16 +260,7 @@ abstract class MatrixBase implements \ArrayAccess, \JsonSerializable
         if ($m != $B->m || $n != $B->n) {
             return false;
         }
-
-        // All elements are the same
-        for ($i = 0; $i < $m; $i++) {
-            for ($j = 0; $j < $n; $j++) {
-                if (Support::isNotEqual($this->A[$i][$j], $B[$i][$j], $ε)) {
-                    return false;
-                }
-            }
-        }
-
+        
         return true;
     }
 
