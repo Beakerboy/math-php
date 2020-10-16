@@ -254,7 +254,6 @@ abstract class MatrixBase implements \ArrayAccess, \JsonSerializable
         
         $m = $this->m;
         $n = $this->n;
-        $ε = $this->ε;
 
         // Same dimensions
         if ($m != $B->m || $n != $B->n) {
