@@ -106,7 +106,7 @@ class Matrix extends MatrixBase implements MatrixInterface
      */
     public function isEqual(MatrixInterface $B): bool
     {
-        if (!parent::isEqual($B)) {
+        if (!$this->isEqualSizaAndType($B)) {
             return false;
         }
 
