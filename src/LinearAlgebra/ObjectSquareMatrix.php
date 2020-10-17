@@ -75,7 +75,7 @@ class ObjectSquareMatrix extends SquareMatrix
      */
     public function isEqual(MatrixInterface $B): bool
     {
-        if (!$this->checkEqualSizes($B)) {
+        if (!$this->isEqualSizeAndType($B)) {
             return false;
         }
 
@@ -91,6 +91,22 @@ class ObjectSquareMatrix extends SquareMatrix
         }
 
         return true;
+    }
+
+    /**
+     * Check that the matricies are the same size and of the same type
+     *
+     * @throws Exception\MatrixException if matrices have a different number of rows or columns
+     * @throws Exception\IncorrectTypeException if the two matricies are not the same class
+     */
+    private function checkEqualSizes(Matrix $B)
+    {
+        if ($B->getM() !== $this->m || $B->getN() !== $this->n) {
+            throw new Exception\MatrixException('Matrices are different sizes');
+        }
+        if ($B->getObjectType() !== $this->object_type) {
+            throw new Exception\IncorrectTypeException('Matrices must contain the same object types');
+        }
     }
 
     /**
