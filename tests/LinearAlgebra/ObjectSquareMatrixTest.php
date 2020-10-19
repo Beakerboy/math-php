@@ -127,10 +127,10 @@ class ObjectSquareMatrixTest extends \PHPUnit\Framework\TestCase
      * @dataProvider dataProviderisEqual
      * @param        array $A
      * @param        array $B
-     * @param        boolean $expected
+     * @param        bool $expected
      * @throws       \Exception
      */
-    public function testIsEqual(array $A, array $B, boolean $expected)
+    public function testIsEqual(array $A, array $B, bool $expected)
     {
         // Given
         $A = MatrixFactory::create($A);
