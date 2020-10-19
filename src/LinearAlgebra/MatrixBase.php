@@ -282,7 +282,6 @@ abstract class MatrixBase implements \ArrayAccess, \JsonSerializable
     /**************************************************************************
      * MATRIX AUGMENTATION - Return a Matrix
      *  - augment
-     *  - augmentIdentity
      *  - augmentBelow
      *  - augmentAbove
      *  - augmentLeft
