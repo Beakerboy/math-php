@@ -537,7 +537,7 @@ abstract class MatrixBase implements \ArrayAccess, \JsonSerializable
      */
     public function insert(MatrixInterface $small, int $m, int $n): MatrixInterface
     {
-        if ($this->getObjectType() !== $B->getObjectType()) {
+        if ($this->getObjectType() !== $small->getObjectType()) {
             throw new Exception\MatrixException('Matrices must be the same type.');
         }
         if ($small->getM() + $m > $this->m || $small->getN() + $n > $this->n) {
