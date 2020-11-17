@@ -23,7 +23,6 @@ trait SquareMatrixTrait
      *
      * @return Matrix with row mᵢ and column nⱼ removed
      *
-     * @throws Exception\MatrixException if matrix is not square
      * @throws Exception\MatrixException if row to exclude for minor matrix does not exist
      * @throws Exception\MatrixException if column to exclude for minor matrix does not exist
      * @throws Exception\IncorrectTypeException
@@ -66,7 +65,6 @@ trait SquareMatrixTrait
      *
      * @throws Exception\OutOfBoundsException if k ≤ 0
      * @throws Exception\OutOfBoundsException if k > n
-     * @throws Exception\MatrixException if matrix is not square
      * @throws Exception\IncorrectTypeException
      */
     public function leadingPrincipalMinor(int $k): Matrix
