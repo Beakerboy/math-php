@@ -64,7 +64,6 @@ class SquareMatrix extends Matrix
      *
      * @return Matrix
      *
-     * @throws Exception\MatrixException if not a square matrix
      * @throws Exception\MatrixException if singular matrix
      * @throws Exception\IncorrectTypeException
      * @throws Exception\BadParameterException
@@ -76,9 +75,6 @@ class SquareMatrix extends Matrix
             return $this->catalog->getInverse();
         }
 
-        if (!$this->isSquare()) {
-            throw new Exception\MatrixException('Not a sqaure matrix (required for determinant)');
-        }
         if ($this->isSingular()) {
             throw new Exception\MatrixException('Singular matrix (determinant = 0); not invertible');
         }
