@@ -75,7 +75,7 @@ trait SquareMatrixTrait
         if ($k > $this->n) {
             throw new Exception\OutOfBoundsException("k ($k) leading principal minor is larger than size of Matrix: " . $this->n);
         }
-        
+
         $R = [];
         for ($i = 0; $i < $k; $i++) {
             for ($j = 0; $j < $k; $j++) {
