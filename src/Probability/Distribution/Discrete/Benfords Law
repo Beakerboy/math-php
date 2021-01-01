@@ -1,0 +1,71 @@
+<?php
+
+namespace MathPHP\Probability\Distribution\Discrete;
+
+use MathPHP\Arithmetic;
+use MathPHP\Probability\Combinatorics;
+use MathPHP\Functions\Support;
+
+/**
+ * Binomial distribution - probability mass function
+ *
+ * https://en.wikipedia.org/wiki/Benford's_Law
+ */
+class BenfordsLaw extends Discrete
+{
+    /**
+     * Constructor
+     *
+     * @param int   $n number of events n >= 0
+     * @param float $p probability of success 0 <= p <= 1
+     */
+    public function __construct()
+    {
+        parent::__construct();
+    }
+
+    /**
+     * Probability mass function
+     *
+     * P() = log₁₀(1 + 1 / d)
+     *
+     * If n is large, combinatorial factorial blows up,
+     * so use the multiplication method instead.
+     *
+     * @param  int $r number of successful events
+     *
+     * @return float
+     */
+    public function pmf(int $d): float
+    {
+        Support::checkLimits(self::SUPPORT_LIMITS, ['d' => $d]);
+
+        return log10(1 + 1 / d);
+    }
+
+    /**
+     * Cumulative distribution function
+     * Computes and sums the binomial distribution at each of the values in r.
+     *
+     * @param  int $r number of successful events
+     *
+     * @return float
+     */
+    public function cdf(int $d): float
+    {
+        Support::checkLimits(self::SUPPORT_LIMITS, ['d' => $d]);
+        return log10($d + 1);
+    }
+
+    /**
+     * Mean of the distribution
+     *
+     * log₁₀ (10⁹ / 9!)
+     *
+     * @return float
+     */
+    public function mean(): float
+    {
+        return 9 - log10(362880);
+    }
+}
