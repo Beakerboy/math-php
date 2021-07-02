@@ -1670,10 +1670,9 @@ class SetOperationsTest extends \PHPUnit\Framework\TestCase
             $this->assertArrayHasKey("$member", $setA->asArray());
             $this->assertArrayNotHasKey("$member", $setB->asArray());
             $this->assertArrayNotHasKey("$member", $setC->asArray());
-            $member = is_object($member) ? "$member" : $member;
-            $this->assertContains($member, $A);
-            $this->assertNotContains($member, $B);
-            $this->assertNotContains($member, $C);
+            $this->assertContains((string) $member, $A);
+            $this->assertNotContains((string) $member, $B);
+            $this->assertNotContains((string) $member, $C);
         }
         foreach ($diff as $_ => $value) {
             if ($value instanceof Set) {
