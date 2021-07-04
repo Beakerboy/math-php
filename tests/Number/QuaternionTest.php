@@ -219,6 +219,7 @@ class QuaternionTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @test   Constructor throws an exception when given non-numeric
+     * @dataProvider dataProviderForConstructorException
      * @throws \Exception
      */
     public function testConstructorException($r, $i, $j, $k)
