@@ -216,4 +216,27 @@ class QuaternionTest extends \PHPUnit\Framework\TestCase
             [3, 4, 3, 4, -3, -4, -3, -4],
         ];
     }
+
+    /**
+     * @test   Constructor throws an exception when given non-numeric
+     * @throws \Exception
+     */
+    public function testConstructorException($r, $i, $j, $k)
+    {
+        // Then
+        $this->expectException(Exception\BadDataException::class);
+
+        // When
+        $c = new Quaternion($r, $i, $j, $k);
+    }
+
+    public function dataProviderForConstructorException(): array
+    {
+        return [
+            ['a', 1, 1, 1],
+            [1, true, 1, 1],
+            [1, 1, new \stdClass(), 1],
+            [1, 1, 1, [1]],
+        ];
+    }
 }
