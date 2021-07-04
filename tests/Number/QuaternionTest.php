@@ -251,7 +251,7 @@ class QuaternionTest extends \PHPUnit\Framework\TestCase
     public function testAdd(array $complex1, array $complex2, array $expected)
     {
         // Given
-        $c1 = new Quarternion($complex1['r'], $complex1['i'], $complex1['j'], $complex1['k']);
+        $c1 = new Quaternion($complex1['r'], $complex1['i'], $complex1['j'], $complex1['k']);
         $c2 = new Quaternion($complex2['r'], $complex2['i'], $complex2['j'], $complex2['k']);
 
         // When
