@@ -254,7 +254,7 @@ class Quaternion implements ObjectArithmetic
             throw new Exception\IncorrectTypeException('Argument must be real or quaternion' . print_r($q, true));
         }
         if (is_numeric($q)) {
-            return new Quaternion($this->r * q, $this->i * q, $this->j * q, $this->k * q);
+            return new Quaternion($this->r * $q, $this->i * $q, $this->j * $q, $this->k * $q);
         }
         $a = $this->r;
         $b = $this->i;
