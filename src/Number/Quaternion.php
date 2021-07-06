@@ -260,7 +260,7 @@ class Quaternion implements ObjectArithmetic
         $b = $this->i;
         $c = $this->j;
         $d = $this->k;
-        
+
         $e = $q->r;
         $f = $q->i;
         $g = $q->j;
