@@ -242,20 +242,26 @@ class QuaternionTest extends \PHPUnit\Framework\TestCase
     }
     
     /**
-     * @testCase     inverse returns the expected complex number
+     * @testCase     inverse returns the expected quaternion
      * @dataProvider dataProviderForInverse
      * @param        number $r
      * @param        number $i
+     * @param        number $j
+     * @param        number $k
      * @param        number $expected_r
      * @param        number $expected_i
+     * @param        number $expected_j
+     * @param        number $expected_k
      */
-    public function testInverse($r, $i, $expected_r, $expected_i)
+    public function testInverse($r, $i, $j, $k, $expected_r, $expected_i, $expected_j, $expected_k)
     {
-        $c       = new Complex($r, $i);
-        $inverse = $c->inverse();
+        $q       = new Quaternion($r, $i, $j, $k);
+        $inverse = $q->inverse();
 
         $this->assertEquals($expected_r, $inverse->r);
         $this->assertEquals($expected_i, $inverse->i);
+        $this->assertEquals($expected_j, $inverse->j);
+        $this->assertEquals($expected_k, $inverse->k);
     }
 
     public function dataProviderForInverse(): array
