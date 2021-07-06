@@ -240,7 +240,7 @@ class QuaternionTest extends \PHPUnit\Framework\TestCase
             [1, 1, 1, [1]],
         ];
     }
-    
+
     /**
      * @testCase     inverse returns the expected quaternion
      * @dataProvider dataProviderForInverse
@@ -284,7 +284,7 @@ class QuaternionTest extends \PHPUnit\Framework\TestCase
         $this->expectException(Exception\BadDataException::class);
         $q->inverse();
     }
-    
+
     /**
      * @test         add of two complex numbers returns the expected complex number
      * @dataProvider dataProviderForAdd
@@ -432,7 +432,7 @@ class QuaternionTest extends \PHPUnit\Framework\TestCase
             ],
         ];
     }
-    
+
     /**
      * @test add throws an Exception\IncorrectTypeException when the argument is not a number or quaternion
      */
