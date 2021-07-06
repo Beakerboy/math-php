@@ -473,6 +473,38 @@ class QuaternionTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * @test         divide of two complex numbers returns the expected complex number
+     * @dataProvider dataProviderForDivide
+     * @param        array  $complex1
+     * @param        array  $complex2
+     * @param        array  $expected
+     */
+    public function testDivide(array $complex1, array $complex2, array $expected)
+    {
+        // Given
+        $c1 = new Complex($complex1['r'], $complex1['i']);
+        $c2 = new Complex($complex2['r'], $complex2['i']);
+
+        // When
+        $result = $c1->divide($c2);
+
+        // Then
+        $this->assertEquals($expected['r'], $result->r);
+        $this->assertEquals($expected['i'], $result->i);
+    }
+
+    public function dataProviderForDivide(): array
+    {
+        return [
+            [
+                ['r' => 3, 'i' => 2, 'j' => 1, 'k' => -1],
+                ['r' => 1, 'i' => 4, 'j' => 3, 'k' => 2],
+                ['r' => 1 / 75, 'i' => -1 / 60, 'j' => 0, 'k' => -1 / 100],
+            ],
+        ];
+    }
+
+    /**
      * @test add throws an Exception\IncorrectTypeException when the argument is not a number or quaternion
      */
     public function testQuaternionAddException()
