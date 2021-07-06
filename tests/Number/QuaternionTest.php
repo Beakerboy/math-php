@@ -473,7 +473,7 @@ class QuaternionTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @test         divide of two complex numbers returns the expected complex number
+     * @test         divide of two cquaternions returns the expected quaternion
      * @dataProvider dataProviderForDivide
      * @param        array  $complex1
      * @param        array  $complex2
@@ -482,15 +482,17 @@ class QuaternionTest extends \PHPUnit\Framework\TestCase
     public function testDivide(array $complex1, array $complex2, array $expected)
     {
         // Given
-        $c1 = new Complex($complex1['r'], $complex1['i']);
-        $c2 = new Complex($complex2['r'], $complex2['i']);
+        $q1 = new Quaternion($complex1['r'], $complex1['i'], $complex1['j'], $complex1['k']);
+        $q2 = new Quaternion($complex2['r'], $complex2['i'], $complex2['j'], $complex2['k']);
 
         // When
-        $result = $c1->divide($c2);
+        $result = $q1->divide($q2);
 
         // Then
         $this->assertEquals($expected['r'], $result->r);
         $this->assertEquals($expected['i'], $result->i);
+        $this->assertEquals($expected['j'], $result->j);
+        $this->assertEquals($expected['k'], $result->k);
     }
 
     public function dataProviderForDivide(): array
