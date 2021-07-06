@@ -240,7 +240,45 @@ class QuaternionTest extends \PHPUnit\Framework\TestCase
             [1, 1, 1, [1]],
         ];
     }
+    
+    /**
+     * @testCase     inverse returns the expected complex number
+     * @dataProvider dataProviderForInverse
+     * @param        number $r
+     * @param        number $i
+     * @param        number $expected_r
+     * @param        number $expected_i
+     */
+    public function testInverse($r, $i, $expected_r, $expected_i)
+    {
+        $c       = new Complex($r, $i);
+        $inverse = $c->inverse();
 
+        $this->assertEquals($expected_r, $inverse->r);
+        $this->assertEquals($expected_i, $inverse->i);
+    }
+
+    public function dataProviderForInverse(): array
+    {
+        return [
+            [1, 0, 0, 0, 1, 0, 0, 0],
+            [0, 1, 0, 0, 0, -1, 0, 0],
+            [0, 0, 1, 0, 0, 0, -1, 0],
+            [0, 0, 0, 1, 0, 0, 0, -1],
+            [1, -1, -1 -1, .25, .25, .25, .25],
+        ];
+    }
+
+    /**
+     * @testCase inverse throws an Exception\BadDataException when value is 0 + 0i + 0j + 0k
+     */
+    public function testInverseException()
+    {
+        $q = new Quaternion(0, 0, 0, 0);
+        $this->expectException(Exception\BadDataException::class);
+        $q->inverse();
+    }
+    
     /**
      * @test         add of two complex numbers returns the expected complex number
      * @dataProvider dataProviderForAdd
@@ -282,5 +320,105 @@ class QuaternionTest extends \PHPUnit\Framework\TestCase
                 ['r' => 7, 'i' => -1, 'j' => -1, 'k' => -6],
             ],
         ];
+    }
+
+    /**
+     * @test         add of real numbers returns the expected quaternion
+     * @dataProvider dataProviderForAddReal
+     */
+    public function testAddReal($complex, $real, $expected)
+    {
+        // Given
+        $q = new Quaternion($complex['r'], $complex['i'], $complex['j'], $complex['k']);
+
+        // When
+        $result = $q->add($real);
+
+        // Then
+        $this->assertEquals($expected['r'], $result->r);
+        $this->assertEquals($expected['i'], $result->i);
+        $this->assertEquals($expected['j'], $result->j);
+        $this->assertEquals($expected['k'], $result->k);
+    }
+
+    public function dataProviderForAddReal()
+    {
+        return [
+            [
+                ['r' => 3, 'i' => 2, 'j' => 1, 'k' => -1],
+                5,
+                ['r' => 8, 'i' => 2, 'j' => 1, 'k' => -1],
+            ],
+            [
+                ['r' => 0, 'i' => 0, 'j' => 0, 'k' => 0],
+                5,
+                ['r' => 5, 'i' => 0, 'j' => 0, 'k' => 0],
+            ],
+            [
+                ['r' => 3, 'i' => 2, 'j' => 1, 'k' => -1],
+                -2,
+                ['r' => 1, 'i' => 2, 'j' => 1, 'k' => -1],
+            ],
+        ];
+    }
+
+    /**
+     * @test add throws an Exception\IncorrectTypeException when the argument is not a number or quaternion
+     */
+    public function testQuaternionAddException()
+    {
+        // Given
+        $q = new Quaternion(1, 1, 1, 1);
+
+        // Then
+        $this->expectException(Exception\IncorrectTypeException::class);
+
+        // When
+        $q->add("string");
+    }
+
+    /**
+     * @test subtract throws an Exception\IncorrectTypeException when the argument is not a number or quaternion
+     */
+    public function testQuaternionSubtractException()
+    {
+        // Given
+        $q = new Quaternion(1, 1, 1, 1);
+
+        // Then
+        $this->expectException(Exception\IncorrectTypeException::class);
+
+        // When
+        $q->subtract("string");
+    }
+
+    /**
+     * @test multiply throws an Exception\IncorrectTypeException when the argument is not a number or quaternion
+     */
+    public function tesQuaternionMultiplyException()
+    {
+        // Given
+        $q = new Quaternion(1, 1, 1, 1);
+
+        // Then
+        $this->expectException(Exception\IncorrectTypeException::class);
+
+        // When
+        $q->multiply("string");
+    }
+
+    /**
+     * @test divide throws an Exception\IncorrectTypeException when the argument is not a number or quaternion
+     */
+    public function testQuaternionDivideException()
+    {
+        // Given
+        $q = new Quaternion(1, 1, 1, 1);
+
+        // Then
+        $this->expectException(Exception\IncorrectTypeException::class);
+
+        // When
+        $q->divide("string");
     }
 }
