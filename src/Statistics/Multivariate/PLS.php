@@ -221,8 +221,8 @@ class PLS
      * Use provided $center and $scale Vectors to transform the provided data
      *
      * @param Matrix $new_data - A Matrix of new data which is standardized against the original data
-     * @param Vector $center -  A list of values to center the data against
-     * @param Vector $scale  - A list of standard deviations to scale the data with.
+     * @param Vector $center   - A list of values to center the data against
+     * @param Vector $scale    - A list of standard deviations to scale the data with.
      *
      * @return Matrix
      *
@@ -241,7 +241,15 @@ class PLS
         return $new_data->subtract($center_matrix)->multiply($scale_matrix);
     }
 
-    private static function columnStdevs(Matrix $M)
+    /**
+     * Column Standard Deviations
+     * Create a Vector with the standard deviations of each column of the supplied matrix
+     *
+     * @param Matrix $M - A Matrix of which to calculate the standard deviations.
+     *
+     * @return Vector
+     */
+    private static function columnStdevs(Matrix $M): Vector
     {
         $scaleArray = [];
         for ($i = 0; $i < $M->getN(); $i++) {
