@@ -73,6 +73,6 @@ class NumericDiagonalMatrix extends NumericSquareMatrix
 
     public function inverse(): NumericMatrix
     {
-        return MatrixFactory::diagonal(Single::reciprocal($this->getDiagonalElemenets()));
+        return MatrixFactory::diagonal(Single::reciprocal($this->getDiagonalElements()));
     }
 }
