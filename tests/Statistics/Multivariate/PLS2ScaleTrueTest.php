@@ -226,7 +226,32 @@ class PLS2ScaleTrueTest extends \PHPUnit\Framework\TestCase
         // Then
         $this->assertEqualsWithDelta($expected, $B, .00001, '');
     }
-    
+
+    /**
+     * @test The class returns the correct values for C
+     *
+     * R code for expected values:
+     *   pls.model$C
+     */
+    public function testC()
+    {
+        // Given
+        $expected = [
+            [0.034970929,  0.02335423,  0.29614554,  0.152681650,  0.38391867],
+            [0.033493121, -0.04624945,  0.36657446,  0.208617731, -0.04463526],
+            [-0.006399525, -0.06849268, -0.21305926, -0.299013879,  0.13964463],
+            [-0.056663579,  0.12247338,  0.08342433, -0.303325431,  0.03359633],
+            [0.078737844, -0.09124596, -0.10004379, -0.003850354,  0.20090709],
+            [-0.044316572,  0.15062065,  0.14929142, -0.001252483, -0.28604875],
+        ];
+
+        // When
+        $C = self::$pls->getYLoadings()->getMatrix();
+
+        // Then
+        $this->assertEqualsWithDelta($expected, $C, .00001, '');
+    }
+             
     /**
      * R code for expected values:
      * X = cereal$X[1,]
