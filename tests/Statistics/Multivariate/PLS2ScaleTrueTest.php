@@ -279,11 +279,11 @@ class PLS2ScaleTrueTest extends \PHPUnit\Framework\TestCase
         $cereal   = new SampleData\Cereal();
         return [
             [
-                $cereal->getXData()[0],
+                [$cereal->getXData()[0]],
                 [[18477.04, 41.52811, 6.57031, 1.900265, 60.26447, 2.297653]],
             ],
             [
-                $cereal->getXData()[9],
+                [$cereal->getXData()[9]],
                 [[18213.15, 40.54223, 6.816377, 1.633618, 68.58449, 1.675997]],
             ]
         ];
