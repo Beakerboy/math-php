@@ -251,7 +251,7 @@ class PLS2ScaleTrueTest extends \PHPUnit\Framework\TestCase
         // Then
         $this->assertEqualsWithDelta($expected, $C, .00001, '');
     }
-             
+
     /**
      * R code for expected values:
      * X = cereal$X[1,]
