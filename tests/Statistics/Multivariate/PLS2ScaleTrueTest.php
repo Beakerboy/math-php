@@ -22,7 +22,6 @@ class PLS2ScaleTrueTest extends \PHPUnit\Framework\TestCase
      * R code for expected values:
      *   library(chemometrics)
      *   data(cereal)
-     *   options(width=600)
      *   pls.model = pls2_nipals(cereal$X, cereal$Y, a=5, scale=TRUE)
      *
      * @throws Exception\MathException
@@ -226,6 +225,43 @@ class PLS2ScaleTrueTest extends \PHPUnit\Framework\TestCase
 
         // Then
         $this->assertEqualsWithDelta($expected, $B, .00001, '');
+    }
+    
+    /**
+     * R code for expected values:
+     * X = cereal$X[1,]
+     * (X - colMeans(cereal$X)) %*% solve(diag(apply(cereal$X, 2, sd))) %*% pls.model$B %*% diag(apply(cereal$Y, 2, sd)) + colMeans(cereal$Y)
+     *
+     * @test         predict Y values from X
+     * @dataProvider dataProviderForRegression
+     * @param        array $X
+     * @param        array $Y
+     */
+    public function testRegression($X, $expected)
+    {
+        // Given.
+        $input = MatrixFactory::create($X);
+
+        // When
+        $actual = self::$pls->predict($input)->getMatrix();
+
+        // Then
+        $this->assertEqualsWithDelta($expected, $actual, .00001, '');
+    }
+
+    public function dataProviderForRegression()
+    {
+        $cereal   = new SampleData\Cereal();
+        return [
+            [
+                $cereal->getXData()->getRow(0),
+                [[18477.04, 41.52811, 6.57031, 1.900265, 60.26447, 2.297653]],
+            ],
+            [
+                $cereal->getXData()->getRow(9),
+                [[18213.15, 40.54223, 6.816377, 1.633618, 68.58449, 1.675997]],
+            ]
+        ];
     }
 
     /**
