@@ -449,7 +449,7 @@ class Polynomial implements ObjectArithmetic
      *
      * https://en.wikipedia.org/wiki/Companion_matrix
      */
-    public function CompanionMatrix(): NumericSquareMatrix
+    public function companionMatrix(): NumericSquareMatrix
     {
         $coefficients = $this->getCoefficients();
         $reversed_coefficients = new Vector(array_reverse($coefficients));
