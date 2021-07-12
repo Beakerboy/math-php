@@ -94,6 +94,20 @@ class SVDTest extends \PHPUnit\Framework\TestCase
                     'S' => [[3]],
                 ],
             ],
+            [
+                [
+                    [1, 1, 1, 1, 1],
+                    [1, 1, 1, 1, 1],
+                    [1, 1, 1, 1, 1],
+                ],
+                [
+                    'S' => [
+                        [3.872983, 0, 0, 0, 0],
+                        [0, 1.812987e-16, 0, 0, 0],
+                        [0, 0, 1.509615e-32, 0, 0],
+                    ],
+                ],
+            ]
         ];
     }
 
@@ -117,7 +131,7 @@ class SVDTest extends \PHPUnit\Framework\TestCase
         if ($A->rank() == $A->getM()){
             $this->assertTrue($svd->getV()->isOrthogonal());
         }
-        $this->assertEqualsWithDelta($svd->getD()->getVector(), $svd->getS()->getDiagonalElements());
+        $this->assertEqualsWithDelta($svd->getD()->getVector(), $svd->getS()->getDiagonalElements(), 0.00001, '');
     }
 
     /**
