@@ -128,7 +128,7 @@ class SVDTest extends \PHPUnit\Framework\TestCase
         // Then
         $this->assertTrue($svd->getU()->isOrthogonal());
         $this->assertTrue($svd->getS()->isRectangularDiagonal());
-        if ($A->rank() == $A->getM()){
+        if ($A->rank() == $A->getM()) {
             $this->assertTrue($svd->getV()->isOrthogonal());
         }
         $this->assertEqualsWithDelta($svd->getD()->getVector(), $svd->getS()->getDiagonalElements(), 0.00001, '');
