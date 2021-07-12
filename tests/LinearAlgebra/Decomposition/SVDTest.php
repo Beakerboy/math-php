@@ -110,10 +110,6 @@ class SVDTest extends \PHPUnit\Framework\TestCase
         $svd = $A->SVD();
         
         // Then
-        $this->assertTrue(isset($svd->U));
-        $this->assertTrue(isset($svd->S));
-        $this->assertTrue(isset($svd->V));
-        $this->assertTrue(isset($svd->D));
         $this->assertTrue($svd->getU()->isOrthogonal());
         $this->assertTrue($svd->getS()->isRectangularDiagonal());
         $this->assertTrue($svd->getV()->isOrthogonal());
