@@ -1,4 +1,5 @@
 <?php
+
 namespace MathPHP\LinearAlgebra\Decomposition;
 
 use MathPHP\Exception;
@@ -87,10 +88,10 @@ class SVD extends Decomposition
         $Mt = $M->transpose();
         $MMt = $M->multiply($Mt);
         $MtM = $Mt->multiply($M);
-        
+
         // m x m orthoganol matrix
         $U = $MMt->eigenvectors();
-        
+
         // n x n orthoganol matrix
         $V = $MtM->eigenvectors();
 
