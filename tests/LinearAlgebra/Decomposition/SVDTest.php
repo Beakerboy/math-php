@@ -95,7 +95,12 @@ class SVDTest extends \PHPUnit\Framework\TestCase
                     'S' => [[3]],
                 ],
             ],
-
+            [
+                [[0]],
+                [
+                    'S' => [[0]],
+                ],
+            ],
         ];
     }
 
