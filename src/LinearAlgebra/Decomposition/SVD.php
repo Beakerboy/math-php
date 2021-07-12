@@ -3,7 +3,7 @@ namespace MathPHP\LinearAlgebra\Decomposition;
 
 use MathPHP\Exception;
 use MathPHP\Functions\Map\Single;
-use MathPHP\LinearAlgebra\Matrix;
+use MathPHP\LinearAlgebra\NumericMatrix;
 use MathPHP\LinearAlgebra\MatrixFactory;
 use MathPHP\LinearAlgebra\Vector;
 
@@ -34,7 +34,7 @@ class SVD extends Decomposition
      * @param Matrix $S Rectangular Diagonal matrix
      * @param Matrix $V Orthogonal matrix
      */
-    private function __construct(Matrix $U, Matrix $S, Matrix $V)
+    private function __construct(NumericMatrix $U, NumericMatrix $S, NumericMatrix $V)
     {
         $this->U = $U;
         $this->S = $S;
@@ -47,7 +47,7 @@ class SVD extends Decomposition
      *
      * @return Matrix
      */
-    public function getU(): Matrix
+    public function getU(): NumericMatrix
     {
         return $this->U;
     }
@@ -57,7 +57,7 @@ class SVD extends Decomposition
      *
      * @return Matrix
      */
-    public function getS(): Matrix
+    public function getS(): NumericMatrix
     {
         return $this->S;
     }
@@ -67,7 +67,7 @@ class SVD extends Decomposition
      *
      * @return Matrix
      */
-    public function getV(): Matrix
+    public function getV(): NumericMatrix
     {
         return $this->V;
     }
@@ -82,7 +82,7 @@ class SVD extends Decomposition
         return $this->D;
     }
 
-    public static function decompose(Matrix $M): SVD
+    public static function decompose(NumericMatrix $M): SVD
     {
         $Mt = $M->transpose();
         $MMt = $M->multiply($Mt);
