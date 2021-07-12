@@ -1314,4 +1314,20 @@ class PolynomialTest extends \PHPUnit\Framework\TestCase
             ],
         ];
     }
+
+    /**
+     * @test   companionMatrix - OutOfBoundsException if the polynomial is degree 0.
+     * @throws \Exception
+     */
+    public function testCompanionException()
+    {
+        // Given
+        $poly   = new Polynomial([2]);
+
+        // Then
+        $this->expectException(Exception\OutOfBoundsException::class);
+
+        // When
+        $matrix = $poly->companionMatrix();
+    }
 }
