@@ -29,6 +29,7 @@ class SVDTest extends \PHPUnit\Framework\TestCase
         $svdU = $svd->U;
         $svdS = $svd->S;
         $svdV = $svd->V;
+        $svdD = $svd->D;
 
         // Then A = USVᵀ
         $this->assertEqualsWithDelta($A->getMatrix(), $svdU->multiply($svdS)->multiply($svdV->transpose())->getMatrix(), 0.00001, '');
@@ -113,6 +114,30 @@ class SVDTest extends \PHPUnit\Framework\TestCase
         // Then
         $this->assertTrue($svd->getU()->isOrthogonal());
         $this->assertTrue($svd->getS()->isRectangularDiagonal());
-        $this->assertTrue($svd->getV()->isOrthogonal());
+        if ($A->rank() == $A->getM()){
+            $this->assertTrue($svd->getV()->isOrthogonal());
+        }
+        $this->assertEqualsWithDelta($svd->getD()->getVector(), $svd->getS()->getDiagonalElements());
+    }
+
+    /**
+     * @test   SVD invalid property
+     * @throws \Exception
+     */
+    public function testSVDInvalidProperty()
+    {
+        // Given
+        $A = MatrixFactory::create([
+            [4, 1, -1],
+            [1, 2, 1],
+            [-1, 1, 2],
+        ]);
+        $svd = $A->SVD();
+
+        // Then
+        $this->expectException(Exception\MathException::class);
+
+        // When
+        $doesNotExist = $svd->doesNotExist;
     }
 }
