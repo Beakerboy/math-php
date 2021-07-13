@@ -88,12 +88,12 @@ class NonInteger
             return [];
         }
         $sequence = [];
-        
+
         if ($r == 0) {
             for ($k = 1; $k <= $n; $k++) {
                 $sequence[$k] = new Rational(0, 1, $k);
             }
-        } else { 
+        } else {
             $array = self::hyperharmonic($n, $r - 1, true);
             $∑     = Rational::createZeroValue();
             for ($k = 1; $k <= $n; $k++) {
