@@ -115,13 +115,14 @@ class ZipfTest extends \PHPUnit\Framework\TestCase
             [1, 8, 1],
         ];
     }
-    
+
     /**
-     * @test         mode
+     * @test         mean
      * @dataProvider dataProviderForMean
      * @param        int $s
      * @param        int $N
      *
+     * R code to replicate:
      * library(sads)
      * x <- 1:N
      * sum(dzipf(x=x, N=N, s=s) * x)
