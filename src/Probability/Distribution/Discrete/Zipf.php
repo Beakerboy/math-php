@@ -45,7 +45,7 @@ class Zipf extends Discrete
      */
     public function __construct($s, int $N)
     {
-        parent::__construct($a, $b);
+        parent::__construct($s, $N);
     }
 
     /**
