@@ -93,4 +93,19 @@ class NonIntegerTest extends \PHPUnit\Framework\TestCase
             [10, 2, [1 => 1, 5/2, 26/6, 77/12, 87/10, 223/20, 481/35, 4609/280, 4861/252, 55991/2520]],
         ];
     }
+
+    /**
+     * @test hyperharmonic throws a OutOfBoundsException when r is less than zero
+     */
+    public function testHyperharmonicSeriesException()
+    {
+        // Given
+        $r = -1;
+
+        // Then
+        $this->expectException(Exception\OutOfBoundsException::class);
+
+        // When
+        NonInteger::hyperharmonic(10, $r);
+    }
 }
