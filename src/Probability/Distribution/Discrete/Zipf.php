@@ -110,6 +110,6 @@ class Zipf extends Discrete
      */
     public function mode()
     {
-        return (1;
+        return 1;
     }
 }
