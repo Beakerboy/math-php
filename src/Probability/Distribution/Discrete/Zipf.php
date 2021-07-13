@@ -95,7 +95,7 @@ class Zipf extends Discrete
             throw new Exception\OutOfBoundsException('Support parameter k cannot be greater than N');
         }
         $numerator = array_pop(NonInteger::generalizedHarmonic($k, $s));
-        $denominator = array_pop(NonInteger::generalizedHarmonic($N, $s))
+        $denominator = array_pop(NonInteger::generalizedHarmonic($N, $s));
         return $numerator / $denominator;
     }
 
