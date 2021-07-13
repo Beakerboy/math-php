@@ -60,4 +60,36 @@ class NonInteger
 
         return $sequence;
     }
+
+    /**
+     * Hyperharmonic Numbers
+     *
+     *         ₙ
+     * Hₙ⁽ʳ⁾ = ∑  Hₖ⁽ʳ⁻¹⁾
+     *        ᵏ⁼¹
+     *
+     * https://en.wikipedia.org/wiki/Hyperharmonic_number
+     *
+     * @param int $n the length of the sequence to calculate
+     * @param int $r the depth of recursion
+     *
+     * @return array
+     */
+    public static function Hyperharmonic(int $n, int $r): array
+    {
+        if ($n <= 0) {
+            return [];
+        }
+        $sequence = [];
+        $∑        = 0;
+        
+        for ($k = 1; $k <= $n; $k++) {
+            $array = self::Hyperharmonic($k, $r -1);
+            $value = array_pop($array);
+            $∑ += $value;
+            $sequence[$k] = $∑;
+        }
+
+        return $sequence;
+    }
 }
