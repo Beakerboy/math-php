@@ -101,7 +101,7 @@ class ZipfTest extends \PHPUnit\Framework\TestCase
         $mode = $zipf->mode();
 
         // Then
-        $this->assertEquals(1, $mean);
+        $this->assertEquals(1, $mode);
     }
 
 }
