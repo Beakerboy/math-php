@@ -77,14 +77,19 @@ class NonInteger
      */
     public static function hyperharmonic(int $n, int $r): array
     {
+        if ($r < 0) {
+            throw new Exception\OutOfBoundsException('Recursion depth must be greater than 0');
+        }
         if ($n <= 0) {
             return [];
         }
         $sequence = [];
         $∑        = 0;
         
-        if ($r == 1) {
-            return self::harmonic($n);
+        if ($r == 0) {
+            for ($k = 1; $k < $n; $k++) {
+                $sequence[$k] = 1 / $k;
+            }
         } else {
             $array = self::hyperharmonic($n, $r -1);
             for ($k = 1; $k < $n; $k++) {
