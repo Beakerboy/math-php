@@ -66,8 +66,6 @@ class Zipf extends Discrete
         $s = $this->s;
         $N = $this->N;
 
-        $n = $b - $a + 1;
-
         return (1 / $k ** $s) / NonInteger::generalizedHarmonicNumber($N, $s);
     }
 
