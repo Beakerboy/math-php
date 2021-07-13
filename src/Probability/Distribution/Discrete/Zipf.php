@@ -55,51 +55,44 @@ class Zipf extends Discrete
      *
      *            1
      * pmf = -----------
-     *       kˢ * Hₙ,ₛ
+     *         kˢ * Hₙ,ₛ
      *
+     * @param int $k 
      *
      * @return number
      */
     public function pmf(int $k)
     {
         Support::checkLimits(self::SUPPORT_LIMITS, ['k' => $k]);
-
+        if ($k > $this->N) {
+            throw new Exception\OutOfBoundsException('Support parameter k cannot be greater than N');
+        }
         $s = $this->s;
         $N = $this->N;
 
-        return (1 / $k ** $s) / NonInteger::generalizedHarmonic($N, $s);
+        return (1 / $k ** $s) / array_pop(NonInteger::generalizedHarmonic($N, $s));
     }
 
     /**
      * Cumulative distribution function
      *
-     *       k - a + 1
+     *           Hₖ,ₛ
      * pmf = ---------
-     *           n
+     *           Hₙ,ₛ
      *
-     * Percentile n = b - a + 1
      *
-     * @param number $k percentile
+     * @param int $k 
      *
      * @return number
      */
     public function cdf(int $k)
     {
         Support::checkLimits(self::SUPPORT_LIMITS, ['k' => $k]);
-
-        $a = $this->a;
-        $b = $this->b;
-
-        if ($k < $a) {
-            return 0;
-        }
-        if ($k > $b) {
-            return 1;
+        if ($k > $this->N) {
+            throw new Exception\OutOfBoundsException('Support parameter k cannot be greater than N');
         }
 
-        $n = $b - $a + 1;
-
-        return ($k - $a + 1) / $n;
+        return array_pop(NonInteger::generalizedHarmonic($k, $s)) / array_pop(NonInteger::generalizedHarmonic($N, $s));
     }
 
     /**
