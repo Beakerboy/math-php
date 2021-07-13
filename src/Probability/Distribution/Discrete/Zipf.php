@@ -70,7 +70,8 @@ class Zipf extends Discrete
         }
         $s = $this->s;
         $N = $this->N;
-        $denominator = array_pop(NonInteger::generalizedHarmonic($N, $s));
+        $series = NonInteger::generalizedHarmonic($N, $s);
+        $denominator = array_pop($series);
         return 1 / ($k ** $s) / $denominator;
     }
 
@@ -96,8 +97,10 @@ class Zipf extends Discrete
         }
         $s = $this->s;
         $N = $this->N;
-        $numerator = array_pop(NonInteger::generalizedHarmonic($k, $s));
-        $denominator = array_pop(NonInteger::generalizedHarmonic($N, $s));
+        $num_series = NonInteger::generalizedHarmonic($k, $s);
+        $numerator = array_pop($num_series);
+        $den_series = NonInteger::generalizedHarmonic($N, $s);
+        $denominator = array_pop($den_series);
         return $numerator / $denominator;
     }
 
@@ -112,7 +115,11 @@ class Zipf extends Discrete
      */
     public function mean()
     {
-        return array_pop(NonInteger::generalizedHarmonic($N, $s - 1)) / array_pop(NonInteger::generalizedHarmonic($N, $s));
+        $num_series = NonInteger::generalizedHarmonic($N, $s - 1);
+        $numerator = array_pop($num_series);
+        $den_series = NonInteger::generalizedHarmonic($N, $s);
+        $denominator = array_pop($den_series);
+        return $numerator / $denominator;
     }
 
     /**
