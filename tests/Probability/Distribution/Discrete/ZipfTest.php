@@ -9,16 +9,16 @@ class ZipfTest extends \PHPUnit\Framework\TestCase
     /**
      * @test         pmf
      * @dataProvider dataProviderForPmf
-     * @param        int $x
-     * @param        int $s
-     * @param        float $N
-     * @param        float $expectedPmf
+     * @param        int    $x
+     * @param        number $s
+     * @param        int    $N
+     * @param        float  $expectedPmf
      *
      * R code to replicate:
      * library(sads)
      * dzipf(x=x, N=N, s=s)
      */
-    public function testPmf(int $x, int $s, float $N, float $expectedPmf)
+    public function testPmf(int $x, $s, int $N, float $expectedPmf)
     {
         // Given
         $zipf = new Zipf($s, $N);
@@ -47,17 +47,37 @@ class ZipfTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * @test     pmfthrows a BadDataException if x > N
+     * @throws   \Exception
+     */
+    public function testBadK()
+    {
+        // Given
+        $x    = 11;
+        $zipf = new Zipf(3, 10);
+
+        // When
+        $pmf = $zipf->pmf($x);
+
+        // Then
+        $this->expectException(Exception\BadDataException::class);
+
+        // When
+        $categorical = new Categorical($k, $probabilities);
+    }
+    /**
      * @test         cdf
      * @dataProvider dataProviderForCdf
-     * @param        int $k
-     * @param        float $λ
-     * @param        float $expectedCdf
+     * @param        int    $x
+     * @param        number $s
+     * @param        int    $N
+     * @param        float  $expectedCdf
      *
      * R code to replicate:
      * library(sads)
      * pzipf(q=x, N=N, s=s)
      */
-    public function testCdf(int $x, int $s, float $N, float $expectedCdf)
+    public function testCdf(int $x, $s, int $N, float $expectedCdf)
     {
         // Given
         $zipf = new Zipf($s, $N);
@@ -88,10 +108,11 @@ class ZipfTest extends \PHPUnit\Framework\TestCase
     /**
      * @test         mode
      * @dataProvider dataProviderForMode
-     * @param        int $s
-     * @param        int $N
+     * @param        number $s
+     * @param        int    $N
+     * @param        int    $expected_mode
      */
-    public function testMode(int $s, int $N, int $expected_mode)
+    public function testMode($s, int $N, int $expected_mode)
     {
         // Given
         $zipf = new Zipf($s, $N);
@@ -119,24 +140,25 @@ class ZipfTest extends \PHPUnit\Framework\TestCase
     /**
      * @test         mean
      * @dataProvider dataProviderForMean
-     * @param        int $s
-     * @param        int $N
+     * @param        number $s
+     * @param        int    $N
+     * @param        float  $expected_mean
      *
      * R code to replicate:
      * library(sads)
      * x <- 1:N
      * sum(dzipf(x=x, N=N, s=s) * x)
      */
-    public function testMean(int $s, int $N, float $mean)
+    public function testMean($s, int $N, float $expected_mean)
     {
         // Given
         $zipf = new Zipf($s, $N);
 
         // When
-        $mode = $zipf->mode();
+        $mean = $zipf->mean();
 
         // Then
-        $this->assertEquals(1, $mode);
+        $this->assertEquals($expected_mean, $mean);
     }
 
     /**
