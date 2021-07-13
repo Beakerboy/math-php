@@ -4,7 +4,7 @@ namespace MathPHP\Tests\Probability\Distribution\Discrete;
 
 use MathPHP\Probability\Distribution\Discrete\Zipf;
 
-class PoissonTest extends \PHPUnit\Framework\TestCase
+class ZipfTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @test         pmf
