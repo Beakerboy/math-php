@@ -102,7 +102,7 @@ class NonInteger
             }
         }
         if (!$rational) {
-            for ($k = 1; $k <= $n; $k++)) {
+            for ($k = 1; $k <= $n; $k++) {
                 $sequence[$k] = $sequence[$k]->toFloat();
             }
         }
