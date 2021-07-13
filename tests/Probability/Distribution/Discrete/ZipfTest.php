@@ -9,29 +9,29 @@ class ZipfTest extends \PHPUnit\Framework\TestCase
     /**
      * @test         pmf
      * @dataProvider dataProviderForPmf
-     * @param        int    $x
+     * @param        int    $k
      * @param        number $s
      * @param        int    $N
      * @param        float  $expectedPmf
      *
      * R code to replicate:
      * library(sads)
-     * dzipf(x=x, N=N, s=s)
+     * dzipf(x=k, N=N, s=s)
      */
-    public function testPmf(int $x, $s, int $N, float $expectedPmf)
+    public function testPmf(int $k, $s, int $N, float $expectedPmf)
     {
         // Given
         $zipf = new Zipf($s, $N);
 
         // When
-        $pmf = $zipf->pmf($x);
+        $pmf = $zipf->pmf($k);
 
         // Then
         $this->assertEqualsWithDelta($expectedPmf, $pmf, 0.001);
     }
 
     /**
-     * @return array [x, s, N, pmf]
+     * @return array [k, s, N, pmf]
      */
     public function dataProviderForPmf(): array
     {
@@ -47,28 +47,26 @@ class ZipfTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @test     pmfthrows a BadDataException if x > N
+     * @test     pmfthrows a BadDataException if k > N
      * @throws   \Exception
      */
-    public function testBadK()
+    public function testBadPmfK()
     {
         // Given
-        $x    = 11;
+        $k    = 11;
         $zipf = new Zipf(3, 10);
 
-        // When
-        $pmf = $zipf->pmf($x);
-
         // Then
-        $this->expectException(Exception\BadDataException::class);
+        $this->expectException(Exception\OutOfBoundsException::class);
 
         // When
-        $categorical = new Categorical($k, $probabilities);
+        $pmf = $zipf->pmf($k);
     }
+
     /**
      * @test         cdf
      * @dataProvider dataProviderForCdf
-     * @param        int    $x
+     * @param        int    $k
      * @param        number $s
      * @param        int    $N
      * @param        float  $expectedCdf
@@ -77,20 +75,37 @@ class ZipfTest extends \PHPUnit\Framework\TestCase
      * library(sads)
      * pzipf(q=x, N=N, s=s)
      */
-    public function testCdf(int $x, $s, int $N, float $expectedCdf)
+    public function testCdf(int $k, $s, int $N, float $expectedCdf)
     {
         // Given
         $zipf = new Zipf($s, $N);
 
         // When
-        $cdf = $zipf->cdf($x);
+        $cdf = $zipf->cdf($k);
 
         // Then
         $this->assertEqualsWithDelta($expectedCdf, $cdf, 0.001);
     }
 
     /**
-     * @return array[x, s, N, cdf]
+     * @test     pmfthrows a BadDataException if k > N
+     * @throws   \Exception
+     */
+    public function testBadCdfK()
+    {
+        // Given
+        $k    = 11;
+        $zipf = new Zipf(3, 10);
+
+        // Then
+        $this->expectException(Exception\OutOfBoundsException::class);
+
+        // When
+        $pmf = $zipf->cdf($k);
+    }
+
+    /**
+     * @return array[k, s, N, cdf]
      */
     public function dataProviderForCdf(): array
     {
@@ -146,8 +161,8 @@ class ZipfTest extends \PHPUnit\Framework\TestCase
      *
      * R code to replicate:
      * library(sads)
-     * x <- 1:N
-     * sum(dzipf(x=x, N=N, s=s) * x)
+     * k <- 1:N
+     * sum(dzipf(x=k, N=N, s=s) * k)
      */
     public function testMean($s, int $N, float $expected_mean)
     {
