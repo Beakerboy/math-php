@@ -2,6 +2,7 @@
 
 namespace MathPHP\Tests\Sequence;
 
+use MathPHP\Exception;
 use MathPHP\Sequence\NonInteger;
 
 class NonIntegerTest extends \PHPUnit\Framework\TestCase
