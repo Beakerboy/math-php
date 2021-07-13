@@ -44,7 +44,7 @@ class NonIntegerTest extends \PHPUnit\Framework\TestCase
     public function testGeneralizedHarmonicNumbers(int $n, float $p, array $expectedSequence)
     {
         // When
-        $harmonicSequence = NonInteger::Hyperharmonic($n, $p);
+        $harmonicSequence = NonInteger::generalizedHarmonic($n, $p);
 
         // Then
         $this->assertEquals($expectedSequence, $harmonicSequence);
