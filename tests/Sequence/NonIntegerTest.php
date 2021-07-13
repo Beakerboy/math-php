@@ -77,7 +77,7 @@ class NonIntegerTest extends \PHPUnit\Framework\TestCase
         $hyperharmonicSequence = NonInteger::hyperharmonic($n, $r);
 
         // Then
-        $this->assertEquals($expectedSequence, $hyperharmonicSequence);
+        $this->assertEqualsWithDelta($expectedSequence, $hyperharmonicSequence, .0001);
     }
 
     /**
