@@ -27,7 +27,7 @@ class NonInteger
      */
     public static function Harmonic(int $n): array
     {
-        return self::Hyperharmonic($n, 1);
+        return self::generalizedHarmonic($n, 1);
     }
 
     /**
@@ -44,7 +44,7 @@ class NonInteger
      *
      * @return array
      */
-    public static function GeneralizedHarmonic(int $n, float $m): array
+    public static function generalizedHarmonic(int $n, float $m): array
     {
         if ($n <= 0) {
             return [];
