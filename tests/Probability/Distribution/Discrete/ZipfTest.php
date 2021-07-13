@@ -103,5 +103,4 @@ class ZipfTest extends \PHPUnit\Framework\TestCase
         // Then
         $this->assertEquals(1, $mode);
     }
-
 }
