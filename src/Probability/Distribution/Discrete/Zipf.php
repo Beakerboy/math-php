@@ -2,6 +2,7 @@
 namespace MathPHP\Probability\Distribution\Discrete;
 
 use MathPHP\Exception;
+use MathPHP\Functions\Support;
 
 /**
  * Zipf's Law
