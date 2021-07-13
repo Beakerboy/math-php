@@ -35,13 +35,13 @@ class NonIntegerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @test         Hyperharmonic produces the expected sequence
-     * @dataProvider dataProviderForHyperharmonicNumbers
+     * @test         generalizedHarmonic produces the expected sequence
+     * @dataProvider dataProviderForGeneralizedHarmonicNumbers
      * @param        int   $n
      * @param        float $p
      * @param        array $expectedSequence
      */
-    public function testHyperharmonicNumbers(int $n, float $p, array $expectedSequence)
+    public function testGeneralizedHarmonicNumbers(int $n, float $p, array $expectedSequence)
     {
         // When
         $harmonicSequence = NonInteger::Hyperharmonic($n, $p);
@@ -53,7 +53,7 @@ class NonIntegerTest extends \PHPUnit\Framework\TestCase
     /**
      * @return array
      */
-    public function dataProviderForHyperharmonicNumbers(): array
+    public function dataProviderForGeneralizedHarmonicNumbers(): array
     {
         return [
             [-1, 2, []],
