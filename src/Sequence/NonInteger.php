@@ -84,14 +84,14 @@ class NonInteger
             return [];
         }
         $sequence = [];
-        $∑        = 0;
         
         if ($r == 0) {
             for ($k = 1; $k < $n; $k++) {
                 $sequence[$k] = 1 / $k;
             }
-        } else {
+        } else { 
             $array = self::hyperharmonic($n, $r -1);
+            $∑     = 0;
             for ($k = 1; $k < $n; $k++) {
                 $sequence[$k] = $∑ + $array[$k];
             }
