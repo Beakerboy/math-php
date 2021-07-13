@@ -95,7 +95,7 @@ class NonInteger
             for ($k = 1; $k < $n; $k++) {
                 $sequence[$k] = $∑ + $array[$k];
             }
-            return $sequence;
         }
+        return $sequence;
     }
 }
