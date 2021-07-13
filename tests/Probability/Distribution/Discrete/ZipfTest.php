@@ -87,12 +87,46 @@ class ZipfTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @test         mode
-     * @dataProvider dataProviderForCdf
-     * @param        int   $x
+     * @dataProvider dataProviderForMode
      * @param        int $s
      * @param        int $N
      */
-    public function testMode(int $x, int $s, int $N, float $Cdf)
+    public function testMode(int $s, int $N, int $expected_mode)
+    {
+        // Given
+        $zipf = new Zipf($s, $N);
+
+        // When
+        $mode = $zipf->mode();
+
+        // Then
+        $this->assertEquals($expected_mode, $mode);
+    }
+
+    /**
+     * @return array[s, N, mode]
+     */
+    public function dataProviderForMode(): array
+    {
+        return [
+            [3, 10, 1],
+            [2, 10, 1],
+            [1, 10, 1],
+            [1, 8, 1],
+        ];
+    }
+    
+    /**
+     * @test         mode
+     * @dataProvider dataProviderForMean
+     * @param        int $s
+     * @param        int $N
+     *
+     * library(sads)
+     * x <- 1:N
+     * sum(dzipf(x=x, N=N, s=s) * x)
+     */
+    public function testMean(int $s, int $N, float $mean)
     {
         // Given
         $zipf = new Zipf($s, $N);
@@ -102,5 +136,18 @@ class ZipfTest extends \PHPUnit\Framework\TestCase
 
         // Then
         $this->assertEquals(1, $mode);
+    }
+
+    /**
+     * @return array[s, N, mean]
+     */
+    public function dataProviderForMean(): array
+    {
+        return [
+            [3, 10, 1.294135],
+            [2, 10, 1.88994],
+            [1, 10, 3.414172],
+            [1, 8, 2.943495],
+        ];
     }
 }
