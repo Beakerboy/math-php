@@ -173,7 +173,7 @@ class ZipfTest extends \PHPUnit\Framework\TestCase
         $mean = $zipf->mean();
 
         // Then
-        $this->assertEquals($expected_mean, $mean);
+        $this->assertEqualsWithDelta($expected_mean, $mean, .001);
     }
 
     /**
