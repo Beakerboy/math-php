@@ -93,7 +93,8 @@ class NonInteger
             $array = self::hyperharmonic($n, $r -1);
             $∑     = 0;
             for ($k = 1; $k < $n; $k++) {
-                $sequence[$k] = $∑ + $array[$k];
+                $∑ += $array[$k];
+                $sequence[$k] = $∑;
             }
         }
         return $sequence;
