@@ -24,6 +24,7 @@ class Zipf extends Discrete
 
     /**
      * Distribution support bounds limits
+     * Rank
      * k ∈ [1,∞)
      * @var array
      */
@@ -31,19 +32,17 @@ class Zipf extends Discrete
         'k' => '[1,∞)',
     ];
 
-    /** @var int number of events */
+    /** @var number Characterizing exponenet */
     protected $s;
 
-    /** @var float probability of success */
+    /** @var int Number of elements */
     protected $N;
 
     /**
      * Constructor
      *
-     * @param int $s lower boundary of the distribution
-     * @param int $N upper boundary of the distribution
-     *
-     * @throws Exception\BadDataException if b is ≤ a
+     * @param number $s exponent
+     * @param int $N elements
      */
     public function __construct($s, int $N)
     {
@@ -60,6 +59,8 @@ class Zipf extends Discrete
      * @param int $k 
      *
      * @return number
+     *
+     * @throws Exception\OutOfBoundsException if k is > N
      */
     public function pmf(int $k)
     {
@@ -84,6 +85,8 @@ class Zipf extends Discrete
      * @param int $k 
      *
      * @return number
+     *
+     * @throws Exception\OutOfBoundsException if k is > N
      */
     public function cdf(int $k)
     {
@@ -93,6 +96,20 @@ class Zipf extends Discrete
         }
 
         return array_pop(NonInteger::generalizedHarmonic($k, $s)) / array_pop(NonInteger::generalizedHarmonic($N, $s));
+    }
+
+    /**
+     * Mean of the distribution
+     *
+     *       Hₖ,ₛ₋₁
+     * μ = ---------
+     *        Hₙ,ₛ
+     *
+     * @return number
+     */
+    public function mean()
+    {
+        return array_pop(NonInteger::generalizedHarmonic($N, $s - 1)) / array_pop(NonInteger::generalizedHarmonic($N, $s));
     }
 
     /**
