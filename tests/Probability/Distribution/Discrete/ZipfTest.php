@@ -95,7 +95,7 @@ class ZipfTest extends \PHPUnit\Framework\TestCase
     public function testMode(int $x, int $s, int $N, float $Cdf)
     {
         // Given
-        $binomial = new Zipf($s, $N);
+        $zipf = new Zipf($s, $N);
 
         // When
         $mode = $zipf->mode();
