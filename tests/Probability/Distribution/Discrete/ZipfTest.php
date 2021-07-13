@@ -2,6 +2,7 @@
 
 namespace MathPHP\Tests\Probability\Distribution\Discrete;
 
+use MathPHP\Exception;
 use MathPHP\Probability\Distribution\Discrete\Zipf;
 
 class ZipfTest extends \PHPUnit\Framework\TestCase
