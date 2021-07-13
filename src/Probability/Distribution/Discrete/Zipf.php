@@ -102,36 +102,14 @@ class Zipf extends Discrete
     }
 
     /**
-     * Mean of the distribution
+     * Mode of the distribution
      *
-     *     a + b
-     * μ = -----
-     *       2
+     * μ = 1
      *
      * @return number
      */
-    public function mean()
+    public function mode()
     {
-        $a = $this->a;
-        $b = $this->b;
-
-        return ($a + $b) / 2;
-    }
-
-    /**
-     * Median of the distribution
-     *
-     *     a + b
-     * μ = -----
-     *       2
-     *
-     * @return number
-     */
-    public function median()
-    {
-        $a = $this->a;
-        $b = $this->b;
-
-        return ($a + $b) / 2;
+        return (1;
     }
 }
