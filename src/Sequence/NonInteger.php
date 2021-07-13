@@ -2,9 +2,12 @@
 
 namespace MathPHP\Sequence;
 
+use MathPHP\Number\Rational;
+
 /**
  * Non-integer sequences
  *  - Harmonic
+ *  - Generalized Harmonic
  *  - Hyperharmonic
  *
  * All sequences return an array of numbers in the sequence.
@@ -72,10 +75,11 @@ class NonInteger
      *
      * @param int $n the length of the sequence to calculate
      * @param int $r the depth of recursion
+     * @param int $rational return results as a Rational object
      *
      * @return array
      */
-    public static function hyperharmonic(int $n, int $r): array
+    public static function hyperharmonic(int $n, int $r, $rational = false): array
     {
         if ($r < 0) {
             throw new Exception\OutOfBoundsException('Recursion depth must be greater than 0');
@@ -87,14 +91,19 @@ class NonInteger
         
         if ($r == 0) {
             for ($k = 1; $k <= $n; $k++) {
-                $sequence[$k] = 1 / $k;
+                $sequence[$k] = new Rational(0, 1, $k);
             }
         } else { 
-            $array = self::hyperharmonic($n, $r -1);
-            $∑     = 0;
+            $array = self::hyperharmonic($n, $r - 1, true);
+            $∑     = Rational::createZeroValue();
             for ($k = 1; $k <= $n; $k++) {
-                $∑ += $array[$k];
+                $∑ = $∑->add($array[$k]);
                 $sequence[$k] = $∑;
+            }
+        }
+        if (!$rational) {
+            for ($k = 1; $k <= $n; $k++)) {
+                $sequence[$k] = $sequence[$k]->toFloat();
             }
         }
         return $sequence;
