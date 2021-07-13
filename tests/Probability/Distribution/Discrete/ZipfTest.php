@@ -84,4 +84,24 @@ class ZipfTest extends \PHPUnit\Framework\TestCase
             [4, 1, 8, 0.7665353],
         ];
     }
+
+    /**
+     * @test         mode
+     * @dataProvider dataProviderForCdf
+     * @param        int   $x
+     * @param        int $s
+     * @param        int $N
+     */
+    public function testMode(int $x, int $s, int $N, float $Cdf)
+    {
+        // Given
+        $binomial = new Zipf($s, $N);
+
+        // When
+        $mode = $zipf->mode();
+
+        // Then
+        $this->assertEquals(1, $mean);
+    }
+
 }
