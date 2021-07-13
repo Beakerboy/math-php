@@ -70,7 +70,7 @@ class Zipf extends Discrete
         }
         $s = $this->s;
         $N = $this->N;
-        $denominator = array_pop(NonInteger::generalizedHarmonic($N, $s))
+        $denominator = array_pop(NonInteger::generalizedHarmonic($N, $s));
         return 1 / ($k ** $s) / $denominator;
     }
 
