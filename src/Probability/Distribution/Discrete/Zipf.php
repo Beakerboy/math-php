@@ -3,6 +3,7 @@ namespace MathPHP\Probability\Distribution\Discrete;
 
 use MathPHP\Exception;
 use MathPHP\Functions\Support;
+use MathPHP\Sequence\NonInteger;
 
 /**
  * Zipf's Law
