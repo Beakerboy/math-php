@@ -83,13 +83,14 @@ class NonInteger
         $sequence = [];
         $∑        = 0;
         
-        for ($k = 1; $k <= $n; $k++) {
-            $array = self::hyperharmonic($k, $r -1);
-            $value = array_pop($array);
-            $∑ += $value;
-            $sequence[$k] = $∑;
+        if ($r == 1) {
+            return self::harmonic($n);
+        } else {
+            $array = self::hyperharmonic($n, $r -1);
+            for ($k = 1; $k < $n; $k++) {
+                $sequence[$k] = $∑ + $array[$k];
+            }
+            return $sequence;
         }
-
-        return $sequence;
     }
 }
