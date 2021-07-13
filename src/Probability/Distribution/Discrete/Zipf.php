@@ -1,4 +1,5 @@
 <?php
+
 namespace MathPHP\Probability\Distribution\Discrete;
 
 use MathPHP\Exception;
@@ -56,7 +57,7 @@ class Zipf extends Discrete
      * pmf = -----------
      *         kˢ * Hₙ,ₛ
      *
-     * @param int $k 
+     * @param int $k
      *
      * @return number
      *
@@ -83,7 +84,7 @@ class Zipf extends Discrete
      *           Hₙ,ₛ
      *
      *
-     * @param int $k 
+     * @param int $k
      *
      * @return number
      *
