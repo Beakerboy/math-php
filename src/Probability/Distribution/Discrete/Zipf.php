@@ -60,6 +60,8 @@ class Zipf extends Discrete
      */
     public function pmf(int $k)
     {
+        Support::checkLimits(self::SUPPORT_LIMITS, ['k' => $k]);
+
         $s = $this->s;
         $N = $this->N;
 
@@ -83,6 +85,8 @@ class Zipf extends Discrete
      */
     public function cdf(int $k)
     {
+        Support::checkLimits(self::SUPPORT_LIMITS, ['k' => $k]);
+
         $a = $this->a;
         $b = $this->b;
 
