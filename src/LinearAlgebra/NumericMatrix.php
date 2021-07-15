@@ -2668,6 +2668,7 @@ class NumericMatrix extends Matrix
      *  - QR decomposition
      *  - Cholesky decomposition
      *  - Crout decomposition
+     *  - Eigen decomposition
      *  - SVD (Singular Value Decomposition)
      ********************************************************************************/
 
@@ -2768,6 +2769,27 @@ class NumericMatrix extends Matrix
         }
 
         return $this->catalog->getCroutDecomposition();
+    }
+
+    /**
+     * Eigen decomposition
+     *
+     * Decomposes a matrix into a matrix (V) and a diagonal matrix (D).
+     *
+     * A = VDV⁻¹
+     *  - V = Matrix of eigenvectors
+     *  - D = diagonal matrix of eigenvalues
+     *
+     * @return Decomposition\Eigen
+     *
+     */
+    public function eigenDecomposition(): Decomposition\Eigen
+    {
+        if (!$this->catalog->hasEigenDecomposition()) {
+            $this->catalog->addEigenDecomposition(Decomposition\Eigen::decompose($this));
+        }
+
+        return $this->catalog->getEigenDecomposition();
     }
 
     /**
