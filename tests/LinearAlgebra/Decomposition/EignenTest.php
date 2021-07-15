@@ -43,8 +43,8 @@ class EigenTest extends \PHPUnit\Framework\TestCase
         $eigen = $A->eigenDecomposition();
 
         // When
-        $V = $crout['V'];
-        $D = $crout['D'];
+        $V = $eigen['V'];
+        $D = $eigen['D'];
 
         // Then
         $this->assertEquals($eigen->V, $V);
