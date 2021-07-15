@@ -30,7 +30,7 @@ class Eigen extends Decomposition
     }
 
     public static function decompose(NumericMatrix $A): Eigen
-    {        
+    {
         self::checkMatrix($A);
         $original = $A;
         $eigenvalues = [];
@@ -43,7 +43,7 @@ class Eigen extends Decomposition
             $vectors[] = $eigenvector->transpose()->getMatrix()[0]; // Adding as a new row
         }
         // The matrix trace equals the sum of the eigenvalues. We can avoid using iteration to find the final value.
-        
+
         $eigenvalues[] = $original->trace() - array_sum($eigenvalues);
         $D = new Vector($eigenvalues);
         // if ($duplicate_eigenvalues) {
