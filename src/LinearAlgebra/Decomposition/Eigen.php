@@ -95,46 +95,56 @@ class Eigen extends Decomposition
      */
     public static function powerIteration(NumericMatrix $A, int $iterations = 1000): array
     {
+        self::checkMatrix($A);
+
         $initial_iter = $iterations;
         do {
             $b = MatrixFactory::random($A->getM(), 1);
         } while ($b->frobeniusNorm() == 0);
         $b = $b->scalarDivide($b->frobeniusNorm());  // Scale to a unit vector
+
         $newμ      = 0;
         $μ         = -1;
         $max_rerun = 2;
         $rerun     = 0;
         $max_ev    = 0;
+        $max_b = [];
         while ($rerun < $max_rerun) {
-            while (!Support::isEqual($μ, $newμ, 0.00000000001)) {
+            while (!Support::isEqual($μ, $newμ)) {
                 if ($iterations <= 0) {
                     throw new Exception\FunctionFailedToConvergeException("Maximum number of iterations exceeded.");
                 }
+
                 $μ  = $newμ;
                 $Ab = $A->multiply($b);
                 while ($Ab->frobeniusNorm() == 0) {
                     $Ab = MatrixFactory::random($A->getM(), 1);
                 }
+
                 $b    = $Ab->scalarDivide($Ab->frobeniusNorm());
                 $newμ = $b->transpose()->multiply($A)->multiply($b)->get(0, 0);
                 $iterations--;
             }
-            if (abs($max_ev) < abs($newμ)) {
+
+            if (abs($newμ) > abs($max_ev)) {
                 $max_ev = $newμ;
                 $max_b = $b->getMatrix();
             }
+
             // Perturb the eigenvector and run again to make sure the same solution is found
             $newb = $b->getMatrix();
-            for ($i = 0; $i < count($newb); $i++) {
-                $newb[$i][0] = $newb[1][0] + rand() / 10;
+            for ($i = 0; $i < \count($newb); $i++) {
+                $newb[$i][0] = $newb[1][0] + \rand() / 10;
             }
             $b    = MatrixFactory::create($newb);
             $b    = $b->scalarDivide($b->frobeniusNorm());  // Scale to a unit vector
             $newμ = 0;
             $μ    = -1;
+
             $rerun++;
             $iterations = $initial_iter;
         }
+
         return [$max_ev, $max_b];
     }
 
