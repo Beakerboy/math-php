@@ -67,6 +67,32 @@ class Eigen extends Decomposition
         }
     }
 
+    /**
+     * Power Iteration
+     *
+     * The recurrence relation:
+     *         Abₖ
+     * bₖ₊₁ = ------
+     *        ‖Abₖ‖
+     *
+     * will converge to the dominant eigenvector,
+     *
+     * The corresponding eigenvalue is calculated as:
+     *
+     *      bₖᐪAbₖ
+     * μₖ = -------
+     *       bₖᐪbₖ
+     *
+     * https://en.wikipedia.org/wiki/Power_iteration
+     *
+     * @param NumericMatrix $A
+     * @param int           $iterations max number of iterations to perform
+     *
+     * @return array        most extreme eigenvalue and eigenvector
+     *
+     * @throws Exception\BadDataException if the matrix is not square
+     * @throws Exception\MathException
+     */
     public static function powerIteration(NumericMatrix $A, int $iterations = 1000): array
     {
         $initial_iter = $iterations;
