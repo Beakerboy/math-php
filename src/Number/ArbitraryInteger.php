@@ -603,7 +603,7 @@ class ArbitraryInteger implements ObjectArithmetic
     public function pow($exp): ArbitraryInteger
     {
         $exp = self::create($exp);
-        if (!$this->equals(1) && $exp->lessThan(0)) {
+        if (!($this->equals(1) || $this->equals(-1)) && $exp->lessThan(0)) {
             throw new Exception\BadParameterException('Negative exponents rarely produce integer results.');
         }
         if ($exp->equals(0)) {
