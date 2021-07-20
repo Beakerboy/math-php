@@ -539,6 +539,10 @@ class ArbitraryInteger implements ObjectArithmetic
         if ($this->abs()->lessThan($divisor) && $this->isPositive()) {
             return [new ArbitraryInteger(0), $this];
         }
+        if (!$this->isPositive()) {
+            [$int, $mod] = $this->negate()->fullIntdiv($divisor);
+            return [$int->negate()->subtract(1), $mod->negate()->add($divisor)];
+        }
 
         // If the divisor is less than Int_max / 256 then
         // the native php intdiv and mod functions can be used.
