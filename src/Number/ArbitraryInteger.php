@@ -536,7 +536,7 @@ class ArbitraryInteger implements ObjectArithmetic
      */
     public function fullIntdiv($divisor): array
     {
-        if ($this->lessThan($divisor)) {
+        if ($this->abs()->lessThan($divisor) && $this->isPositive()) {
             return [new ArbitraryInteger(0), $this];
         }
 
