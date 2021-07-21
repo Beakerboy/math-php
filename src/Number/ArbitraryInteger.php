@@ -630,7 +630,7 @@ class ArbitraryInteger implements ObjectArithmetic
         if ($exp->equals(0) || $this->equals(1)) {
             return new static(1);
         }
-        if ($exp->equals(1)) {
+        if ($exp->abs()->equals(1)) {
             return $this;
         }
 
