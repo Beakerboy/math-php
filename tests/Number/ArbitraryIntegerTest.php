@@ -531,6 +531,8 @@ class ArbitraryIntegerTest extends \PHPUnit\Framework\TestCase
             ['301', 300, '1', '1'],
             ['-1', 2, '-1', '1'],
             ['-3', 2, '-2', '1'],
+            ['3', '-2', '-2', '1'],
+            ['-12', -5, '3', '3'],
         ];
     }
 
