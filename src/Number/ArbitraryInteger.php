@@ -627,15 +627,13 @@ class ArbitraryInteger implements ObjectArithmetic
         if (!($this->equals(1) || $this->equals(-1)) && $exp->lessThan(0)) {
             throw new Exception\BadParameterException('Negative exponents rarely produce integer results.');
         }
-        if ($exp->equals(0)) {
+        if ($exp->equals(0) || $this->equals(1)) {
             return new static(1);
         }
         if ($exp->equals(1)) {
             return $this;
         }
-        if ($exp->equals(-1) && $this->equals(1)) {
-            return $this;
-        }
+
         [$int, $mod] = $exp->fullIntdiv(2);
         $square      = $this->multiply($this)->pow($int);
 
