@@ -546,9 +546,7 @@ class ArbitraryInteger implements ObjectArithmetic
             $negative_result = !$negative_result;
             [$int, $mod] = $this->abs()->fullIntdiv($divisor);
             if ($negative_result) {
-                $int = $int->negate();
-                throw new Exception\IncorrectTypeException((string) $int);
-                $int = $int->add(-1);
+                $int = $int->negate()->subtract(1);
                 $mod = $mod->negate()->add($divisor);
                 return [$int, $mod];
             }
