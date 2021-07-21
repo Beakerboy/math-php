@@ -633,7 +633,9 @@ class ArbitraryInteger implements ObjectArithmetic
         if ($exp->equals(1)) {
             return $this;
         }
-
+        if ($exp->equals(-1) && $this->equals(1)) {
+            return $this;
+        }
         [$int, $mod] = $exp->fullIntdiv(2);
         $square      = $this->multiply($this)->pow($int);
 
