@@ -538,6 +538,18 @@ class ArbitraryInteger implements ObjectArithmetic
     {
         $negative_result = false;
         $divisor = self::create($divisor);
+        if (!$divisor->isPositive()) {
+            $negative_result = true;
+            $divisor = $divisor->negate();
+        }
+        //if (!$this->isPositive()) {
+        //    $negative_result = ! $negative_result;
+        //    [$int, $mod] = $this->negate()->fullIntdiv($divisor);
+        //    if ($negative_result) {
+        //        return [$int->negate()->subtract(1), $mod->negate()->add($divisor)];
+        //    }
+        //    return [$int, $mod];
+        //}
         if ($this->lessThan($divisor)) {
             return [new ArbitraryInteger(0), $this];
         }
