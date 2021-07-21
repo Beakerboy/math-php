@@ -536,18 +536,27 @@ class ArbitraryInteger implements ObjectArithmetic
      */
     public function fullIntdiv($divisor): array
     {
-        if ($this->abs()->lessThan($divisor) && $this->isPositive()) {
-            return [new ArbitraryInteger(0), $this];
+        $negative_result = false;
+        $divisor = self::create($divisor);
+        if (!$divisor->isPositive()) {
+            $negative_result = true;
+            $divisor = $divisor->negate();
         }
         if (!$this->isPositive()) {
+            $negative_result = ! $negative_result;
             [$int, $mod] = $this->negate()->fullIntdiv($divisor);
-            return [$int->negate()->subtract(1), $mod->negate()->add($divisor)];
+            if ($negative_result) {
+                return [$int->negate()->subtract(1), $mod->negate()->add($divisor)];
+            }
+            return [$int, $mod];
+        }
+        if ($this->lessThan($divisor)) {
+            return [new ArbitraryInteger(0), $this];
         }
 
         // If the divisor is less than Int_max / 256 then
         // the native php intdiv and mod functions can be used.
         $safe_bytes = new ArbitraryInteger(\intdiv(\PHP_INT_MAX, 256));
-        $divisor    = self::create($divisor);
 
         if ($divisor->lessThan($safe_bytes)) {
             $divisor  = $divisor->toInt();
