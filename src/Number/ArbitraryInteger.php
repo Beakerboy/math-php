@@ -598,7 +598,9 @@ class ArbitraryInteger implements ObjectArithmetic
                 $int = $int->leftShift(8)->add($new_int);
             }
         }
-
+        if ($negative_result) {
+            return [$int->negate()->subtract(1), $mod->negate()->add($divisor)];
+        }
         return [$int, $mod];
     }
 
