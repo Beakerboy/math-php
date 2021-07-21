@@ -545,9 +545,11 @@ class ArbitraryInteger implements ObjectArithmetic
         if (!$this->isPositive()) {
             $negative_result = !$negative_result;
             [$int, $mod] = $this->abs()->fullIntdiv($divisor);
-        //    if ($negative_result) {
-        //        return [$int->negate()->subtract(1), $mod->negate()->add($divisor)];
-        //    }
+            if ($negative_result) {
+                $int = $int->negate()->subtract(1);
+                $mod = $mod->negate()->add($divisor);
+                return [$int, $mod];
+            }
             return [$int, $mod];
         }
         if ($this->lessThan($divisor)) {
@@ -599,7 +601,9 @@ class ArbitraryInteger implements ObjectArithmetic
             }
         }
         if ($negative_result) {
-            return [$int->negate()->subtract(1), $mod->negate()->add($divisor)];
+            $int = $int->negate()->subtract(1);
+            $mod = $mod->negate()->add($divisor);
+            return [$int, $mod];
         }
         return [$int, $mod];
     }
