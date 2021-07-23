@@ -624,7 +624,7 @@ class ArbitraryInteger implements ObjectArithmetic
         $exp = self::create($exp);
         if (!($this->equals(1) || $this->equals(-1)) && $exp->lessThan(0)) {
             $tmp = $this->pow($exp->negate());
-            if ($tmp->lessThan(\PHP_INT_MAX) && $tmp->greaterThan(\PHP_INT_MIN) {
+            if ($tmp->lessThan(\PHP_INT_MAX) && $tmp->greaterThan(\PHP_INT_MIN)){
                 return new Rational(0, 1, $tmp->toInt());
             }
             throw new Exception\OutOfBoundsException('Integer is too large to be expressed as a Rational object.');
